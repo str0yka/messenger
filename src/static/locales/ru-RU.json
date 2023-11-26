@@ -1,0 +1,6 @@
+{
+  "input.label.email": "Почта",
+  "input.label.password": "Пароль",
+
+  "page.auth.logInText": "Для входа, пожалуйста, введите вашу почту и пароль"
+}

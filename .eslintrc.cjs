@@ -28,6 +28,9 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
+    '@typescript-eslint/no-floating-promises': 0,
+    'import/export': 0,
+    'react/no-array-index-key': 0,
     'react/prop-types': 0,
     'import/no-extraneous-dependencies': 0,
     'react/jsx-props-no-spreading': 0,
@@ -48,7 +51,7 @@ module.exports = {
         'newlines-between': 'always',
         pathGroups: [
           {
-            pattern: '~/*',
+            pattern: '~/**',
             group: 'internal',
           },
           {
