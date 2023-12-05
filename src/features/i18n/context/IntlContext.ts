@@ -6,7 +6,6 @@ export interface IntlState {
   messages: Record<string, string>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const IntlContext = createContext<IntlState>({
   locale: '' as Locale,
   setLocale: () => {},

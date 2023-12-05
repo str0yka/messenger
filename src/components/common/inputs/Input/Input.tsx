@@ -13,8 +13,8 @@ export const Input: React.FC<InputProps> = ({ startAdornment, endAdornment, ...p
     <label
       htmlFor={props.id || inputId}
       className={cn(
-        'flex min-h-[40px] w-full cursor-text items-center gap-2 rounded-full border border-neutral-700 bg-neutral-900 px-4 text-neutral-700 transition-all',
-        'focus-within:bg-neutral-800 focus-within:text-violet-400 focus-within:outline focus-within:-outline-offset-1 focus-within:outline-violet-400',
+        'border-neutral-700 bg-neutral-900 text-neutral-700 flex min-h-[40px] w-full cursor-text items-center gap-2 rounded-full border px-4 transition-all',
+        'focus-within:bg-neutral-800 focus-within:text-primary-400 focus-within:outline-primary-400 focus-within:outline focus-within:-outline-offset-1',
       )}
     >
       {startAdornment}
@@ -22,7 +22,7 @@ export const Input: React.FC<InputProps> = ({ startAdornment, endAdornment, ...p
         type="text"
         id={inputId}
         {...props}
-        className="flex-grow self-stretch bg-transparent font-normal text-neutral-50 outline-none placeholder:select-none placeholder:text-neutral-500"
+        className="bg-transparent text-neutral-50 placeholder:text-neutral-500 flex-grow self-stretch font-normal outline-none placeholder:select-none"
       />
       {endAdornment}
     </label>

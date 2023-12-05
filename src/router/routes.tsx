@@ -1,17 +1,29 @@
-import type { RouteObject } from 'react-router-dom';
+import { Navigate, type RouteObject } from 'react-router-dom';
 
 import { AuthPage, HomePage } from '~/pages';
 
 export const privateRoutes: RouteObject[] = [
   {
-    index: true,
-    element: <HomePage />,
+    path: '/',
+    errorElement: <Navigate to="/" />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+    ],
   },
 ];
 
 export const publicRoutes: RouteObject[] = [
   {
-    index: true,
-    element: <AuthPage />,
+    path: '/',
+    errorElement: <Navigate to="/" />,
+    children: [
+      {
+        index: true,
+        element: <AuthPage />,
+      },
+    ],
   },
 ];

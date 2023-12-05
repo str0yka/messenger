@@ -21,15 +21,15 @@ export const HomePage = () => {
   }, []);
 
   return (
-    <main className="flex h-screen bg-neutral-900">
+    <main className="bg-neutral-900 flex h-screen">
       <aside
         className={cn(
-          'flex w-full flex-col border-r border-r-neutral-700 bg-neutral-800',
+          'border-r-neutral-700 bg-neutral-800 flex w-full flex-col border-r',
           'lg:w-[400px]',
           '2xl:w-[450px]',
         )}
       >
-        <div className="flex justify-between gap-2 border-b border-b-neutral-700 p-4">
+        <div className="border-b-neutral-700 flex justify-between gap-2 border-b p-4">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <IconButton aria-label="Customise options">
@@ -37,7 +37,7 @@ export const HomePage = () => {
               </IconButton>
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
-              <DropdownMenu.Content className="w-80 rounded-xl bg-neutral-800/75 p-2 shadow-[0_0_35px_rgba(0,0,0,0.5)] backdrop-blur-lg">
+              <DropdownMenu.Content className="bg-neutral-800/75 w-80 rounded-xl p-2 shadow-[0_0_35px_rgba(0,0,0,0.5)] backdrop-blur-lg">
                 <DropdownMenu.Item
                   className={cn(
                     'cursor-pointer rounded p-2 outline-none transition-all',
@@ -45,7 +45,7 @@ export const HomePage = () => {
                     'active:scale-95',
                   )}
                 >
-                  <p className="text-sm font-semibold text-neutral-50">Saved Messages</p>
+                  <p className="text-neutral-50 text-sm font-semibold">Saved Messages</p>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
                   className={cn(
@@ -54,7 +54,7 @@ export const HomePage = () => {
                     'active:scale-95',
                   )}
                 >
-                  <p className="text-sm font-semibold text-neutral-50">My stories</p>
+                  <p className="text-neutral-50 text-sm font-semibold">My stories</p>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
                   className={cn(
@@ -63,7 +63,7 @@ export const HomePage = () => {
                     'active:scale-95',
                   )}
                 >
-                  <p className="text-sm font-semibold text-neutral-50">Contacts</p>
+                  <p className="text-neutral-50 text-sm font-semibold">Contacts</p>
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
@@ -88,23 +88,23 @@ export const HomePage = () => {
                     'active:bg-neutral-600/50',
                   )}
                 >
-                  <Avatar.Root className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-violet-300 to-violet-500">
-                    <Avatar.Fallback className="text-xl font-semibold text-neutral-50">
+                  <Avatar.Root className="from-primary-300 to-primary-500 flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-b">
+                    <Avatar.Fallback className="text-neutral-50 text-xl font-semibold">
                       MA
                     </Avatar.Fallback>
                   </Avatar.Root>
                   <div className="flex min-w-[0] flex-grow flex-col">
                     <div className="flex items-center gap-2">
-                      <h2 className="flex-grow truncate font-semibold text-neutral-50">
+                      <h2 className="text-neutral-50 flex-grow truncate font-semibold">
                         some 124124124412124124124124124124channel
                       </h2>
-                      <p className="text-xs text-neutral-400">19:32</p>
+                      <p className="text-neutral-400 text-xs">19:32</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <p className="flex-grow truncate text-neutral-400">
+                      <p className="text-neutral-400 flex-grow truncate">
                         afjawfaafkaafjawfaafkaafjawfaaafjawfaafkaafjawfaafkaafjawfaafkaafjawfaafkaafjawfaafkafkaafjawfaafkaafjawfaafkaafjawfaafkaafjawfaafkaafjawfaafkaafjawfaafka
                       </p>
-                      <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-violet-400 text-xs font-medium text-neutral-50">
+                      <div className="bg-primary-400 text-neutral-50 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium">
                         2
                       </div>
                     </div>
@@ -116,25 +116,25 @@ export const HomePage = () => {
       </aside>
       <div
         className={cn(
-          "flex flex-grow flex-col overflow-hidden bg-neutral-900 bg-[url('/images/chat-bg.png')]",
+          "bg-neutral-900 flex flex-grow flex-col overflow-hidden bg-[url('/images/chat-bg.png')]",
           isOpen && 'absolute inset-0',
           'lg:static',
         )}
       >
         {isOpen && (
           <>
-            <div className="flex cursor-pointer items-center gap-4 border-b border-b-neutral-700 bg-neutral-800 px-4 py-2">
+            <div className="border-b-neutral-700 bg-neutral-800 flex cursor-pointer items-center gap-4 border-b px-4 py-2">
               <div>
                 <IconButton onClick={() => setIsOpen(false)}>
                   <IconCross />
                 </IconButton>
               </div>
-              <Avatar.Root className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-violet-300 to-violet-500">
-                <Avatar.Fallback className="text-md font-semibold text-neutral-50">
+              <Avatar.Root className="from-primary-300 to-primary-500 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-b">
+                <Avatar.Fallback className="text-md text-neutral-50 font-semibold">
                   MA
                 </Avatar.Fallback>
               </Avatar.Root>
-              <h2 className="truncate font-semibold text-neutral-50">
+              <h2 className="text-neutral-50 truncate font-semibold">
                 Saved MessagesSaved MessagesSaved MessagesSaved MessagesSaved MessagesSaved
                 MessagesSavedSaved MessagesSaved MessagesSaved MessagesSaved MessagesSaved
                 MessagesSaved MessagesSaved Messages MessagesSaved MessagesSaved Messages
@@ -152,45 +152,45 @@ export const HomePage = () => {
                     'xl:w-6/12',
                   )}
                 >
-                  <div className="w-fit max-w-[66%] rounded-xl bg-neutral-800 p-2 text-neutral-50">
+                  <div className="bg-neutral-800 text-neutral-50 w-fit max-w-[66%] rounded-xl p-2">
                     привет.
                   </div>
-                  <div className="w-fit max-w-[66%] rounded-xl bg-neutral-800 p-2 text-neutral-50">
+                  <div className="bg-neutral-800 text-neutral-50 w-fit max-w-[66%] rounded-xl p-2">
                     Сегодня еду к Ване дипонсу смотреть фильм, который у него на ауке выиграл. А
                     завтра у меня фильм.
                     <br />
                     <br />
                     «Куклы» вроде, то ли «Кукла». Хз короче. Я вас уведомил, вот.
                   </div>
-                  <div className="w-fit max-w-[66%] self-end rounded-xl bg-violet-500 p-2 text-neutral-50">
+                  <div className="bg-primary-500 text-neutral-50 w-fit max-w-[66%] self-end rounded-xl p-2">
                     Сегодня еду к Ване дипонсу смотреть фильм, который у него на ауке выиграл. А
                     завтра у меня фильм.
                     <br />
                     <br />
                     «Куклы» вроде, то ли «Кукла». Хз короче. Я вас уведомил, вот.
                   </div>
-                  <div className="w-fit max-w-[66%] rounded-xl bg-neutral-800 p-2 text-neutral-50">
+                  <div className="bg-neutral-800 text-neutral-50 w-fit max-w-[66%] rounded-xl p-2">
                     Сегодня еду к Ване дипонсу смотреть фильм, который у него на ауке выиграл. А
                     завтра у меня фильм.
                     <br />
                     <br />
                     «Куклы» вроде, то ли «Кукла». Хз короче. Я вас уведомил, вот.
                   </div>
-                  <div className="w-fit max-w-[66%] rounded-xl bg-neutral-800 p-2 text-neutral-50">
+                  <div className="bg-neutral-800 text-neutral-50 w-fit max-w-[66%] rounded-xl p-2">
                     Сегодня еду к Ване дипонсу смотреть фильм, который у него на ауке выиграл. А
                     завтра у меня фильм.
                     <br />
                     <br />
                     «Куклы» вроде, то ли «Кукла». Хз короче. Я вас уведомил, вот.
                   </div>
-                  <div className="w-fit max-w-[66%] self-end rounded-xl bg-violet-500 p-2 text-neutral-50">
+                  <div className="bg-primary-500 text-neutral-50 w-fit max-w-[66%] self-end rounded-xl p-2">
                     Сегодня еду к Ване дипонсу смотреть фильм, который у него на ауке выиграл. А
                     завтра у меня фильм.
                     <br />
                     <br />
                     «Куклы» вроде, то ли «Кукла». Хз короче. Я вас уведомил, вот.
                   </div>
-                  <div className="w-fit max-w-[66%] rounded-xl bg-neutral-800 p-2 text-neutral-50">
+                  <div className="bg-neutral-800 text-neutral-50 w-fit max-w-[66%] rounded-xl p-2">
                     Добрый день, меня зовут Никита, мне 20 лет, являюсь Frontend разработчиком, буду
                     рад если рассмотрите меня в качестве кандидата на должность :) Имею опыт
                     построения SPA, SSR web-приложений на языке TypeScript с использованием
@@ -200,21 +200,21 @@ export const HomePage = () => {
                     <br />
                     https://drive.google.com/file/d/1t54MBwMyqvEcsr3Ks19pZZCWo9pXJHHt/view
                   </div>
-                  <div className="w-fit max-w-[66%] rounded-xl bg-neutral-800 p-2 text-neutral-50">
+                  <div className="bg-neutral-800 text-neutral-50 w-fit max-w-[66%] rounded-xl p-2">
                     Сегодня еду к Ване дипонсу смотреть фильм, который у него на ауке выиграл. А
                     завтра у меня фильм.
                     <br />
                     <br />
                     «Куклы» вроде, то ли «Кукла». Хз короче. Я вас уведомил, вот.
                   </div>
-                  <div className="w-fit max-w-[66%] self-end rounded-xl bg-violet-500 p-2 text-neutral-50">
+                  <div className="bg-primary-500 text-neutral-50 w-fit max-w-[66%] self-end rounded-xl p-2">
                     Сегодня еду к Ване дипонсу смотреть фильм, который у него на ауке выиграл. А
                     завтра у меня фильм.
                     <br />
                     <br />
                     «Куклы» вроде, то ли «Кукла». Хз короче. Я вас уведомил, вот.
                   </div>
-                  <div className="w-fit max-w-[66%] rounded-xl bg-neutral-800 p-2 text-neutral-50">
+                  <div className="bg-neutral-800 text-neutral-50 w-fit max-w-[66%] rounded-xl p-2">
                     тест
                   </div>
                 </div>

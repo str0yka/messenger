@@ -1,7 +1,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { App } from './App';
+import { App } from '~/App';
+import '~/static/styles/scrollbar.css';
+import '~/static/styles/themes.css';
 
 import './index.css';
 
