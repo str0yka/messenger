@@ -2,5 +2,7 @@
   "input.label.email": "Почта",
   "input.label.password": "Пароль",
 
-  "page.auth.logInText": "Для входа, пожалуйста, введите вашу почту и пароль"
+  "page.auth.logInText": "Для входа, пожалуйста, введите вашу почту и пароль",
+  "page.auth.settings": "Настройки",
+  "page.auth.theme": "Тема"
 }

@@ -1,11 +1,8 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import cn from 'classnames';
-
-import { Input, IconButton } from '~/components/common';
-import { IconBrush } from '~/components/common/icons';
+import { Input, IconButton, DropdownMenu } from '~/components/common';
+import { IconGear } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { useTheme } from '~/features/theme';
-import { THEME } from '~/utils/constants';
+import { INTL_LOCALE, THEME } from '~/utils/constants';
 
 export const AuthPage = () => {
   const intl = useIntl();
@@ -17,38 +14,48 @@ export const AuthPage = () => {
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <IconButton aria-label="Select theme">
-              <IconBrush />
+              <IconGear />
             </IconButton>
           </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content
-              align="end"
-              className="flex flex-col gap-2 rounded bg-neutral-800 p-2"
-            >
-              <DropdownMenu.Item
-                className={cn(
-                  'flex cursor-pointer gap-1 p-2',
-                  'rounded hover:bg-neutral-300/10',
-                  theme === THEME.VIOLET_LIGHT && 'bg-neutral-300/20',
-                )}
-                onClick={() => setTheme(THEME.VIOLET_LIGHT)}
-              >
-                <div className="h-4 w-4 rounded-full bg-white shadow-lg" />
-                <div className="h-4 w-4 rounded-full bg-violet-400 shadow" />
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                className={cn(
-                  'flex cursor-pointer gap-1 p-2',
-                  'rounded hover:bg-neutral-300/10',
-                  theme === THEME.VIOLET_DARK && 'bg-neutral-300/5',
-                )}
-                onClick={() => setTheme(THEME.VIOLET_DARK)}
-              >
-                <div className="h-4 w-4 rounded-full bg-black shadow" />
-                <div className="h-4 w-4 rounded-full bg-violet-400 shadow" />
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
+          <DropdownMenu.Content align="end">
+            <DropdownMenu.Label>{intl.t('page.auth.settings')}</DropdownMenu.Label>
+            <DropdownMenu.Sub>
+              <DropdownMenu.SubTrigger>Language</DropdownMenu.SubTrigger>
+              <DropdownMenu.SubContent>
+                <DropdownMenu.RadioGroup
+                  value={intl.locale}
+                  onValueChange={(value) => intl.setLocale(value as Locale)}
+                >
+                  <DropdownMenu.RadioItem value={INTL_LOCALE.EN}>English</DropdownMenu.RadioItem>
+                  <DropdownMenu.RadioItem value={INTL_LOCALE.RU}>Русский</DropdownMenu.RadioItem>
+                </DropdownMenu.RadioGroup>
+              </DropdownMenu.SubContent>
+            </DropdownMenu.Sub>
+            <DropdownMenu.Sub>
+              <DropdownMenu.SubTrigger>{intl.t('page.auth.theme')}</DropdownMenu.SubTrigger>
+              <DropdownMenu.SubContent>
+                <DropdownMenu.RadioGroup
+                  value={theme}
+                  onValueChange={(value) => setTheme(value as Theme)}
+                >
+                  <DropdownMenu.RadioItem
+                    className="flex gap-1"
+                    value={THEME.VIOLET_DARK}
+                  >
+                    <div className="h-4 w-4 rounded-full bg-violet-400" />
+                    <div className="h-4 w-4 rounded-full bg-black" />
+                  </DropdownMenu.RadioItem>
+                  <DropdownMenu.RadioItem
+                    className="flex gap-1"
+                    value={THEME.VIOLET_LIGHT}
+                  >
+                    <div className="h-4 w-4 rounded-full bg-violet-400" />
+                    <div className="h-4 w-4 rounded-full bg-white" />
+                  </DropdownMenu.RadioItem>
+                </DropdownMenu.RadioGroup>
+              </DropdownMenu.SubContent>
+            </DropdownMenu.Sub>
+          </DropdownMenu.Content>
         </DropdownMenu.Root>
       </div>
       <div className="flex h-full flex-col items-center justify-center gap-4">
