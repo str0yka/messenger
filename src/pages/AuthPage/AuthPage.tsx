@@ -2,7 +2,7 @@ import { Input, IconButton, DropdownMenu } from '~/components/common';
 import { IconGear } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { useTheme } from '~/features/theme';
-import { INTL_LOCALE, THEME } from '~/utils/constants';
+import { EXTENDED_THEMES, INTL_LANGUAGES } from '~/utils/constants';
 
 export const AuthPage = () => {
   const intl = useIntl();
@@ -26,8 +26,9 @@ export const AuthPage = () => {
                   value={intl.locale}
                   onValueChange={(value) => intl.setLocale(value as Locale)}
                 >
-                  <DropdownMenu.RadioItem value={INTL_LOCALE.EN}>English</DropdownMenu.RadioItem>
-                  <DropdownMenu.RadioItem value={INTL_LOCALE.RU}>Русский</DropdownMenu.RadioItem>
+                  {INTL_LANGUAGES.map((language) => (
+                    <DropdownMenu.RadioItem value={language.locale}>English</DropdownMenu.RadioItem>
+                  ))}
                 </DropdownMenu.RadioGroup>
               </DropdownMenu.SubContent>
             </DropdownMenu.Sub>
@@ -38,20 +39,20 @@ export const AuthPage = () => {
                   value={theme}
                   onValueChange={(value) => setTheme(value as Theme)}
                 >
-                  <DropdownMenu.RadioItem
-                    className="flex gap-1"
-                    value={THEME.VIOLET_DARK}
-                  >
-                    <div className="h-4 w-4 rounded-full bg-violet-400" />
-                    <div className="h-4 w-4 rounded-full bg-black" />
-                  </DropdownMenu.RadioItem>
-                  <DropdownMenu.RadioItem
-                    className="flex gap-1"
-                    value={THEME.VIOLET_LIGHT}
-                  >
-                    <div className="h-4 w-4 rounded-full bg-violet-400" />
-                    <div className="h-4 w-4 rounded-full bg-white" />
-                  </DropdownMenu.RadioItem>
+                  {EXTENDED_THEMES.map((extendedTheme) => (
+                    <DropdownMenu.RadioItem
+                      key={extendedTheme.theme}
+                      className="flex gap-1"
+                      value={extendedTheme.theme}
+                    >
+                      <div className={`h-4 w-4 rounded-full ${extendedTheme.tailwind.bg}`} />
+                      <div
+                        className={`h-4 w-4 rounded-full ${
+                          extendedTheme.mode === 'light' ? 'bg-white' : 'bg-black'
+                        }`}
+                      />
+                    </DropdownMenu.RadioItem>
+                  ))}
                 </DropdownMenu.RadioGroup>
               </DropdownMenu.SubContent>
             </DropdownMenu.Sub>
