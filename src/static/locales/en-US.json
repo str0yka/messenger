@@ -3,6 +3,7 @@
   "input.label.password": "Password",
 
   "page.auth.logInText": "Please enter your email and password to log in",
+  "page.auth.registerText": "To register, please enter your e-mail and password. We will send a verification code to your e-mail",
   "page.auth.settings": "Settings",
   "page.auth.theme": "Theme"
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { INTL_LOCAL_STORAGE_KEY } from '~/utils/constants';
+import { LOCALE_LOCAL_STORAGE_KEY } from '~/utils/constants';
 import { getMessages, getLocale } from '~/utils/helpers';
 
 export const useAppIntl = () => {
@@ -11,7 +11,7 @@ export const useAppIntl = () => {
   useEffect(() => {
     (async () => {
       const localeMessages = await getMessages(locale);
-      localStorage.setItem(INTL_LOCAL_STORAGE_KEY, locale);
+      localStorage.setItem(LOCALE_LOCAL_STORAGE_KEY, locale);
       setMessages(localeMessages);
       setAreMessagesLoading(false);
     })();

@@ -1,15 +1,15 @@
-export const INTL_LOCALE = {
+export const LOCALE = {
   RU: 'ru-RU',
   EN: 'en-US',
 } as const;
 
-export const INTL_LOCALES = Object.values(INTL_LOCALE);
+export const LOCALES = Object.values(LOCALE);
 
-export const INTL_DEFAULT_LOCALE = INTL_LOCALE.EN;
+export const LOCALE_DEFAULT = LOCALE.EN;
 
-export const INTL_LOCAL_STORAGE_KEY = 'locale';
+export const LOCALE_LOCAL_STORAGE_KEY = 'locale';
 
-export const INTL_LANGUAGE: Record<string, Language> = {
+export const LANGUAGE: Record<keyof typeof LOCALE, Language> = {
   RU: {
     locale: 'ru-RU',
     name: 'Русский',
@@ -20,6 +20,6 @@ export const INTL_LANGUAGE: Record<string, Language> = {
   },
 } as const;
 
-export const INTL_LANGUAGES = Object.values(INTL_LANGUAGE);
+export const LANGUAGES = Object.values(LANGUAGE);
 
-export const INTL_DEFAULT_LANGUAGE = INTL_LANGUAGE.RU;
+export const LANGUAGE_DEFAULT = LANGUAGE.RU;
