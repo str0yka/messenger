@@ -1,10 +1,11 @@
 import { Navigate, type RouteObject } from 'react-router-dom';
 
-import { AuthPage, HomePage } from '~/pages';
+import { AuthPage, HomePage, VerifyPage } from '~/pages';
+import { PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
 
 export const privateRoutes: RouteObject[] = [
   {
-    path: '/',
+    path: PRIVATE_ROUTE.HOME,
     errorElement: <Navigate to="/" />,
     children: [
       {
@@ -17,12 +18,16 @@ export const privateRoutes: RouteObject[] = [
 
 export const publicRoutes: RouteObject[] = [
   {
-    path: '/',
+    path: PUBLIC_ROUTE.HOME,
     errorElement: <Navigate to="/" />,
     children: [
       {
         index: true,
         element: <AuthPage />,
+      },
+      {
+        path: PUBLIC_ROUTE.VERIFY,
+        element: <VerifyPage />,
       },
     ],
   },

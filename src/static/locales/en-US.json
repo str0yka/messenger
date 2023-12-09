@@ -1,9 +1,18 @@
 {
+  "button.logIn": "Log in",
+  "button.register": "Register",
+  "button.verify": "Verify",
+
   "input.label.email": "Email",
   "input.label.password": "Password",
+  "input.label.verifyCode": "Verification code",
 
   "page.auth.logInText": "Please enter your email and password to log in",
   "page.auth.registerText": "To register, please enter your e-mail and password. We will send a verification code to your e-mail",
   "page.auth.settings": "Settings",
-  "page.auth.theme": "Theme"
+  "page.auth.theme": "Theme",
+  "page.tabs.trigger.logIn": "Log in",
+  "page.tabs.trigger.register": "Register",
+
+  "page.verify.verifyText": "We have sent the verification code to {email}, paste it here and use the app"
 }

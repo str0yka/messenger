@@ -13,7 +13,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ..
     className={cn(
       'min-h-[2.5rem] w-full min-w-[2.5rem] rounded-full bg-primary-400 font-medium text-white transition-transform',
       'hover:bg-primary-500',
-      'active:scale-95',
+      'disabled:bg-neutral-700 disabled:text-neutral-50',
+      'enabled:active:scale-95',
     )}
   >
     {children}

@@ -2,6 +2,7 @@ import * as Avatar from '@radix-ui/react-avatar';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import cn from 'classnames';
 import { useLayoutEffect, useRef, useState } from 'react';
+import { useMutation } from 'react-query';
 
 import { IconButton, Input } from '~/components/common';
 import {
@@ -12,8 +13,11 @@ import {
   IconSmilingFace,
 } from '~/components/common/icons';
 import { useTheme } from '~/features/theme';
+import { PostLogoutFailureResponse, PostLogoutSuccessResponse, postLogout } from '~/utils/api';
+import { useUserStore } from '~/utils/store';
 
 export const HomePage = () => {
+  const resetUser = useUserStore((state) => state.resetUser);
   const { theme } = useTheme();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +26,16 @@ export const HomePage = () => {
   useLayoutEffect(() => {
     chatRef.current?.scrollTo(0, chatRef.current.scrollHeight);
   }, []);
+
+  const { mutate: logoutMutation } = useMutation<
+    PostLogoutSuccessResponse,
+    PostLogoutFailureResponse
+  >({
+    mutationFn: postLogout,
+    onSuccess: () => {
+      resetUser();
+    },
+  });
 
   return (
     <main className="flex h-screen bg-neutral-900">
@@ -65,8 +79,9 @@ export const HomePage = () => {
                     'focus-visible:bg-neutral-900/50',
                     'active:scale-95',
                   )}
+                  onClick={() => logoutMutation()}
                 >
-                  <p className="text-sm font-semibold text-neutral-50">Contacts</p>
+                  <p className="text-sm font-semibold text-neutral-50">Logout</p>
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Portal>

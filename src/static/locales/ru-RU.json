@@ -1,9 +1,18 @@
 {
+  "button.logIn": "Войти",
+  "button.register": "Зарегистрироваться",
+  "button.verify": "Подтвердить",
+
   "input.label.email": "Почта",
   "input.label.password": "Пароль",
+  "input.label.verifyCode": "Код подтверждения",
 
   "page.auth.logInText": "Для входа, пожалуйста, введите вашу почту и пароль",
   "page.auth.registerText": "Для регистрации, пожалуйста, введите вашу почту и пароль. На почту мы отправим код подтверждения",
   "page.auth.settings": "Настройки",
-  "page.auth.theme": "Тема"
+  "page.auth.theme": "Тема",
+  "page.tabs.trigger.logIn": "Войти",
+  "page.tabs.trigger.register": "Создать",
+
+  "page.verify.verifyText": "Мы отправили проверочный код на {email}, вставьте его тут и пользуйтесь приложением"
 }

@@ -1,11 +1,13 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import cn from 'classnames';
 
-import { Input, IconButton, DropdownMenu, Button } from '~/components/common';
+import { IconButton, DropdownMenu } from '~/components/common';
 import { IconGear } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { useTheme } from '~/features/theme';
 import { EXTENDED_THEMES, LANGUAGES } from '~/utils/constants';
+
+import { Login, Registration } from './components';
 
 export const AuthPage = () => {
   const intl = useIntl();
@@ -30,7 +32,10 @@ export const AuthPage = () => {
                   onValueChange={(value) => intl.setLocale(value as Locale)}
                 >
                   {LANGUAGES.map((language) => (
-                    <DropdownMenu.RadioItem value={language.locale}>
+                    <DropdownMenu.RadioItem
+                      key={language.locale}
+                      value={language.locale}
+                    >
                       {language.name}
                     </DropdownMenu.RadioItem>
                   ))}
@@ -76,7 +81,7 @@ export const AuthPage = () => {
             )}
             value="login"
           >
-            Log in
+            {intl.t('page.tabs.trigger.logIn')}
           </Tabs.Trigger>
           <Tabs.Trigger
             className={cn(
@@ -85,43 +90,17 @@ export const AuthPage = () => {
             )}
             value="register"
           >
-            Register
+            {intl.t('page.tabs.trigger.register')}
           </Tabs.Trigger>
         </Tabs.List>
-        <Tabs.Content
-          className="rounded-b bg-neutral-800 p-5"
-          value="login"
-        >
-          <div className="flex h-full  flex-col items-center justify-center gap-4">
-            <h1 className="text-2xl font-bold text-neutral-50">Messenger</h1>
-            <p className="text-center text-neutral-500">{intl.t('page.auth.logInText')}</p>
-            <Input
-              placeholder={intl.t('input.label.email')}
-              type="email"
-            />
-            <Input
-              placeholder={intl.t('input.label.password')}
-              type="password"
-            />
-            <Button>Log in</Button>
+        <Tabs.Content value="login">
+          <div className="flex flex-col items-center gap-4 rounded-b bg-neutral-800 p-5">
+            <Login />
           </div>
         </Tabs.Content>
-        <Tabs.Content
-          className="rounded-b bg-neutral-800 p-5"
-          value="register"
-        >
-          <div className="flex h-full  flex-col items-center justify-center gap-4">
-            <h1 className="text-2xl font-bold text-neutral-50">Messenger</h1>
-            <p className="text-center text-neutral-500">{intl.t('page.auth.registerText')}</p>
-            <Input
-              placeholder={intl.t('input.label.email')}
-              type="email"
-            />
-            <Input
-              placeholder={intl.t('input.label.password')}
-              type="password"
-            />
-            <Button>Register</Button>
+        <Tabs.Content value="register">
+          <div className="flex flex-col items-center gap-4 rounded-b bg-neutral-800 p-5">
+            <Registration />
           </div>
         </Tabs.Content>
       </Tabs.Root>
