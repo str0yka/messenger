@@ -1,3 +1,6 @@
+/* eslint-disable react/destructuring-assignment */
+import cn from 'classnames';
+
 export const IconBrush: React.FC<IconProps> = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -5,6 +8,7 @@ export const IconBrush: React.FC<IconProps> = (props) => (
     height="20px"
     viewBox="0 0 24 24"
     fill="none"
+    className={cn('w-full', props.className)}
     {...props}
   >
     <path

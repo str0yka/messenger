@@ -1,3 +1,6 @@
+/* eslint-disable react/destructuring-assignment */
+import cn from 'classnames';
+
 export const IconMagnifyingGlass: React.FC<IconProps> = (props) => (
   <svg
     width="20px"
@@ -5,6 +8,7 @@ export const IconMagnifyingGlass: React.FC<IconProps> = (props) => (
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    className={cn('w-full', props.className)}
     {...props}
   >
     <path

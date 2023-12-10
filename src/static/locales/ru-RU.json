@@ -14,5 +14,9 @@
   "page.tabs.trigger.logIn": "Войти",
   "page.tabs.trigger.register": "Создать",
 
-  "page.verify.verifyText": "Мы отправили проверочный код на {email}, вставьте его тут и пользуйтесь приложением"
+  "page.verify.verifyText": "Мы отправили проверочный код на {email}, вставьте его тут и пользуйтесь приложением",
+
+  "page.home.settings": "Настройки",
+  "page.home.theme": "Тема",
+  "page.home.logOut": "Выйти"
 }

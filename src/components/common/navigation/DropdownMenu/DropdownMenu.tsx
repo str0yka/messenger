@@ -19,7 +19,7 @@ const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({ children, ...
   <DropdownMenuPrimitive.Portal>
     <DropdownMenuPrimitive.Content
       {...props}
-      className={cn('rounded bg-neutral-800 p-2 shadow-md', props.className)}
+      className={cn('rounded bg-neutral-800 p-2 shadow-xl shadow-black/10', props.className)}
     >
       {children}
     </DropdownMenuPrimitive.Content>
@@ -28,19 +28,26 @@ const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({ children, ...
 
 // DropdownMenuItem
 
-interface DropdownMenuItemProps extends Props<typeof DropdownMenuPrimitive.Item> {}
+interface DropdownMenuItemProps extends Props<typeof DropdownMenuPrimitive.Item> {
+  endAdornment?: React.ReactNode;
+}
 
-const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({ children, ...props }) => (
+const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
+  endAdornment,
+  children,
+  ...props
+}) => (
   <DropdownMenuPrimitive.Item
     {...props}
     className={cn(
-      'select-none gap-1 rounded px-2 py-1.5 pl-7 text-sm font-medium text-neutral-50',
+      'flex select-none items-center justify-between gap-3 rounded px-2 py-1.5 pl-7 text-sm font-medium text-neutral-50',
       'data-[highlighted]:cursor-pointer data-[highlighted]:bg-neutral-300/10 data-[highlighted]:outline-none',
       'data-[disabled]:text-neutral-500',
       props.className,
     )}
   >
-    {children}
+    <div className="grow">{children}</div>
+    {endAdornment && <div className="h-[16px] w-[16px] text-neutral-500">{endAdornment}</div>}
   </DropdownMenuPrimitive.Item>
 );
 
@@ -123,8 +130,10 @@ const DropdownMenuSubTrigger: React.FC<DropdownMenuSubTriggerProps> = ({ childre
       props.className,
     )}
   >
-    <div className="flex-grow">{children}</div>
-    <IconChevron direction="right" />
+    <div className="grow">{children}</div>
+    <div className="h-[16px] w-[16px] text-neutral-500">
+      <IconChevron direction="right" />
+    </div>
   </DropdownMenuPrimitive.SubTrigger>
 );
 
@@ -136,7 +145,7 @@ const DropdownMenuSubContent: React.FC<DropdownMenuSubContentProps> = ({ childre
   <DropdownMenuPrimitive.Portal>
     <DropdownMenuPrimitive.SubContent
       {...props}
-      className={cn('rounded bg-neutral-800 p-2 shadow-md', props.className)}
+      className={cn('rounded bg-neutral-800 p-2 shadow-xl shadow-black/10', props.className)}
     >
       {children}
     </DropdownMenuPrimitive.SubContent>

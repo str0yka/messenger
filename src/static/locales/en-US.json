@@ -14,5 +14,9 @@
   "page.tabs.trigger.logIn": "Log in",
   "page.tabs.trigger.register": "Register",
 
-  "page.verify.verifyText": "We have sent the verification code to {email}, paste it here and use the app"
+  "page.verify.verifyText": "We have sent the verification code to {email}, paste it here and use the app",
+
+  "page.home.settings": "Settings",
+  "page.home.theme": "Theme",
+  "page.home.logOut": "Log out"
 }

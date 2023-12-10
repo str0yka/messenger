@@ -7,7 +7,7 @@ interface IconChevronProps extends IconProps {
 export const IconChevron: React.FC<IconChevronProps> = ({ direction = 'left', ...props }) => (
   <svg
     className={cn(
-      'transform',
+      'w-full transform',
       {
         transform: direction !== 'left',
         'rotate-90': direction === 'up',

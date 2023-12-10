@@ -1,7 +1,4 @@
-import * as Tabs from '@radix-ui/react-tabs';
-import cn from 'classnames';
-
-import { IconButton, DropdownMenu } from '~/components/common';
+import { IconButton, DropdownMenu, Tabs } from '~/components/common';
 import { IconGear } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { useTheme } from '~/features/theme';
@@ -15,10 +12,26 @@ export const AuthPage = () => {
 
   return (
     <main className="flex h-screen items-center justify-center bg-neutral-900">
+      <Tabs.Root defaultValue="login">
+        <Tabs.List className="flex border-b border-neutral-700">
+          <Tabs.Trigger value="login">{intl.t('page.tabs.trigger.logIn')}</Tabs.Trigger>
+          <Tabs.Trigger value="register">{intl.t('page.tabs.trigger.register')}</Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Content value="login">
+          <div className="flex flex-col items-center gap-4 rounded-b bg-neutral-800 p-5">
+            <Login />
+          </div>
+        </Tabs.Content>
+        <Tabs.Content value="register">
+          <div className="flex flex-col items-center gap-4 rounded-b bg-neutral-800 p-5">
+            <Registration />
+          </div>
+        </Tabs.Content>
+      </Tabs.Root>
       <div className="absolute right-4 top-4">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
-            <IconButton aria-label="Select theme">
+            <IconButton aria-label="Settings">
               <IconGear />
             </IconButton>
           </DropdownMenu.Trigger>
@@ -69,41 +82,6 @@ export const AuthPage = () => {
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       </div>
-      <Tabs.Root
-        className="flex w-[350px] flex-col"
-        defaultValue="login"
-      >
-        <Tabs.List className="flex border-b border-neutral-700">
-          <Tabs.Trigger
-            className={cn(
-              'h-12 flex-1 bg-neutral-800 font-medium text-neutral-50 first:rounded-tl last:rounded-tr',
-              'data-[state=active]:border-b data-[state=active]:text-primary-400 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0]',
-            )}
-            value="login"
-          >
-            {intl.t('page.tabs.trigger.logIn')}
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            className={cn(
-              'h-12 flex-1 bg-neutral-800 font-medium text-neutral-50 first:rounded-tl last:rounded-tr',
-              'data-[state=active]:border-b data-[state=active]:text-primary-400  data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0]',
-            )}
-            value="register"
-          >
-            {intl.t('page.tabs.trigger.register')}
-          </Tabs.Trigger>
-        </Tabs.List>
-        <Tabs.Content value="login">
-          <div className="flex flex-col items-center gap-4 rounded-b bg-neutral-800 p-5">
-            <Login />
-          </div>
-        </Tabs.Content>
-        <Tabs.Content value="register">
-          <div className="flex flex-col items-center gap-4 rounded-b bg-neutral-800 p-5">
-            <Registration />
-          </div>
-        </Tabs.Content>
-      </Tabs.Root>
     </main>
   );
 };

@@ -49,3 +49,55 @@ body.violet-light {
   --color-neutral-100: 23 23 23;
   --color-neutral-50: 10 10 10;
 }
+
+body.sky-light {
+  --color-primary-50: 240 249 255;
+  --color-primary-100: 224 242 254;
+  --color-primary-200: 186 230 253;
+  --color-primary-300: 125 211 252;
+  --color-primary-400: 56 189 248;
+  --color-primary-500: 14 165 233;
+  --color-primary-600: 2 132 199;
+  --color-primary-700: 3 105 161;
+  --color-primary-800: 7 89 133;
+  --color-primary-900: 12 74 110;
+  --color-primary-950: 8 47 73;
+
+  --color-neutral-950: 250 250 250;
+  --color-neutral-900: 245 245 245;
+  --color-neutral-800: 229 229 229;
+  --color-neutral-700: 212 212 212;
+  --color-neutral-600: 163 163 163;
+  --color-neutral-500: 115 115 115;
+  --color-neutral-400: 82 82 82;
+  --color-neutral-300: 64 64 64;
+  --color-neutral-200: 38 38 38;
+  --color-neutral-100: 23 23 23;
+  --color-neutral-50: 10 10 10;
+}
+
+body.sky-dark {
+  --color-primary-50: 240 249 255;
+  --color-primary-100: 224 242 254;
+  --color-primary-200: 186 230 253;
+  --color-primary-300: 125 211 252;
+  --color-primary-400: 56 189 248;
+  --color-primary-500: 14 165 233;
+  --color-primary-600: 2 132 199;
+  --color-primary-700: 3 105 161;
+  --color-primary-800: 7 89 133;
+  --color-primary-900: 12 74 110;
+  --color-primary-950: 8 47 73;
+
+  --color-neutral-50: 250 250 250;
+  --color-neutral-100: 245 245 245;
+  --color-neutral-200: 229 229 229;
+  --color-neutral-300: 212 212 212;
+  --color-neutral-400: 163 163 163;
+  --color-neutral-500: 115 115 115;
+  --color-neutral-600: 82 82 82;
+  --color-neutral-700: 64 64 64;
+  --color-neutral-800: 38 38 38;
+  --color-neutral-900: 23 23 23;
+  --color-neutral-950: 10 10 10;
+}
