@@ -6,8 +6,14 @@ interface IconChevronProps extends IconProps {
 
 export const IconChevron: React.FC<IconChevronProps> = ({ direction = 'left', ...props }) => (
   <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20px"
+    height="20px"
+    viewBox="0 0 24 24"
+    fill="none"
+    {...props}
     className={cn(
-      'w-full transform',
+      'aspect-square h-auto w-full transform',
       {
         transform: direction !== 'left',
         'rotate-90': direction === 'up',
@@ -16,12 +22,6 @@ export const IconChevron: React.FC<IconChevronProps> = ({ direction = 'left', ..
       },
       props.className,
     )}
-    xmlns="http://www.w3.org/2000/svg"
-    width="20px"
-    height="20px"
-    viewBox="0 0 24 24"
-    fill="none"
-    {...props}
   >
     <path
       d="M15 7L10 12L15 17"

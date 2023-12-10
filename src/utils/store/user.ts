@@ -10,6 +10,7 @@ interface UserStore {
   setUser: (user: User) => void;
   resetUser: () => void;
 }
+
 export const useUserStore = create<UserStore>()(
   devtools((set) => ({
     user: null,

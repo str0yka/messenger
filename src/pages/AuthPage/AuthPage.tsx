@@ -14,8 +14,8 @@ export const AuthPage = () => {
     <main className="flex h-screen items-center justify-center bg-neutral-900">
       <Tabs.Root defaultValue="login">
         <Tabs.List className="flex border-b border-neutral-700">
-          <Tabs.Trigger value="login">{intl.t('page.tabs.trigger.logIn')}</Tabs.Trigger>
-          <Tabs.Trigger value="register">{intl.t('page.tabs.trigger.register')}</Tabs.Trigger>
+          <Tabs.Trigger value="login">{intl.t('page.auth.tabs.trigger.logIn')}</Tabs.Trigger>
+          <Tabs.Trigger value="register">{intl.t('page.auth.tabs.trigger.register')}</Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value="login">
           <div className="flex flex-col items-center gap-4 rounded-b bg-neutral-800 p-5">

@@ -34,7 +34,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         'active:bg-neutral-700/75': color === 'neutral',
       })}
     >
-      {children}
+      <div className="w-5">{children}</div>
     </button>
   ),
 );

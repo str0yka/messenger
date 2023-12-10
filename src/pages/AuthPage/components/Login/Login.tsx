@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
-import { Input, Button } from '~/components/common';
+import { Input, Button, Alert } from '~/components/common';
 import { useIntl } from '~/features/i18n';
 import { postLogin } from '~/utils/api';
 import type { PostLoginSuccessResponse, PostLoginFailureResponse, LoginParams } from '~/utils/api';
@@ -15,7 +15,7 @@ export const Login = () => {
 
   const intl = useIntl();
 
-  const { mutateAsync: loginMutation } = useMutation<
+  const { mutateAsync: loginMutation, error: loginError } = useMutation<
     PostLoginSuccessResponse,
     PostLoginFailureResponse,
     LoginParams
@@ -35,7 +35,7 @@ export const Login = () => {
   const {
     handleSubmit,
     register,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<LoginParams>({
     defaultValues: { email: '', password: '' },
   });
@@ -43,9 +43,17 @@ export const Login = () => {
   return (
     <>
       <h1 className="text-2xl font-bold text-neutral-50">Messenger</h1>
+      {loginError?.message && (
+        <Alert.Root>
+          <Alert.Label>
+            {intl.t('page.auth.login.errorText', { status: loginError.status })}
+          </Alert.Label>
+          {loginError.message}
+        </Alert.Root>
+      )}
       <p className="text-center text-neutral-500">{intl.t('page.auth.logInText')}</p>
       <form
-        className="flex w-full flex-col gap-4"
+        className="flex w-full flex-col gap-3"
         onSubmit={handleSubmit(async (values) => {
           try {
             await loginMutation(values);
@@ -58,13 +66,27 @@ export const Login = () => {
           placeholder={intl.t('input.label.email')}
           type="email"
           disabled={isSubmitting}
-          {...register('email', { required: true })}
+          error={!!errors.email?.message}
+          helperText={errors.email?.message}
+          {...register('email', {
+            required: intl.t('page.auth.login.input.email.helperText.required'),
+            validate: (value) => {
+              if (value === value.replace('@', '').replace('.', '')) {
+                return intl.t('page.auth.login.input.email.helperText.invalidFormat');
+              }
+              return true;
+            },
+          })}
         />
         <Input
           placeholder={intl.t('input.label.password')}
           type="password"
           disabled={isSubmitting}
-          {...register('password', { required: true })}
+          error={!!errors.password?.message}
+          helperText={errors.password?.message}
+          {...register('password', {
+            required: intl.t('page.auth.login.input.password.helperText.required'),
+          })}
         />
         <Button
           type="submit"

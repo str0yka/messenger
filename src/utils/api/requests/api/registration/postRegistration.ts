@@ -6,6 +6,8 @@ export interface RegistrationParams {
 }
 
 export interface PostRegistrationSuccessResponse {
+  accessToken: string;
+  refreshToken: string;
   user: User;
 }
 

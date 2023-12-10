@@ -116,17 +116,20 @@ export const HomePage = () => {
           {Array(20)
             .fill(null)
             .map((_, index) => (
-              <li
-                key={index}
-                // tabIndex={0}
-                // onClick={() => setIsOpen(true)}
-              >
+              <li key={index}>
                 <div
                   className={cn(
                     'flex cursor-pointer select-none gap-2 rounded-lg p-2',
                     'hover:bg-neutral-700/50',
                     'active:bg-neutral-600/50',
                   )}
+                  role="tab"
+                  tabIndex={0}
+                  onClick={() => setIsOpen(true)}
+                  onKeyDown={(event) => {
+                    if (event.code === 'Enter') setIsOpen(true);
+                    if (event.code === 'Escape') setIsOpen(false);
+                  }}
                 >
                   <Avatar.Root className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-primary-300 to-primary-500">
                     <Avatar.Fallback className="text-xl font-semibold text-white">

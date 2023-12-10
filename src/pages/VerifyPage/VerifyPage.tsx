@@ -2,7 +2,8 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import { Input, Button } from '~/components/common';
+import { Input, Button, Link, Alert } from '~/components/common';
+import { IconChevron } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import {
   PostVerifyByIdFailureResponse,
@@ -18,7 +19,7 @@ export const VerifyPage = () => {
   const intl = useIntl();
   const { user, setUser } = useUserStore();
 
-  const { mutateAsync: verifyMutation } = useMutation<
+  const { mutateAsync: verifyMutation, error: verifyError } = useMutation<
     PostVerifyByIdSuccessResponse,
     PostVerifyByIdFailureResponse,
     VerifyByIdParams
@@ -34,7 +35,7 @@ export const VerifyPage = () => {
   const {
     handleSubmit,
     register,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<VerifyByIdParams['body']>();
 
   if (!user) {
@@ -44,7 +45,25 @@ export const VerifyPage = () => {
   return (
     <main className="flex h-screen items-center justify-center bg-neutral-900">
       <div className="flex w-[350px] flex-col items-center gap-4 rounded bg-neutral-800 p-4">
+        <Link
+          to={PUBLIC_ROUTE.HOME}
+          className="flex items-center gap-2 self-start"
+        >
+          <IconChevron
+            direction="left"
+            className="text-primary-400"
+          />
+          back
+        </Link>
         <h1 className="text-2xl font-bold text-neutral-50">Messenger</h1>
+        {verifyError?.message && (
+          <Alert.Root>
+            <Alert.Label>
+              {intl.t('page.verify.errorText', { status: verifyError.status })}
+            </Alert.Label>
+            {verifyError.message}
+          </Alert.Root>
+        )}
         <p className="text-center text-neutral-500">
           {intl.t('page.verify.verifyText', { email: user.email })}
         </p>
@@ -62,11 +81,18 @@ export const VerifyPage = () => {
             placeholder={intl.t('input.label.verifyCode')}
             type="tel"
             disabled={isSubmitting}
+            error={!!errors.verificationCode?.message}
+            helperText={errors.verificationCode?.message}
             {...register('verificationCode', {
-              required: true,
-              valueAsNumber: true,
-              minLength: 4,
-              maxLength: 4,
+              required: intl.t('page.verify.input.code.helperText.required'),
+              minLength: {
+                value: 4,
+                message: intl.t('page.verify.input.code.helperText.codeLength', { number: 4 }),
+              },
+              maxLength: {
+                value: 4,
+                message: intl.t('page.verify.input.code.helperText.codeLength', { number: 4 }),
+              },
             })}
           />
           <Button

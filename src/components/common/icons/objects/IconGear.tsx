@@ -8,8 +8,8 @@ export const IconGear: React.FC<IconProps> = (props) => (
     height="20px"
     viewBox="0 0 24 24"
     fill="none"
-    className={cn('w-full', props.className)}
     {...props}
+    className={cn('aspect-square h-auto w-full', props.className)}
   >
     <path
       d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z"

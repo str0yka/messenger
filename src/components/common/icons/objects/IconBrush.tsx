@@ -8,8 +8,8 @@ export const IconBrush: React.FC<IconProps> = (props) => (
     height="20px"
     viewBox="0 0 24 24"
     fill="none"
-    className={cn('w-full', props.className)}
     {...props}
+    className={cn('aspect-square h-auto w-full', props.className)}
   >
     <path
       d="M8 13.5L10.7817 10.7183M10 16.5L13.2817 13.2183M10.7817 10.7183L17.2506 5.2123C17.4158 5.0717 17.6027 4.95892 17.8041 4.87836L17.8336 4.86658C18.6499 4.54005 19.4599 5.35013 19.1334 6.16645L19.1216 6.19589C19.0411 6.39729 18.9283 6.58424 18.7877 6.74942L13.2817 13.2183M10.7817 10.7183C11.615 10.7911 13.2817 11.393 13.2817 13.2183"

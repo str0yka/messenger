@@ -3,7 +3,7 @@ import { $api } from '~/utils/api';
 export interface VerifyByIdParams {
   userId: number;
   body: {
-    verificationCode: number;
+    verificationCode: string;
   };
 }
 

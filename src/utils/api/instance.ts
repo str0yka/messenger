@@ -39,6 +39,9 @@ $api.interceptors.response.use(
         console.warn('Unathorized');
       }
     }
+
+    if (error?.response?.data) throw error.response.data;
+
     throw error;
   },
 );

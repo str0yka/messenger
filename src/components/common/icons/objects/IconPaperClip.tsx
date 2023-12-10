@@ -8,8 +8,8 @@ export const IconPaperClip: React.FC<IconProps> = (props) => (
     height="20px"
     viewBox="0 0 24 24"
     fill="none"
-    className={cn('w-full', props.className)}
     {...props}
+    className={cn('aspect-square h-auto w-full', props.className)}
   >
     <path
       fillRule="evenodd"

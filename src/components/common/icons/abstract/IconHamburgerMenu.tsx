@@ -1,3 +1,6 @@
+/* eslint-disable react/destructuring-assignment */
+import cn from 'classnames';
+
 export const IconHamburgerMenu: React.FC<IconProps> = (props) => (
   <svg
     width="20px"
@@ -6,6 +9,7 @@ export const IconHamburgerMenu: React.FC<IconProps> = (props) => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
+    className={cn('aspect-square h-auto w-full', props.className)}
   >
     <path
       fillRule="evenodd"
