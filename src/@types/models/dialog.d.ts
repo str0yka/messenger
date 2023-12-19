@@ -1,5 +1,10 @@
-interface Dialog {
+type Dialog = {
   id: number;
-  messages: Message[];
-  users: User[];
-}
+  title: string;
+  userId: number;
+  partnerId: number;
+  lastMessageId: number | null;
+  chatId: number;
+  updatedAt: Date;
+  createdAt: Date;
+};

@@ -31,36 +31,37 @@ export const HomePage = () => {
 
   const chatRef = useRef<HTMLDivElement>(null);
 
-  const [dialogs, setDialogs] = useState<Dialog[]>([]);
-  const [dialog, setDialog] = useState<Dialog | null>(null);
+  const [dialogs, setDialogs] = useState<Parameters<ServerToClientEvents['dialogs:put']>['0']>([]);
+  const [dialog, setDialog] = useState<Parameters<ServerToClientEvents['dialog:put']>['0']>(null);
 
-  const socketRef = useRef(
+  const socketRef = useRef<IO.Socket>(
     io('http://localhost:5000', {
       query: user!,
     }),
   );
 
   useEffect(() => {
-    socketRef.current.on('1', console.log);
-
-    socketRef.current.on('dialogs:update', (d: Dialog) => {
-      console.log('dialogs:update');
-
-      setDialogs((prevDialogs) =>
-        prevDialogs.map((prevDialog) => {
-          if (prevDialog.id === d.id) {
-            setDialog(d);
-            return d;
-          }
-
-          return prevDialog;
-        }),
-      );
+    socketRef.current.on('dialogs:put', (ds) => {
+      console.log('dialogs:put', ds);
+      setDialogs(ds);
     });
 
-    socketRef.current.on('dialogs:put', (ds: Dialog[]) => {
-      console.log('dialogs:put');
-      setDialogs(ds);
+    socketRef.current.on('dialogs:updateRequired', () => {
+      socketRef.current.emit('dialogs:get');
+    });
+
+    socketRef.current.on('messages:add', (message) => {
+      console.log('messages:add', message);
+      setDialog((prevDialog) => {
+        if (!prevDialog) return prevDialog;
+
+        return { ...prevDialog, messages: [...prevDialog.messages, message] };
+      });
+    });
+
+    socketRef.current.on('dialog:put', (d) => {
+      console.log('dialog:put', d);
+      setDialog(d);
     });
 
     return () => {
@@ -155,6 +156,11 @@ export const HomePage = () => {
               <DropdownMenu.Item onClick={() => logoutMutation()}>
                 {intl.t('page.home.logOut')}
               </DropdownMenu.Item>
+              <DropdownMenu.Item
+                onClick={() => socketRef.current.emit('dialogs:create', 1, 'warface212@gmail.com')}
+              >
+                create dialog
+              </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
           <div className="grow">
@@ -162,49 +168,49 @@ export const HomePage = () => {
           </div>
         </div>
         <ul className="flex grow flex-col overflow-auto p-2">
-          {dialogs.map((d, index) => {
-            const partner = d.users.find((dialogUser) => dialogUser.id !== user?.id);
-            const lastMessage = d.messages.at(-1);
-
-            return (
-              <li key={index}>
-                <div
-                  className={cn(
-                    'flex cursor-pointer select-none gap-2 rounded-lg p-2',
-                    'hover:bg-neutral-700/50',
-                    'active:bg-neutral-600/50',
-                  )}
-                  role="tab"
-                  tabIndex={0}
-                  onClick={() => setDialog(d)}
-                  onKeyDown={(event) => {
-                    if (event.code === 'Enter') setDialog(d);
-                    if (event.code === 'Escape') setDialog(null);
-                  }}
-                >
-                  <Avatar.Root className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-primary-300 to-primary-500">
-                    <Avatar.Fallback className="text-xl font-semibold text-white">
-                      MA
-                    </Avatar.Fallback>
-                  </Avatar.Root>
-                  <div className="flex min-w-[0] grow flex-col">
-                    <div className="flex items-center gap-2">
-                      <h2 className="grow truncate font-semibold text-neutral-50">
-                        {partner?.email}
-                      </h2>
-                      <p className="text-xs text-neutral-400">19:32</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <p className="grow truncate text-neutral-400">{lastMessage?.message}</p>
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-400 text-xs font-medium text-white">
-                        2
-                      </div>
+          {dialogs.map((d, index) => (
+            <li key={index}>
+              <div
+                className={cn(
+                  'flex cursor-pointer select-none gap-2 rounded-lg p-2',
+                  'hover:bg-neutral-700/50',
+                  'active:bg-neutral-600/50',
+                )}
+                role="tab"
+                tabIndex={0}
+                onClick={() => socketRef.current.emit('dialog:join', d.id)}
+                onKeyDown={(event) => {
+                  if (event.code === 'Enter') socketRef.current.emit('dialog:join', d.id);
+                  if (event.code === 'Escape') socketRef.current.emit('dialog:leave', d.id);
+                }}
+              >
+                <Avatar.Root className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-primary-300 to-primary-500">
+                  <Avatar.Fallback className="text-xl font-semibold text-white">
+                    {d.partner.email[0]}
+                  </Avatar.Fallback>
+                </Avatar.Root>
+                <div className="flex min-w-[0] grow flex-col">
+                  <div className="flex items-center gap-2">
+                    <h2 className="grow truncate font-semibold text-neutral-50">
+                      {d.partner.email}
+                    </h2>
+                    <p className="text-xs text-neutral-400">
+                      {d.lastMessage &&
+                        `${new Date(d.lastMessage.createdAt).getHours()}:${new Date(
+                          d.lastMessage.createdAt,
+                        ).getMinutes()}`}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="grow truncate text-neutral-400">{d.lastMessage?.message}</p>
+                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-400 text-xs font-medium text-white">
+                      2
                     </div>
                   </div>
                 </div>
-              </li>
-            );
-          })}
+              </div>
+            </li>
+          ))}
         </ul>
       </aside>
       <div
@@ -222,18 +228,14 @@ export const HomePage = () => {
           <>
             <div className="flex cursor-pointer items-center gap-4 border-b border-b-neutral-700 bg-neutral-800 px-4 py-2">
               <div>
-                <IconButton onClick={() => setDialog(null)}>
+                <IconButton onClick={() => socketRef.current.emit('dialog:leave', dialog.id)}>
                   <IconCross />
                 </IconButton>
               </div>
               <Avatar.Root className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-primary-300 to-primary-500">
                 <Avatar.Fallback className="text-md  font-semibold text-white">MA</Avatar.Fallback>
               </Avatar.Root>
-              {/* FIXME */}
-              <h2 className="truncate font-semibold text-neutral-50">
-                {dialog.users.find((dialogUser) => dialogUser.id !== user?.id)?.email}
-              </h2>
-              {/* FIXME */}
+              <h2 className="truncate font-semibold text-neutral-50">{dialog.partner.email}</h2>
             </div>
             <div className="flex w-full grow flex-col overflow-hidden">
               <div
@@ -267,11 +269,7 @@ export const HomePage = () => {
               <form
                 className={cn('mx-auto w-full px-2 pb-4 pt-2', 'md:w-8/12', 'xl:w-6/12')}
                 onSubmit={handleSubmit((values) => {
-                  socketRef.current.emit('message:add', {
-                    toId: dialog.users.find((dialogUser) => dialogUser.id !== user?.id)?.id,
-                    message: values.message,
-                  });
-
+                  socketRef.current.emit('messages:add', dialog.chatId, values.message);
                   reset();
                 })}
               >

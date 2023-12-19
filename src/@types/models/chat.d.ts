@@ -1,7 +1,5 @@
-type Message = {
+type Chat = {
   id: number;
-  message: string;
-  userId: number;
   updatedAt: Date;
   createdAt: Date;
 };
