@@ -2,17 +2,18 @@ import * as Avatar from '@radix-ui/react-avatar';
 import cn from 'classnames';
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { Link, useParams } from 'react-router-dom';
 
 import { IconButton, Input } from '~/components/common';
 import { IconSmilingFace, IconPaperClip, IconCross } from '~/components/common/icons';
-import { useExtendedTheme } from '~/utils/hooks';
+import { PRIVATE_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../contexts';
 
 export const MiddleColumn = () => {
+  const { id: partnerId } = useParams();
   const user = useUserStore((state) => state.user);
-  const { extendedTheme } = useExtendedTheme();
   const socket = useSocket();
 
   const [dialog, setDialog] = useState<Parameters<ServerToClientEvents['dialog:put']>['0']>(null);
@@ -26,11 +27,12 @@ export const MiddleColumn = () => {
   });
 
   useLayoutEffect(() => {
+    const isDialogCurrentlyOpen = !dialogRef.current;
     const isLastMessageSendByUser = dialog?.messages.at(-1)?.userId === user!.id;
 
     if (chatNodeRef.current) {
       if (
-        !dialogRef.current ||
+        isDialogCurrentlyOpen ||
         isLastMessageSendByUser ||
         chatNodeRef.current.scrollTop + chatNodeRef.current.offsetHeight + 500 >
           chatNodeRef.current.scrollHeight
@@ -59,6 +61,8 @@ export const MiddleColumn = () => {
     socket.on('messages:add', onMessagesAdd);
     socket.on('dialog:put', onDialogPut);
 
+    socket.emit('dialog:join', Number(partnerId));
+
     return () => {
       socket.off('messages:add', onMessagesAdd);
       socket.off('dialog:put', onDialogPut);
@@ -70,10 +74,6 @@ export const MiddleColumn = () => {
       className={cn(
         'flex grow flex-col overflow-hidden',
         dialog && 'absolute inset-0',
-        extendedTheme.mode === 'dark' &&
-          "bg-neutral-900 bg-[url('/images/chat-bg-pattern-dark.png')]",
-        extendedTheme.mode === 'light' &&
-          "bg-primary-300 bg-[url('/images/chat-bg-pattern-light.png')] bg-contain",
         'lg:static',
       )}
     >
@@ -81,9 +81,11 @@ export const MiddleColumn = () => {
         <>
           <div className="flex cursor-pointer items-center gap-4 border-b border-b-neutral-700 bg-neutral-800 px-4 py-2">
             <div>
-              <IconButton onClick={() => socket.emit('dialog:leave', dialog.id)}>
-                <IconCross />
-              </IconButton>
+              <Link to={PRIVATE_ROUTE.HOME}>
+                <IconButton>
+                  <IconCross />
+                </IconButton>
+              </Link>
             </div>
             <Avatar.Root className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-primary-300 to-primary-500">
               <Avatar.Fallback className="text-md  font-semibold text-white">MA</Avatar.Fallback>

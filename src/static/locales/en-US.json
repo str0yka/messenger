@@ -32,6 +32,8 @@
   "page.verify.input.code.helperText.required": "Required field",
   "page.verify.input.code.helperText.codeLength": "The code consists of {number} characters",
 
+  "page.home.leftColumn.input.placeholder": "Search",
+
   "page.home.settings": "Settings",
   "page.home.theme": "Theme",
   "page.home.logOut": "Log out"

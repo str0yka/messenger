@@ -32,6 +32,8 @@
   "page.verify.input.code.helperText.required": "Обязательное поле",
   "page.verify.input.code.helperText.codeLength": "Код состоит из {number} символов",
 
+  "page.home.leftColumn.input.placeholder": "Поиск",
+
   "page.home.settings": "Настройки",
   "page.home.theme": "Тема",
   "page.home.logOut": "Выйти"

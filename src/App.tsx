@@ -23,6 +23,7 @@ const CheckAuth: React.FC<CheckAuthProps> = ({ children }) => {
   const setUser = useUserStore((state) => state.setUser);
 
   const { isLoading } = useQuery<GetRefreshSuccessResponse, GetRefreshFailureResponse>({
+    queryKey: '/refresh',
     queryFn: getRefresh,
     onSuccess: (data) => {
       localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, data.accessToken);

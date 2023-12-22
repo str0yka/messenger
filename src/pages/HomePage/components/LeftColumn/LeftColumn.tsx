@@ -2,6 +2,7 @@ import * as Avatar from '@radix-ui/react-avatar';
 import cn from 'classnames';
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
+import { Link } from 'react-router-dom';
 
 import { DropdownMenu, IconButton, Input } from '~/components/common';
 import { IconHamburgerMenu, IconMagnifyingGlass } from '~/components/common/icons';
@@ -9,7 +10,7 @@ import { useIntl } from '~/features/i18n';
 import { useTheme } from '~/features/theme';
 import { postLogout } from '~/utils/api';
 import type { PostLogoutFailureResponse, PostLogoutSuccessResponse } from '~/utils/api';
-import { EXTENDED_THEMES, LANGUAGES } from '~/utils/constants';
+import { EXTENDED_THEMES, LANGUAGES, PRIVATE_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../contexts';
@@ -121,25 +122,22 @@ export const LeftColumn = () => {
           </DropdownMenu.Content>
         </DropdownMenu.Root>
         <div className="grow">
-          <Input startAdornment={<IconMagnifyingGlass />} />
+          <Input
+            placeholder={intl.t('page.home.leftColumn.input.placeholder')}
+            startAdornment={<IconMagnifyingGlass />}
+          />
         </div>
       </div>
       <ul className="flex grow flex-col overflow-auto p-2">
         {dialogs.map((d, index) => (
           <li key={index}>
-            <div
+            <Link
+              to={PRIVATE_ROUTE.USER(d.partnerId)}
               className={cn(
                 'flex cursor-pointer select-none gap-2 rounded-lg p-2',
                 'hover:bg-neutral-700/50',
                 'active:bg-neutral-600/50',
               )}
-              role="tab"
-              tabIndex={0}
-              onClick={() => socket.emit('dialog:join', d.id)}
-              onKeyDown={(event) => {
-                if (event.code === 'Enter') socket.emit('dialog:join', d.id);
-                if (event.code === 'Escape') socket.emit('dialog:leave', d.id);
-              }}
             >
               <Avatar.Root className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-primary-300 to-primary-500">
                 <Avatar.Fallback className="text-xl font-semibold text-white">
@@ -163,7 +161,7 @@ export const LeftColumn = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </li>
         ))}
       </ul>

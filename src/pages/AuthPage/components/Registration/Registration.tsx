@@ -72,6 +72,8 @@ export const Registration = () => {
             validate: (value) => {
               if (value === value.replace('@', '').replace('.', ''))
                 return intl.t('page.auth.registration.input.email.helperText.invalidFormat');
+
+              return true;
             },
           })}
         />
@@ -101,11 +103,12 @@ export const Registration = () => {
                   number: 1,
                 });
               }
-              if (!isNaN(Number(value))) {
+              if (!Number.isNaN(Number(value))) {
                 return intl.t('page.auth.registration.input.password.helperText.minLetters', {
                   number: 1,
                 });
               }
+              return true;
             },
           })}
         />
