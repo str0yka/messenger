@@ -1,1 +1,1 @@
-export * from './formatMilliseconds';
+export * from './formatTime';

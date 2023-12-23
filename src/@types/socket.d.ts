@@ -2,16 +2,13 @@ interface ServerToClientEvents {
   'dialogs:put': (
     dialogs: (Dialog & { user: User; partner: User; lastMessage: Message | null })[],
   ) => void;
-  'dialog:put': (
-    dialogs: (Dialog & { user: User; partner: User; messages: Message[] }) | null,
-  ) => void;
+  'dialog:put': (dialog: Dialog & { user: User; partner: User; messages: Message[] }) => void;
   'dialogs:updateRequired': () => void;
   'messages:add': (message: Message) => void;
 }
 
 interface ClientToServerEvents {
-  'dialog:join': (partnerId: number) => void;
-  'dialogs:create': (partnerId: number, partnerEmail: string) => void;
+  'dialog:getOrCreate': (partnerId: number) => void;
   'dialogs:get': () => void;
   'messages:add': (chatId: number, message: string) => void;
 }

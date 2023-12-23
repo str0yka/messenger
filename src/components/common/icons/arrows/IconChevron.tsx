@@ -13,7 +13,7 @@ export const IconChevron: React.FC<IconChevronProps> = ({ direction = 'left', ..
     fill="none"
     {...props}
     className={cn(
-      'aspect-square h-auto w-full transform',
+      'aspect-square h-auto w-full',
       {
         transform: direction !== 'left',
         'rotate-90': direction === 'up',

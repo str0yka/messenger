@@ -16,7 +16,9 @@ export const MiddleColumn = () => {
   const user = useUserStore((state) => state.user);
   const socket = useSocket();
 
-  const [dialog, setDialog] = useState<Parameters<ServerToClientEvents['dialog:put']>['0']>(null);
+  const [dialog, setDialog] = useState<Parameters<ServerToClientEvents['dialog:put']>['0'] | null>(
+    null,
+  );
   const dialogRef = useRef(dialog);
   const chatNodeRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +63,7 @@ export const MiddleColumn = () => {
     socket.on('messages:add', onMessagesAdd);
     socket.on('dialog:put', onDialogPut);
 
-    socket.emit('dialog:join', Number(partnerId));
+    socket.emit('dialog:getOrCreate', Number(partnerId));
 
     return () => {
       socket.off('messages:add', onMessagesAdd);

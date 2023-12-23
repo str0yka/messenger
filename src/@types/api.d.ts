@@ -3,3 +3,5 @@ interface ApiErrorResponse {
   message: string;
   errors: unknown[];
 }
+
+type ApiSearchType = 'user' | 'dialog';
