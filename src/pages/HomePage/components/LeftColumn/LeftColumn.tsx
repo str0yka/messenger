@@ -20,7 +20,7 @@ export const LeftColumn = () => {
   const { theme, setTheme } = useTheme();
   const resetUser = useUserStore((state) => state.resetUser);
 
-  const [mode, setMode] = useState<'chatList' | 'search'>('chatList');
+  const [mode, setMode] = useState<'chatList' | 'searchList'>('chatList');
 
   const { mutate: logoutMutation } = useMutation<
     PostLogoutSuccessResponse,
@@ -32,13 +32,18 @@ export const LeftColumn = () => {
     },
   });
 
-  const { control, watch } = useForm({
+  const { control, watch, reset } = useForm({
     defaultValues: {
       query: '',
     },
   });
 
   const debouncedQuery = useDebounce(watch('query'));
+
+  const onCloseSearchList = () => {
+    setMode('chatList');
+    reset({ query: '' });
+  };
 
   return (
     <aside
@@ -110,8 +115,8 @@ export const LeftColumn = () => {
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         )}
-        {mode === 'search' && (
-          <IconButton onClick={() => setMode('chatList')}>
+        {mode === 'searchList' && (
+          <IconButton onClick={onCloseSearchList}>
             <IconChevron direction="left" />
           </IconButton>
         )}
@@ -123,7 +128,7 @@ export const LeftColumn = () => {
               <Input
                 placeholder={intl.t('page.home.leftColumn.input.placeholder')}
                 startAdornment={<IconMagnifyingGlass />}
-                onClick={() => setMode('search')}
+                onClick={() => setMode('searchList')}
                 {...field}
               />
             )}
@@ -131,10 +136,10 @@ export const LeftColumn = () => {
         </div>
       </div>
       {mode === 'chatList' && <LeftChatList />}
-      {mode === 'search' && (
+      {mode === 'searchList' && (
         <LeftSearchList
           query={debouncedQuery}
-          onClose={() => setMode('chatList')}
+          onClose={onCloseSearchList}
         />
       )}
     </aside>

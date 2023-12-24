@@ -1,19 +1,24 @@
 import * as Avatar from '@radix-ui/react-avatar';
 import cn from 'classnames';
-import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
 
 import { IconButton, Input } from '~/components/common';
 import { IconSmilingFace, IconPaperClip, IconCross } from '~/components/common/icons';
+import { useIntl } from '~/features/i18n';
 import { PRIVATE_ROUTE } from '~/utils/constants';
+import { createDate, isDateEqual } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../contexts';
 
+import { MessageItem, MessageItemWithObserver } from './components';
+
 export const MiddleColumn = () => {
   const { id: partnerId } = useParams();
   const user = useUserStore((state) => state.user);
+  const intl = useIntl();
   const socket = useSocket();
 
   const [dialog, setDialog] = useState<Parameters<ServerToClientEvents['dialog:put']>['0'] | null>(
@@ -60,12 +65,30 @@ export const MiddleColumn = () => {
       setDialog(d);
     };
 
+    const onMessagePatch: ServerToClientEvents['message:patch'] = (message) => {
+      console.log('message:patch');
+      setDialog((prevDialog) => {
+        if (!prevDialog) return prevDialog;
+        return {
+          ...prevDialog,
+          messages: prevDialog.messages.map((msg) => {
+            if (msg.id === message.id) {
+              return message;
+            }
+            return msg;
+          }),
+        };
+      });
+    };
+
+    socket.on('message:patch', onMessagePatch);
     socket.on('messages:add', onMessagesAdd);
     socket.on('dialog:put', onDialogPut);
 
     socket.emit('dialog:getOrCreate', Number(partnerId));
 
     return () => {
+      socket.off('message:patch', onMessagePatch);
       socket.off('messages:add', onMessagesAdd);
       socket.off('dialog:put', onDialogPut);
     };
@@ -101,24 +124,47 @@ export const MiddleColumn = () => {
             >
               <div
                 className={cn(
-                  'mx-auto my-0 flex flex-col gap-2 break-words',
+                  'mx-auto my-2 flex flex-col gap-2 break-words',
                   'md:w-8/12',
                   'xl:w-6/12',
                 )}
               >
-                {dialog.messages.map((message) => {
-                  const isUserMessage = message.userId === user?.id;
+                {dialog.messages.map((message, index) => {
+                  const isMessageSendByUser = user?.id === message.userId;
+                  const messageDate = new Date(message.createdAt);
+                  const prevMessageDate = new Date(dialog.messages[index - 1]?.createdAt);
+                  const needToDisplayDate = !isDateEqual(messageDate, prevMessageDate);
+                  const { dayNumber, month } = createDate({
+                    date: messageDate,
+                    locale: intl.locale,
+                  });
 
                   return (
-                    <div
-                      key={message.id}
-                      className={cn('w-fit max-w-[66%] rounded-xl p-2', {
-                        'bg-neutral-800 text-neutral-50': !isUserMessage,
-                        'self-end bg-primary-500 text-white': isUserMessage,
-                      })}
-                    >
-                      {message.message}
-                    </div>
+                    <React.Fragment key={message.id}>
+                      {needToDisplayDate && (
+                        <div className="select-none self-center rounded-3xl bg-neutral-950/40 px-2 py-1 text-sm font-medium text-neutral-50">
+                          {dayNumber} {month}
+                        </div>
+                      )}
+                      {!message.read && !isMessageSendByUser && (
+                        <MessageItemWithObserver
+                          message={message}
+                          sentByUser={isMessageSendByUser}
+                          className="flex flex-col"
+                          observe={(entry) => {
+                            if (entry?.isIntersecting) {
+                              socket.emit('message:read', message.id);
+                            }
+                          }}
+                        />
+                      )}
+                      {!(!message.read && !isMessageSendByUser) && (
+                        <MessageItem
+                          message={message}
+                          sentByUser={isMessageSendByUser}
+                        />
+                      )}
+                    </React.Fragment>
                   );
                 })}
               </div>
@@ -131,9 +177,10 @@ export const MiddleColumn = () => {
               })}
             >
               <Input
+                placeholder={intl.t('page.home.middleColumn.footer.input.placeholder.message')}
                 startAdornment={<IconSmilingFace />}
                 endAdornment={<IconPaperClip />}
-                {...register('message')}
+                {...register('message', { required: true })}
               />
             </form>
           </div>

@@ -10,10 +10,7 @@ import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from '~/utils/constants';
 import { useAppIntl, useAppTheme } from '~/utils/hooks';
 import { useUserStore } from '~/utils/store';
 
-const privateRouter = createBrowserRouter(privateRoutes);
-const publicRouter = createBrowserRouter(publicRoutes);
-
-const queryClient = new QueryClient();
+// CheckAuth
 
 interface CheckAuthProps {
   children: React.ReactNode;
@@ -39,6 +36,13 @@ const CheckAuth: React.FC<CheckAuthProps> = ({ children }) => {
 
   return children;
 };
+
+// App
+
+const queryClient = new QueryClient();
+
+const privateRouter = createBrowserRouter(privateRoutes);
+const publicRouter = createBrowserRouter(publicRoutes);
 
 export const App = () => {
   const user = useUserStore((state) => state.user);

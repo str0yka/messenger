@@ -33,6 +33,13 @@
   "page.verify.input.code.helperText.codeLength": "The code consists of {number} characters",
 
   "page.home.leftColumn.input.placeholder": "Search",
+  "page.home.leftColumn.searchList.showMore": "Show more",
+  "page.home.leftColumn.searchList.chats": "Chats and contacts",
+  "page.home.leftColumn.searchList.global": "Global search",
+  "page.home.leftColumn.searchList.notFound": "No results",
+  "page.home.leftColumn.searchList.noResults": "There were no results",
+  "page.home.leftColumn.searchList.tryNewSearch": "Try a new search",
+  "page.home.middleColumn.footer.input.placeholder.message": "Message",
 
   "page.home.settings": "Settings",
   "page.home.theme": "Theme",

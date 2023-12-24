@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { PRIVATE_ROUTE } from '~/utils/constants';
+import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../../../contexts';
 import { ChatItem } from '../ChatItem/ChatItem';
 
 export const LeftChatList = () => {
+  const user = useUserStore((state) => state.user);
   const socket = useSocket();
 
   const [dialogs, setDialogs] = useState<Parameters<ServerToClientEvents['dialogs:put']>['0']>([]);
@@ -42,7 +44,9 @@ export const LeftChatList = () => {
               title={d.partner.email}
               avatarFallback={d.partner.email[0]}
               lastMessage={d.lastMessage}
-              unreadedMessagesCount={1}
+              lastMessageSentByUser={d.lastMessage?.userId === user?.id}
+              // eslint-disable-next-line no-underscore-dangle
+              unreadedMessagesCount={d._count.messages}
             />
           </Link>
         </li>

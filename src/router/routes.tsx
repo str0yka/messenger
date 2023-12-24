@@ -18,6 +18,10 @@ export const privateRoutes: RouteObject[] = [
         path: PRIVATE_ROUTE.USER(':id'),
         element: <MiddleColumn />,
       },
+      {
+        path: '*',
+        element: <Navigate to="/" />,
+      },
     ],
   },
 ];
@@ -29,13 +33,15 @@ export const publicRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        errorElement: <Navigate to="/" />,
         element: <AuthPage />,
       },
       {
         path: PUBLIC_ROUTE.VERIFY,
-        errorElement: <Navigate to="/" />,
         element: <VerifyPage />,
+      },
+      {
+        path: '*',
+        element: <Navigate to="/" />,
       },
     ],
   },
