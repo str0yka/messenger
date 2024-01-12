@@ -1,26 +1,31 @@
 import { Navigate, type RouteObject } from 'react-router-dom';
 
 import { AuthPage, HomePage, VerifyPage } from '~/pages';
-import { MiddleColumn } from '~/pages/HomePage/components';
+import { LeftColumn, MiddleColumn } from '~/pages/HomePage/components';
 import { PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
 
 export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ROUTE.HOME,
-    errorElement: <Navigate to="/" />,
+    errorElement: <Navigate to={PRIVATE_ROUTE.HOME} />,
     element: <HomePage />,
     children: [
       {
         index: true,
-        element: null,
+        element: <LeftColumn />,
       },
       {
         path: PRIVATE_ROUTE.USER(':id'),
-        element: <MiddleColumn />,
+        element: (
+          <>
+            <LeftColumn hideWhenShrink />
+            <MiddleColumn />
+          </>
+        ),
       },
       {
         path: '*',
-        element: <Navigate to="/" />,
+        element: <Navigate to={PUBLIC_ROUTE.HOME} />,
       },
     ],
   },
@@ -29,7 +34,7 @@ export const privateRoutes: RouteObject[] = [
 export const publicRoutes: RouteObject[] = [
   {
     path: PUBLIC_ROUTE.HOME,
-    errorElement: <Navigate to="/" />,
+    errorElement: <Navigate to={PUBLIC_ROUTE.HOME} />,
     children: [
       {
         index: true,
@@ -41,7 +46,7 @@ export const publicRoutes: RouteObject[] = [
       },
       {
         path: '*',
-        element: <Navigate to="/" />,
+        element: <Navigate to={PUBLIC_ROUTE.HOME} />,
       },
     ],
   },

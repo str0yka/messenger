@@ -21,7 +21,12 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, sentByUser = 
     >
       {message.message}
       <div className="relative top-1 float-right ml-2 flex gap-1 break-normal pb-0.5">
-        <span className="text-xs font-medium text-white/50">
+        <span
+          className={cn('text-xs font-medium', {
+            'text-white/50': sentByUser,
+            'text-neutral-50/50': !sentByUser,
+          })}
+        >
           {hours}:{minutes}
         </span>
         {sentByUser && (

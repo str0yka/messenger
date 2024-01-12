@@ -83,6 +83,7 @@ export const VerifyPage = () => {
             disabled={isSubmitting}
             error={!!errors.verificationCode?.message}
             helperText={errors.verificationCode?.message}
+            rounded
             {...register('verificationCode', {
               required: intl.t('page.verify.input.code.helperText.required'),
               minLength: {

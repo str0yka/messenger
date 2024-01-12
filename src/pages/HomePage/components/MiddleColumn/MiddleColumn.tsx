@@ -5,7 +5,13 @@ import { useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
 
 import { IconButton, Input } from '~/components/common';
-import { IconSmilingFace, IconPaperClip, IconCross } from '~/components/common/icons';
+import {
+  IconSmilingFace,
+  IconPaperClip,
+  IconCross,
+  IconPaperPlane,
+  IconChevron,
+} from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { PRIVATE_ROUTE } from '~/utils/constants';
 import { createDate, isDateEqual } from '~/utils/helpers';
@@ -26,6 +32,7 @@ export const MiddleColumn = () => {
   );
   const dialogRef = useRef(dialog);
   const chatNodeRef = useRef<HTMLDivElement>(null);
+  const goDownNodeRef = useRef<HTMLDivElement>(null);
 
   const { handleSubmit, register, reset } = useForm({
     defaultValues: {
@@ -49,6 +56,30 @@ export const MiddleColumn = () => {
     }
 
     dialogRef.current = dialog;
+
+    const onChatScroll = () => {
+      if (!chatNodeRef.current) return;
+      const {
+        scrollTop: chatScrollTop,
+        offsetHeight: chatOffsetHeight,
+        scrollHeight: chatScrollHeight,
+      } = chatNodeRef.current;
+
+      const hideClassName = 'hidden';
+      const scrollBottom = chatScrollHeight - (chatScrollTop + chatOffsetHeight);
+
+      if (scrollBottom === 0) {
+        goDownNodeRef.current?.classList.add(hideClassName);
+      } else {
+        goDownNodeRef.current?.classList.remove(hideClassName);
+      }
+    };
+
+    chatNodeRef.current?.addEventListener('scroll', onChatScroll);
+
+    return () => {
+      chatNodeRef.current?.removeEventListener('scroll', onChatScroll);
+    };
   }, [dialog]);
 
   useEffect(() => {
@@ -95,13 +126,7 @@ export const MiddleColumn = () => {
   }, []);
 
   return (
-    <div
-      className={cn(
-        'flex grow flex-col overflow-hidden',
-        dialog && 'absolute inset-0',
-        'lg:static',
-      )}
-    >
+    <div className={cn('flex grow flex-col overflow-hidden', 'lg:static')}>
       {dialog && (
         <>
           <div className="flex cursor-pointer items-center gap-4 border-b border-b-neutral-700 bg-neutral-800 px-4 py-2">
@@ -120,7 +145,7 @@ export const MiddleColumn = () => {
           <div className="flex w-full grow flex-col overflow-hidden">
             <div
               ref={chatNodeRef}
-              className="grow overflow-auto px-2"
+              className={cn('grow overflow-auto px-2', 'md:px-0')}
             >
               <div
                 className={cn(
@@ -169,20 +194,54 @@ export const MiddleColumn = () => {
                 })}
               </div>
             </div>
-            <form
-              className={cn('mx-auto w-full px-2 pb-4 pt-2', 'md:w-8/12', 'xl:w-6/12')}
-              onSubmit={handleSubmit((values) => {
-                socket.emit('messages:add', dialog.chatId, values.message);
-                reset();
-              })}
-            >
-              <Input
-                placeholder={intl.t('page.home.middleColumn.footer.input.placeholder.message')}
-                startAdornment={<IconSmilingFace />}
-                endAdornment={<IconPaperClip />}
-                {...register('message', { required: true })}
-              />
-            </form>
+            <div className="relative">
+              <form
+                className={cn(
+                  'mx-auto flex w-full gap-2 px-2 pb-4 pt-2',
+                  'md:w-8/12 md:px-0',
+                  'xl:w-6/12',
+                )}
+                onSubmit={handleSubmit((values) => {
+                  socket.emit('messages:add', dialog.chatId, values.message);
+                  reset();
+                })}
+              >
+                <Input
+                  placeholder={intl.t('page.home.middleColumn.footer.input.placeholder.message')}
+                  variant="contained"
+                  s="l"
+                  startAdornment={<IconSmilingFace />}
+                  endAdornment={<IconPaperClip />}
+                  {...register('message', { required: true })}
+                />
+                <div className="shrink-0">
+                  <IconButton
+                    type="submit"
+                    color="primary"
+                    s="l"
+                  >
+                    <IconPaperPlane />
+                  </IconButton>
+                </div>
+                <div
+                  ref={goDownNodeRef}
+                  className="absolute bottom-full right-2 -translate-y-2 transform"
+                >
+                  <IconButton
+                    color="neutral"
+                    s="l"
+                    onClick={() =>
+                      chatNodeRef.current?.scrollTo({
+                        top: chatNodeRef.current.scrollHeight,
+                        behavior: 'smooth',
+                      })
+                    }
+                  >
+                    <IconChevron direction="down" />
+                  </IconButton>
+                </div>
+              </form>
+            </div>
           </div>
         </>
       )}

@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 
 import { useExtendedTheme } from '~/utils/hooks';
 
-import { LeftColumn } from './components';
 import { SocketProvider } from './contexts';
 
 export const HomePage = () => {
@@ -19,7 +18,6 @@ export const HomePage = () => {
             extendedTheme.mode === 'light',
         })}
       >
-        <LeftColumn />
         <Outlet />
       </main>
     </SocketProvider>

@@ -2,17 +2,18 @@ import cn from 'classnames';
 import { forwardRef } from 'react';
 
 interface IconButtonProps extends React.ComponentProps<'button'> {
-  color?: 'primary' | 'warning' | 'error' | 'neutral' | 'success';
+  color?: 'primary' | 'warning' | 'error' | 'neutral' | 'success' | 'transparent';
+  s?: 'base' | 'l' | 'xl';
   children: React.ReactNode;
 }
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ color = 'neutral', children, ...props }, ref) => (
+  ({ color = 'transparent', s = 'base', children, ...props }, ref) => (
     <button
       type="button"
       {...props}
       ref={ref}
-      className={cn('flex h-10 w-10 items-center justify-center rounded-full', {
+      className={cn('flex  items-center justify-center rounded-full', {
         'bg-primary-400 text-white': color === 'primary',
         'hover:bg-primary-500': color === 'primary',
         'active:bg-primary-600': color === 'primary',
@@ -29,9 +30,17 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         'hover:bg-green-500': color === 'success',
         'active:bg-green-600': color === 'success',
 
-        'text-neutral-400': color === 'neutral',
-        'hover:bg-neutral-700/50': color === 'neutral',
-        'active:bg-neutral-700/75': color === 'neutral',
+        'bg-neutral-800 text-neutral-300': color === 'neutral',
+        'hover:bg-neutral-700': color === 'neutral',
+        'active:bg-neutral-600': color === 'neutral',
+
+        'text-neutral-400': color === 'transparent',
+        'hover:bg-neutral-700/50': color === 'transparent',
+        'active:bg-neutral-700/75': color === 'transparent',
+
+        'h-10 w-10': s === 'base',
+        'h-12 w-12': s === 'l',
+        'h-14 w-14': s === 'xl',
       })}
     >
       <div className="w-5">{children}</div>

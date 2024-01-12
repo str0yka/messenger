@@ -15,7 +15,11 @@ import { useUserStore } from '~/utils/store';
 
 import { LeftChatList, LeftSearchList } from './components';
 
-export const LeftColumn = () => {
+interface LeftColumnProps {
+  hideWhenShrink?: boolean;
+}
+
+export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }) => {
   const intl = useIntl();
   const { theme, setTheme } = useTheme();
   const resetUser = useUserStore((state) => state.resetUser);
@@ -51,6 +55,9 @@ export const LeftColumn = () => {
         'flex w-full flex-col border-r border-r-neutral-700 bg-neutral-800',
         'lg:min-w-[400px] lg:max-w-[400px]',
         '2xl:min-w-[450px] 2xl:max-w-[450px]',
+        {
+          'max-lg:hidden': hideWhenShrink,
+        },
       )}
     >
       <div className="flex justify-between gap-2 border-b border-b-neutral-700 p-4">
@@ -128,6 +135,7 @@ export const LeftColumn = () => {
               <Input
                 placeholder={intl.t('page.home.leftColumn.input.placeholder')}
                 startAdornment={<IconMagnifyingGlass />}
+                rounded
                 onClick={() => setMode('searchList')}
                 {...field}
               />

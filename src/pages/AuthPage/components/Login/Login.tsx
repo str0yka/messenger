@@ -68,6 +68,7 @@ export const Login = () => {
           disabled={isSubmitting}
           error={!!errors.email?.message}
           helperText={errors.email?.message}
+          rounded
           {...register('email', {
             required: intl.t('page.auth.login.input.email.helperText.required'),
             validate: (value) => {
@@ -84,6 +85,7 @@ export const Login = () => {
           disabled={isSubmitting}
           error={!!errors.password?.message}
           helperText={errors.password?.message}
+          rounded
           {...register('password', {
             required: intl.t('page.auth.login.input.password.helperText.required'),
           })}

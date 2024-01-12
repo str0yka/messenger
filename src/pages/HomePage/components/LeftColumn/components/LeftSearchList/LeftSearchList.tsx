@@ -72,7 +72,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
           {searchDialogsData.map((dialog) => (
             <Link
               key={dialog.id}
-              to={PRIVATE_ROUTE.USER(dialog.user.id)}
+              to={PRIVATE_ROUTE.USER(dialog.partnerId)}
               onClick={onClose}
             >
               <ChatItem
