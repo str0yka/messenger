@@ -4,13 +4,14 @@ import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
 
-import { IconButton, Input } from '~/components/common';
+import { IconButton, Input, ContextMenu } from '~/components/common';
 import {
   IconSmilingFace,
   IconPaperClip,
   IconCross,
   IconPaperPlane,
   IconChevron,
+  IconPapers,
 } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { PRIVATE_ROUTE } from '~/utils/constants';
@@ -164,6 +165,36 @@ export const MiddleColumn = () => {
                     locale: intl.locale,
                   });
 
+                  let messageComponent;
+                  if (!message.read && !isMessageSendByUser) {
+                    messageComponent = (
+                      <MessageItemWithObserver
+                        message={message}
+                        sentByUser={isMessageSendByUser}
+                        observe={(entry) => {
+                          if (entry?.isIntersecting) {
+                            socket.emit('message:read', message.id);
+                          }
+                        }}
+                      />
+                    );
+                  } else {
+                    messageComponent = (
+                      <MessageItem
+                        message={message}
+                        sentByUser={isMessageSendByUser}
+                      />
+                    );
+                  }
+
+                  const onClickCopy = async () => {
+                    try {
+                      await navigator.clipboard.writeText(message.message);
+                    } catch (error) {
+                      console.log('Something went wrong: ', error);
+                    }
+                  };
+
                   return (
                     <React.Fragment key={message.id}>
                       {needToDisplayDate && (
@@ -171,24 +202,19 @@ export const MiddleColumn = () => {
                           {dayNumber} {month}
                         </div>
                       )}
-                      {!message.read && !isMessageSendByUser && (
-                        <MessageItemWithObserver
-                          message={message}
-                          sentByUser={isMessageSendByUser}
-                          className="flex flex-col"
-                          observe={(entry) => {
-                            if (entry?.isIntersecting) {
-                              socket.emit('message:read', message.id);
-                            }
-                          }}
-                        />
-                      )}
-                      {!(!message.read && !isMessageSendByUser) && (
-                        <MessageItem
-                          message={message}
-                          sentByUser={isMessageSendByUser}
-                        />
-                      )}
+                      <ContextMenu.Root>
+                        <ContextMenu.Trigger className="flex flex-col">
+                          {messageComponent}
+                        </ContextMenu.Trigger>
+                        <ContextMenu.Content className="min-w-[220px]">
+                          <ContextMenu.Item
+                            endAdornment={<IconPapers />}
+                            onClick={onClickCopy}
+                          >
+                            {intl.t('page.home.middleColumn.main.contextMenu.item.copy')}
+                          </ContextMenu.Item>
+                        </ContextMenu.Content>
+                      </ContextMenu.Root>
                     </React.Fragment>
                   );
                 })}

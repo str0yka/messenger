@@ -40,6 +40,7 @@
   "page.home.leftColumn.searchList.noResults": "There were no results",
   "page.home.leftColumn.searchList.tryNewSearch": "Try a new search",
   "page.home.middleColumn.footer.input.placeholder.message": "Message",
+  "page.home.middleColumn.main.contextMenu.item.copy": "Copy",
 
   "page.home.settings": "Settings",
   "page.home.theme": "Theme",
