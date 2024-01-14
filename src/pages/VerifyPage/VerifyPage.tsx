@@ -3,7 +3,7 @@ import { useMutation } from 'react-query';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 import { Input, Button, Link, Alert } from '~/components/common';
-import { IconChevron } from '~/components/common/icons';
+import { IconChevronLeft } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import {
   PostVerifyByIdFailureResponse,
@@ -49,11 +49,8 @@ export const VerifyPage = () => {
           to={PUBLIC_ROUTE.HOME}
           className="flex items-center gap-2 self-start"
         >
-          <IconChevron
-            direction="left"
-            className="text-primary-400"
-          />
-          back
+          <IconChevronLeft className="text-primary-400" />
+          {intl.t('page.verify.header.goBack')}
         </Link>
         <h1 className="text-2xl font-bold text-neutral-50">Messenger</h1>
         {verifyError?.message && (

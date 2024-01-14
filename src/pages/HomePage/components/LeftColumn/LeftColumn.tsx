@@ -4,7 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 
 import { DropdownMenu, IconButton, Input } from '~/components/common';
-import { IconChevron, IconHamburgerMenu, IconMagnifyingGlass } from '~/components/common/icons';
+import { IconChevronLeft, IconHamburgerMenu, IconMagnifyingGlass } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { useTheme } from '~/features/theme';
 import { postLogout } from '~/utils/api';
@@ -52,7 +52,7 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
   return (
     <aside
       className={cn(
-        'flex w-full flex-col border-r border-r-neutral-700 bg-neutral-800',
+        'flex flex-col border-r border-r-neutral-700 bg-neutral-800',
         'lg:min-w-[400px] lg:max-w-[400px]',
         '2xl:min-w-[450px] 2xl:max-w-[450px]',
         {
@@ -69,10 +69,11 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
               </IconButton>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content
-              className="w-[250px]"
+              className="w-56"
               align="start"
             >
               <DropdownMenu.Label>{intl.t('page.home.settings')}</DropdownMenu.Label>
+              <DropdownMenu.Separator />
               <DropdownMenu.Sub>
                 <DropdownMenu.SubTrigger>Language</DropdownMenu.SubTrigger>
                 <DropdownMenu.SubContent>
@@ -124,7 +125,7 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
         )}
         {mode === 'searchList' && (
           <IconButton onClick={onCloseSearchList}>
-            <IconChevron direction="left" />
+            <IconChevronLeft />
           </IconButton>
         )}
         <div className="grow">

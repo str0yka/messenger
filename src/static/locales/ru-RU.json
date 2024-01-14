@@ -31,6 +31,7 @@
   "page.verify.errorText": "Ошибка со статус кодом {status}",
   "page.verify.input.code.helperText.required": "Обязательное поле",
   "page.verify.input.code.helperText.codeLength": "Код состоит из {number} символов",
+  "page.verify.header.goBack": "Назад",
 
   "page.home.leftColumn.input.placeholder": "Поиск",
   "page.home.leftColumn.searchList.showMore": "Показать ещё",

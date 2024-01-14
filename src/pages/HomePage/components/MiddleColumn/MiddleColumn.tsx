@@ -10,8 +10,8 @@ import {
   IconPaperClip,
   IconCross,
   IconPaperPlane,
-  IconChevron,
   IconPapers,
+  IconChevronDown,
 } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { PRIVATE_ROUTE } from '~/utils/constants';
@@ -124,7 +124,7 @@ export const MiddleColumn = () => {
       socket.off('messages:add', onMessagesAdd);
       socket.off('dialog:put', onDialogPut);
     };
-  }, []);
+  }, [partnerId]);
 
   return (
     <div className={cn('flex grow flex-col overflow-hidden', 'lg:static')}>
@@ -206,12 +206,12 @@ export const MiddleColumn = () => {
                         <ContextMenu.Trigger className="flex flex-col">
                           {messageComponent}
                         </ContextMenu.Trigger>
-                        <ContextMenu.Content className="min-w-[220px]">
-                          <ContextMenu.Item
-                            endAdornment={<IconPapers />}
-                            onClick={onClickCopy}
-                          >
+                        <ContextMenu.Content className="w-56">
+                          <ContextMenu.Item onClick={onClickCopy}>
                             {intl.t('page.home.middleColumn.main.contextMenu.item.copy')}
+                            <ContextMenu.Shortcut>
+                              <IconPapers />
+                            </ContextMenu.Shortcut>
                           </ContextMenu.Item>
                         </ContextMenu.Content>
                       </ContextMenu.Root>
@@ -263,7 +263,7 @@ export const MiddleColumn = () => {
                       })
                     }
                   >
-                    <IconChevron direction="down" />
+                    <IconChevronDown />
                   </IconButton>
                 </div>
               </form>

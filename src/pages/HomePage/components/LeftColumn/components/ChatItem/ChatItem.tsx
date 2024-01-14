@@ -44,11 +44,11 @@ export const ChatItem: React.FC<ChatItemProps> = ({
                 return isToday(date) ? `${hours}:${minutes}` : `${dayNumber} ${monthShort}`;
               })()}
             </p>
-            {lastMessageSentByUser && (
-              <div className="w-4 text-neutral-100">
-                {lastMessage.read && <IconDoubleCheck />}
-                {!lastMessage.read && <IconCheck />}
-              </div>
+            {lastMessageSentByUser && lastMessage.read && (
+              <IconDoubleCheck className="w-4 text-neutral-100" />
+            )}
+            {lastMessageSentByUser && !lastMessage.read && (
+              <IconCheck className="w-4 text-neutral-100" />
             )}
           </>
         )}

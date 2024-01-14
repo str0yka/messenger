@@ -35,8 +35,12 @@ export const AuthPage = () => {
               <IconGear />
             </IconButton>
           </DropdownMenu.Trigger>
-          <DropdownMenu.Content align="end">
+          <DropdownMenu.Content
+            align="end"
+            className="w-56"
+          >
             <DropdownMenu.Label>{intl.t('page.auth.settings')}</DropdownMenu.Label>
+            <DropdownMenu.Separator />
             <DropdownMenu.Sub>
               <DropdownMenu.SubTrigger>Language</DropdownMenu.SubTrigger>
               <DropdownMenu.SubContent>

@@ -31,6 +31,7 @@
   "page.verify.errorText": "Error with status code {status}",
   "page.verify.input.code.helperText.required": "Required field",
   "page.verify.input.code.helperText.codeLength": "The code consists of {number} characters",
+  "page.verify.header.goBack": "Back",
 
   "page.home.leftColumn.input.placeholder": "Search",
   "page.home.leftColumn.searchList.showMore": "Show more",

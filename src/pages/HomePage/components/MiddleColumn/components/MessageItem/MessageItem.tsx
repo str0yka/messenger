@@ -29,12 +29,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message, sentByUser = 
         >
           {hours}:{minutes}
         </span>
-        {sentByUser && (
-          <div className="w-4 text-white">
-            {message.read && <IconDoubleCheck />}
-            {!message.read && <IconCheck />}
-          </div>
-        )}
+
+        {sentByUser && message.read && <IconDoubleCheck className="w-4 text-white" />}
+        {sentByUser && !message.read && <IconCheck className="w-4 text-white" />}
       </div>
     </div>
   );
