@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
 
-import { IconButton, Input, ContextMenu } from '~/components/common';
+import { IconButton, Input, ContextMenu, Dialog, Calendar, Button } from '~/components/common';
 import {
   IconSmilingFace,
   IconPaperClip,
@@ -198,9 +198,27 @@ export const MiddleColumn = () => {
                   return (
                     <React.Fragment key={message.id}>
                       {needToDisplayDate && (
-                        <div className="select-none self-center rounded-3xl bg-neutral-950/40 px-2 py-1 text-sm font-medium text-neutral-50">
-                          {dayNumber} {month}
-                        </div>
+                        <Dialog.Root>
+                          <Dialog.Trigger asChild>
+                            <button
+                              className="select-none self-center rounded-3xl bg-neutral-950/40 px-2 py-1 text-sm font-medium text-neutral-50"
+                              type="button"
+                            >
+                              {dayNumber} {month}
+                            </button>
+                          </Dialog.Trigger>
+                          <Dialog.Overlay />
+                          <Dialog.Content className="rounded-xl bg-neutral-800 p-4">
+                            <Dialog.Title>Sat, January 13</Dialog.Title>
+                            <Calendar className="mb-4 mt-4" />
+                            <div className="flex items-center justify-between gap-4">
+                              <Button>TO DATE</Button>
+                              <Dialog.Close asChild>
+                                <Button>CANCEL</Button>
+                              </Dialog.Close>
+                            </div>
+                          </Dialog.Content>
+                        </Dialog.Root>
                       )}
                       <ContextMenu.Root>
                         <ContextMenu.Trigger className="flex flex-col">

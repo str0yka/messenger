@@ -6,15 +6,9 @@ import { IconChevronLeft, IconChevronRight } from '~/components/common/icons';
 
 type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
-export const Calendar = ({
-  className,
-  classNames,
-  showOutsideDays = true,
-  ...props
-}: CalendarProps) => (
+export const Calendar = ({ classNames, showOutsideDays = true, ...props }: CalendarProps) => (
   <DayPicker
     showOutsideDays={showOutsideDays}
-    className={cn('p-2', className)}
     classNames={{
       months: 'flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0',
       month: 'space-y-4',
