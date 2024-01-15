@@ -2,7 +2,8 @@ import { Observer } from '~/components';
 
 import { MessageItem } from '../MessageItem/MessageItem';
 
-type MessageItemWithObserverProps = Props<typeof MessageItem> & Props<typeof Observer>;
+type MessageItemWithObserverProps = React.ComponentProps<typeof MessageItem> &
+  React.ComponentProps<typeof Observer>;
 
 export const MessageItemWithObserver: React.FC<MessageItemWithObserverProps> = ({
   message,

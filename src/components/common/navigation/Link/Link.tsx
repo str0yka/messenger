@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import { Link as LinkReactRouterDom } from 'react-router-dom';
 
-interface LinkProps extends Props<typeof LinkReactRouterDom> {}
+interface LinkProps extends React.ComponentProps<typeof LinkReactRouterDom> {}
 
 export const Link: React.FC<LinkProps> = ({ children, ...props }) => (
   <LinkReactRouterDom
