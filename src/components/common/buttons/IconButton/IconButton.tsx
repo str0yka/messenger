@@ -43,7 +43,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         'h-14 w-14': s === 'xl',
       })}
     >
-      <div className="w-5">{children}</div>
+      {children}
     </button>
   ),
 );

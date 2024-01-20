@@ -11,12 +11,14 @@ interface ServerToClientEvents {
   'dialogs:updateRequired': () => void;
   'message:patch': (message: Message) => void;
   'messages:add': (message: Message) => void;
+  'message:delete': (message: Message) => void;
 }
 
 interface ClientToServerEvents {
   'dialog:getOrCreate': (partnerId: number) => void;
   'dialogs:get': () => void;
   'message:read': (messageId: number) => void;
+  'message:delete': (messageId: number, dialogId: number, deleteForEveryone?: boolean) => void;
   'messages:add': (chatId: number, message: string) => void;
 }
 

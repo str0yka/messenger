@@ -17,3 +17,4 @@ export * from './IconPaperClip';
 export * from './IconPaperPlane';
 export * from './IconPapers';
 export * from './IconSmilingFace';
+export * from './IconTrash';

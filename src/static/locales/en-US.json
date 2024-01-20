@@ -42,6 +42,11 @@
   "page.home.leftColumn.searchList.tryNewSearch": "Try a new search",
   "page.home.middleColumn.footer.input.placeholder.message": "Message",
   "page.home.middleColumn.main.contextMenu.item.copy": "Copy",
+  "page.home.middleColumn.main.contextMenu.item.deleteMessage": "Delete message",
+  "page.home.middleColumn.deleteMessageDialog.title": "Delete message",
+  "page.home.middleColumn.deleteMessageDialog.deleteForEveryone": "Also delete for everyone",
+  "page.home.middleColumn.deleteMessageDialog.cancel": "CANCEL",
+  "page.home.middleColumn.deleteMessageDialog.delete": "DELETE",
 
   "page.home.settings": "Settings",
   "page.home.theme": "Theme",
