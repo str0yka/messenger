@@ -1,43 +1,13 @@
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
+import { CheckAuth } from '~/components';
 import { IntlProvider } from '~/features/i18n';
 import { ThemeProvider } from '~/features/theme';
 import { LoadingPage } from '~/pages';
 import { privateRoutes, publicRoutes } from '~/router';
-import { GetRefreshFailureResponse, GetRefreshSuccessResponse, getRefresh } from '~/utils/api';
-import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from '~/utils/constants';
 import { useAppIntl, useAppTheme } from '~/utils/hooks';
 import { useUserStore } from '~/utils/store';
-
-// CheckAuth
-
-interface CheckAuthProps {
-  children: React.ReactNode;
-}
-
-const CheckAuth: React.FC<CheckAuthProps> = ({ children }) => {
-  const setUser = useUserStore((state) => state.setUser);
-
-  const { isLoading } = useQuery<GetRefreshSuccessResponse, GetRefreshFailureResponse>({
-    queryKey: '/refresh',
-    queryFn: getRefresh,
-    onSuccess: (data) => {
-      localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, data.accessToken);
-      setUser(data.user);
-    },
-    retry: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
-
-  if (isLoading) return <LoadingPage />;
-
-  return children;
-};
-
-// App
 
 const queryClient = new QueryClient();
 

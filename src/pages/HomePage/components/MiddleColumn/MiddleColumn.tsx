@@ -1,4 +1,3 @@
-import * as Avatar from '@radix-ui/react-avatar';
 import cn from 'classnames';
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -12,6 +11,7 @@ import {
   Calendar,
   Button,
   CircularProgress,
+  Avatar,
 } from '~/components/common';
 import {
   IconSmilingFace,
@@ -45,7 +45,7 @@ export const MiddleColumn = () => {
   const chatNodeRef = useRef<HTMLDivElement>(null);
   const goDownNodeRef = useRef<HTMLDivElement>(null);
 
-  const { handleSubmit, register, reset } = useForm({
+  const sendMessageForm = useForm({
     defaultValues: {
       message: '',
     },
@@ -175,9 +175,7 @@ export const MiddleColumn = () => {
             </IconButton>
           </Link>
         </div>
-        <Avatar.Root className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-primary-300 to-primary-500">
-          <Avatar.Fallback className="text-md  font-semibold text-white">MA</Avatar.Fallback>
-        </Avatar.Root>
+        <Avatar fallback={dialog.partner.email[0]} />
         <h2 className="truncate font-semibold text-neutral-50">{dialog.partner.email}</h2>
       </div>
       <div className="flex w-full grow flex-col overflow-hidden">
@@ -293,9 +291,9 @@ export const MiddleColumn = () => {
               'md:w-8/12 md:px-0',
               'xl:w-6/12',
             )}
-            onSubmit={handleSubmit((values) => {
+            onSubmit={sendMessageForm.handleSubmit((values) => {
               socket.emit('messages:add', dialog.chatId, values.message);
-              reset();
+              sendMessageForm.reset();
             })}
           >
             <Input
@@ -304,7 +302,7 @@ export const MiddleColumn = () => {
               s="l"
               startAdornment={<IconSmilingFace />}
               endAdornment={<IconPaperClip />}
-              {...register('message', { required: true })}
+              {...sendMessageForm.register('message', { required: true })}
             />
             <div className="shrink-0">
               <IconButton

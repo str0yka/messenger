@@ -1,4 +1,5 @@
-import { Navigate, type RouteObject } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import type { RouteObject } from 'react-router-dom';
 
 import { AuthPage, HomePage, VerifyPage } from '~/pages';
 import { LeftColumn, MiddleColumn } from '~/pages/HomePage/components';

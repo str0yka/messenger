@@ -13,7 +13,7 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
   ...dialogRootProps
 }) => {
   const intl = useIntl();
-  const { handleSubmit, register } = useForm({ defaultValues: { deleteForEveryone: false } });
+  const deleteMessageForm = useForm({ defaultValues: { deleteForEveryone: false } });
 
   return (
     <Dialog.Root {...dialogRootProps}>
@@ -22,7 +22,9 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
         <Dialog.Content className="w-72 rounded-xl bg-neutral-800 p-4">
           <form
             className="flex flex-col gap-2"
-            onSubmit={handleSubmit(({ deleteForEveryone }) => onDelete(deleteForEveryone))}
+            onSubmit={deleteMessageForm.handleSubmit(({ deleteForEveryone }) =>
+              onDelete(deleteForEveryone),
+            )}
           >
             <Dialog.Title>
               {intl.t('page.home.middleColumn.deleteMessageDialog.title')}
@@ -33,7 +35,7 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
                 'hover:bg-neutral-700/50',
               )}
             >
-              <Checkbox {...register('deleteForEveryone')} />
+              <Checkbox {...deleteMessageForm.register('deleteForEveryone')} />
               <span className="font-medium">
                 {intl.t('page.home.middleColumn.deleteMessageDialog.deleteForEveryone')}
               </span>

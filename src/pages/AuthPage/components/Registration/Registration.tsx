@@ -19,7 +19,7 @@ export const Registration = () => {
 
   const intl = useIntl();
 
-  const { mutateAsync: registerMutation, error: registerError } = useMutation<
+  const registerMutation = useMutation<
     PostRegistrationSuccessResponse,
     PostRegistrationFailureResponse,
     RegistrationParams
@@ -31,31 +31,27 @@ export const Registration = () => {
     },
   });
 
-  const {
-    handleSubmit,
-    register,
-    formState: { isSubmitting, errors },
-  } = useForm<RegistrationParams>({
+  const registerForm = useForm<RegistrationParams>({
     defaultValues: { email: '', password: '' },
   });
 
   return (
     <>
       <h1 className="text-2xl font-bold text-neutral-50">Messenger</h1>
-      {registerError?.message && (
+      {registerMutation.error?.message && (
         <Alert.Root>
           <Alert.Label>
-            {intl.t('page.auth.registration.errorText', { status: registerError.status })}
+            {intl.t('page.auth.registration.errorText', { status: registerMutation.error.status })}
           </Alert.Label>
-          {registerError.message}
+          {registerMutation.error.message}
         </Alert.Root>
       )}
       <p className="text-center text-neutral-500">{intl.t('page.auth.registerText')}</p>
       <form
         className="flex w-full flex-col gap-4"
-        onSubmit={handleSubmit(async (values) => {
+        onSubmit={registerForm.handleSubmit(async (values) => {
           try {
-            await registerMutation(values);
+            await registerMutation.mutateAsync(values);
           } catch {
             console.log('Error'); // $FIXME
           }
@@ -64,11 +60,11 @@ export const Registration = () => {
         <Input
           placeholder={intl.t('input.label.email')}
           type="email"
-          disabled={isSubmitting}
-          error={!!errors.email?.message}
-          helperText={errors.email?.message}
+          disabled={registerForm.formState.isSubmitting}
+          error={!!registerForm.formState.errors.email?.message}
+          helperText={registerForm.formState.errors.email?.message}
           rounded
-          {...register('email', {
+          {...registerForm.register('email', {
             required: intl.t('page.auth.registration.input.email.helperText.required'),
             validate: (value) => {
               if (value === value.replace('@', '').replace('.', ''))
@@ -81,11 +77,11 @@ export const Registration = () => {
         <Input
           placeholder={intl.t('input.label.password')}
           type="password"
-          disabled={isSubmitting}
-          error={!!errors.password?.message}
-          helperText={errors.password?.message}
+          disabled={registerForm.formState.isSubmitting}
+          error={!!registerForm.formState.errors.password?.message}
+          helperText={registerForm.formState.errors.password?.message}
           rounded
-          {...register('password', {
+          {...registerForm.register('password', {
             required: intl.t('page.auth.registration.input.password.helperText.required'),
             minLength: {
               value: 8,
@@ -116,7 +112,7 @@ export const Registration = () => {
         />
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={registerForm.formState.isSubmitting}
         >
           {intl.t('button.register')}
         </Button>

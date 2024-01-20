@@ -19,16 +19,16 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
   const user = useUserStore((state) => state.user);
   const intl = useIntl();
 
-  const { data: searchDialogsData, refetch: searchDialogsRefetch } = useQuery({
-    queryKey: '/search?type=dialog',
+  const searchDialogsQuery = useQuery({
+    queryKey: 'LeftSearchListSearchDialogsQuery',
     queryFn: () => getSearch({ query, type: 'dialog', limit: 5 }),
     initialData: [],
     enabled: false,
     retry: false,
   });
 
-  const { data: searchUsersData, refetch: searchUsersRefetch } = useQuery({
-    queryKey: '/search?type=user',
+  const searchUsersQuery = useQuery({
+    queryKey: 'LeftSearchListSearchUsersQuery',
     queryFn: () => getSearch({ query, type: 'user', limit: 5 }),
     initialData: [],
     enabled: false,
@@ -36,11 +36,11 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
   });
 
   useEffect(() => {
-    searchUsersRefetch();
-    searchDialogsRefetch();
+    searchUsersQuery.refetch();
+    searchDialogsQuery.refetch();
   }, [query]);
 
-  if (!searchDialogsData?.length && !searchUsersData?.length) {
+  if (!searchDialogsQuery.data?.length && !searchUsersQuery.data?.length) {
     return (
       <div className="flex grow flex-col items-center justify-center text-center">
         <h2 className="text-neutral-500">{intl.t('page.home.leftColumn.searchList.notFound')}</h2>
@@ -56,7 +56,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
 
   return (
     <ul className="flex grow flex-col overflow-auto p-2">
-      {!!searchDialogsData?.length && (
+      {!!searchDialogsQuery.data?.length && (
         <>
           <li className="flex justify-between">
             <span className="p-2 text-sm font-medium text-neutral-400">
@@ -69,7 +69,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
               {intl.t('page.home.leftColumn.searchList.showMore')}
             </button>
           </li>
-          {searchDialogsData.map((dialog) => (
+          {searchDialogsQuery.data.map((dialog) => (
             <Link
               key={dialog.id}
               to={PRIVATE_ROUTE.USER(dialog.partnerId)}
@@ -87,7 +87,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
           ))}
         </>
       )}
-      {!!searchUsersData?.length && (
+      {!!searchUsersQuery.data?.length && (
         <>
           <li className="flex justify-between">
             <span className="p-2 text-sm font-medium text-neutral-400">
@@ -100,7 +100,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
               {intl.t('page.home.leftColumn.searchList.showMore')}
             </button>
           </li>
-          {searchUsersData.map((searchUser) => (
+          {searchUsersQuery.data.map((searchUser) => (
             <Link
               key={searchUser.id}
               to={PRIVATE_ROUTE.USER(searchUser.id)}

@@ -1,6 +1,6 @@
-import * as Avatar from '@radix-ui/react-avatar';
 import cn from 'classnames';
 
+import { Avatar } from '~/components/common';
 import { IconDoubleCheck, IconCheck } from '~/components/common/icons';
 import { createDate, formatTime, isToday } from '~/utils/helpers';
 
@@ -26,11 +26,10 @@ export const ChatItem: React.FC<ChatItemProps> = ({
       'active:bg-neutral-600/50',
     )}
   >
-    <Avatar.Root className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-primary-300 to-primary-500">
-      <Avatar.Fallback className="text-xl font-semibold text-white">
-        {avatarFallback}
-      </Avatar.Fallback>
-    </Avatar.Root>
+    <Avatar
+      className="h-14 w-14"
+      fallback={avatarFallback}
+    />
     <div className="flex min-w-[0] grow flex-col">
       <div className="flex items-center gap-2">
         <h2 className="grow truncate font-semibold text-neutral-50">{title}</h2>

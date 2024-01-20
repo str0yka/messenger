@@ -26,27 +26,25 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
 
   const [mode, setMode] = useState<'chatList' | 'searchList'>('chatList');
 
-  const { mutate: logoutMutation } = useMutation<
-    PostLogoutSuccessResponse,
-    PostLogoutFailureResponse
-  >({
+  const logoutMutation = useMutation<PostLogoutSuccessResponse, PostLogoutFailureResponse>({
+    mutationKey: 'LeftColumnLogoutMutation',
     mutationFn: postLogout,
     onSuccess: () => {
       resetUser();
     },
   });
 
-  const { control, watch, reset } = useForm({
+  const searchForm = useForm({
     defaultValues: {
       query: '',
     },
   });
 
-  const debouncedQuery = useDebounce(watch('query'));
+  const debouncedQuery = useDebounce(searchForm.watch('query'));
 
   const onCloseSearchList = () => {
     setMode('chatList');
-    reset({ query: '' });
+    searchForm.reset({ query: '' });
   };
 
   return (
@@ -117,7 +115,7 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
                 </DropdownMenu.SubContent>
               </DropdownMenu.Sub>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item onClick={() => logoutMutation()}>
+              <DropdownMenu.Item onClick={() => logoutMutation.mutate()}>
                 {intl.t('page.home.logOut')}
               </DropdownMenu.Item>
             </DropdownMenu.Content>
@@ -131,7 +129,7 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
         <div className="grow">
           <Controller
             name="query"
-            control={control}
+            control={searchForm.control}
             render={({ field }) => (
               <Input
                 placeholder={intl.t('page.home.leftColumn.input.placeholder')}
