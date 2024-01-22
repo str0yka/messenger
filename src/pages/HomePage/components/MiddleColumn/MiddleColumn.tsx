@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
 
+import { Observer } from '~/components';
 import {
   IconButton,
   Input,
@@ -40,8 +41,12 @@ export const MiddleColumn = () => {
   const [dialog, setDialog] = useState<Parameters<ServerToClientEvents['dialog:put']>['0'] | null>(
     null,
   );
+  const [messages, setMessages] = useState<Message[]>([]);
   const [deleteMessage, setDeleteMessage] = useState<Message | null>(null);
+  const lastMinSendedMessageIdRef = useRef<null | number>(null);
+  const lastMaxSendedMessageIdRef = useRef<null | number>(null);
   const dialogRef = useRef(dialog);
+  const messageListNodeRef = useRef<HTMLDivElement>(null);
   const chatNodeRef = useRef<HTMLDivElement>(null);
   const goDownNodeRef = useRef<HTMLDivElement>(null);
 
@@ -51,9 +56,11 @@ export const MiddleColumn = () => {
     },
   });
 
+  console.log('messages', messages);
+
   useLayoutEffect(() => {
     const isDialogCurrentlyOpen = !dialogRef.current;
-    const isLastMessageSendByUser = dialog?.messages.at(-1)?.userId === user!.id;
+    const isLastMessageSendByUser = messages.at(-1)?.userId === user!.id;
 
     if (chatNodeRef.current) {
       if (
@@ -99,59 +106,75 @@ export const MiddleColumn = () => {
     return () => {
       chatNodeRef.current?.removeEventListener('scroll', onChatScroll);
     };
-  }, [dialog]);
+  }, [messages.length !== 0]);
 
   useEffect(() => {
-    const onMessagesAdd: ServerToClientEvents['messages:add'] = (message) => {
-      console.log('messages:add', message);
-      setDialog((prevDialog) => {
-        if (!prevDialog) return prevDialog;
-        return { ...prevDialog, messages: [...prevDialog.messages, message] };
-      });
+    const onMessagesPatch: ServerToClientEvents['messages:patch'] = (msgs) => {
+      console.log('messages:patch', msgs);
+      if (msgs.length) {
+        setMessages((prevMessages) => {
+          if (!prevMessages.length) {
+            return msgs;
+          }
+
+          if (msgs.at(0)!.id < prevMessages.at(-1)!.id) {
+            return [...prevMessages, ...msgs];
+          }
+
+          if (msgs.at(-1)!.id > prevMessages.at(0)!.id) {
+            return [...msgs.reverse(), ...prevMessages];
+          }
+
+          return prevMessages;
+        });
+      }
+    };
+
+    const onMessageAdd: ServerToClientEvents['message:add'] = (message) => {
+      console.log('message:add', message);
+      setMessages((prevMessages) => [...prevMessages, message]);
     };
 
     const onMessageDelete: ServerToClientEvents['message:delete'] = (message) => {
       console.log('message:delete', message);
-      setDialog((prevDialog) => {
-        if (!prevDialog) return prevDialog;
-        return {
-          ...prevDialog,
-          messages: prevDialog.messages.filter((dialogMessage) => dialogMessage.id !== message.id),
-        };
-      });
+      setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== message.id));
     };
 
     const onDialogPut: ServerToClientEvents['dialog:put'] = (d) => {
       console.log('dialog:put', d);
       setDialog(d);
+
+      socket.emit('messages:get', d.id, {
+        orderBy: { createdAt: 'desc' },
+        take: 1,
+        where: { id: { lte: 30 } },
+      });
     };
 
     const onMessagePatch: ServerToClientEvents['message:patch'] = (message) => {
       console.log('message:patch');
-      setDialog((prevDialog) => {
-        if (!prevDialog) return prevDialog;
-        return {
-          ...prevDialog,
-          messages: prevDialog.messages.map((msg) => {
-            if (msg.id === message.id) {
-              return message;
-            }
-            return msg;
-          }),
-        };
-      });
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) => {
+          if (msg.id === message.id) {
+            return message;
+          }
+          return msg;
+        }),
+      );
     };
 
+    socket.on('messages:patch', onMessagesPatch);
     socket.on('message:patch', onMessagePatch);
     socket.on('message:delete', onMessageDelete);
-    socket.on('messages:add', onMessagesAdd);
+    socket.on('message:add', onMessageAdd);
     socket.on('dialog:put', onDialogPut);
 
     socket.emit('dialog:getOrCreate', Number(partnerId));
 
     return () => {
+      socket.off('messages:patch', onMessagesPatch);
       socket.off('message:patch', onMessagePatch);
-      socket.off('messages:add', onMessagesAdd);
+      socket.off('message:add', onMessageAdd);
       socket.off('dialog:put', onDialogPut);
       socket.off('dialog:put', onDialogPut);
     };
@@ -184,13 +207,48 @@ export const MiddleColumn = () => {
           className={cn('grow overflow-auto px-2', 'md:px-0')}
         >
           <div
-            className={cn('mx-auto my-2 flex flex-col gap-2 break-words', 'md:w-8/12', 'xl:w-6/12')}
+            ref={messageListNodeRef}
+            className={cn(
+              'mx-auto my-2 flex flex-col-reverse gap-2 break-words',
+              'md:w-8/12',
+              'xl:w-6/12',
+            )}
           >
-            {dialog.messages.map((message, index) => {
+            {!!messages.length && (
+              <Observer
+                key={`down-observer-${messages.at(0)?.id}`}
+                observerParams={{
+                  root: chatNodeRef.current,
+                  rootMargin: '0px 0px 75px',
+                }}
+                observe={(entry) => {
+                  const maxMessageId = messages.at(0)!.id;
+                  if (entry?.isIntersecting) {
+                    console.log('DOWN INTERSECTING');
+                    if (maxMessageId !== lastMaxSendedMessageIdRef.current) {
+                      socket.emit('messages:get', dialog.id, {
+                        orderBy: {
+                          createdAt: 'asc',
+                        },
+                        take: 1,
+                        where: {
+                          id: {
+                            gt: maxMessageId,
+                          },
+                        },
+                      });
+                      lastMaxSendedMessageIdRef.current = maxMessageId;
+                    }
+                  }
+                }}
+              />
+            )}
+            {messages.map((message, index) => {
+              const isLastInArray = index === messages.length - 1;
               const isMessageSendByUser = user?.id === message.userId;
               const messageDate = new Date(message.createdAt);
-              const prevMessageDate = new Date(dialog.messages[index - 1]?.createdAt);
-              const needToDisplayDate = !isDateEqual(messageDate, prevMessageDate);
+              const nextMessageDate = new Date(messages[index + 1]?.createdAt);
+              const needToDisplayDate = isLastInArray || !isDateEqual(messageDate, nextMessageDate);
               const { dayNumber, month } = createDate({
                 date: messageDate,
                 locale: intl.locale,
@@ -230,6 +288,30 @@ export const MiddleColumn = () => {
 
               return (
                 <React.Fragment key={message.id}>
+                  <ContextMenu.Root>
+                    <ContextMenu.Trigger className="flex flex-col">
+                      {MessageComponent}
+                    </ContextMenu.Trigger>
+                    <ContextMenu.Content className="w-56">
+                      <ContextMenu.Item onClick={onClickCopy}>
+                        {intl.t('page.home.middleColumn.main.contextMenu.item.copy')}
+                        <ContextMenu.Shortcut>
+                          <IconPapers />
+                        </ContextMenu.Shortcut>
+                      </ContextMenu.Item>
+                      {message.userId === user?.id && (
+                        <ContextMenu.Item
+                          onClick={onClickDelete}
+                          className="text-red-400"
+                        >
+                          {intl.t('page.home.middleColumn.main.contextMenu.item.deleteMessage')}
+                          <ContextMenu.Shortcut>
+                            <IconTrash />
+                          </ContextMenu.Shortcut>
+                        </ContextMenu.Item>
+                      )}
+                    </ContextMenu.Content>
+                  </ContextMenu.Root>
                   {needToDisplayDate && (
                     <Dialog.Root>
                       <Dialog.Trigger asChild>
@@ -255,33 +337,38 @@ export const MiddleColumn = () => {
                       </Dialog.Portal>
                     </Dialog.Root>
                   )}
-                  <ContextMenu.Root>
-                    <ContextMenu.Trigger className="flex flex-col">
-                      {MessageComponent}
-                    </ContextMenu.Trigger>
-                    <ContextMenu.Content className="w-56">
-                      <ContextMenu.Item onClick={onClickCopy}>
-                        {intl.t('page.home.middleColumn.main.contextMenu.item.copy')}
-                        <ContextMenu.Shortcut>
-                          <IconPapers />
-                        </ContextMenu.Shortcut>
-                      </ContextMenu.Item>
-                      {message.userId === user?.id && (
-                        <ContextMenu.Item
-                          onClick={onClickDelete}
-                          className="text-red-400"
-                        >
-                          {intl.t('page.home.middleColumn.main.contextMenu.item.deleteMessage')}
-                          <ContextMenu.Shortcut>
-                            <IconTrash />
-                          </ContextMenu.Shortcut>
-                        </ContextMenu.Item>
-                      )}
-                    </ContextMenu.Content>
-                  </ContextMenu.Root>
                 </React.Fragment>
               );
             })}
+            {!!messages.length && (
+              <Observer
+                key={`up-observer-${messages.at(-1)?.id}`}
+                observerParams={{
+                  root: chatNodeRef.current,
+                  rootMargin: '75px 0px 0px',
+                }}
+                observe={(entry) => {
+                  const minMessageId = messages.at(-1)!.id;
+                  if (entry?.isIntersecting) {
+                    console.log('UP INTERSECTING');
+                    if (minMessageId !== lastMinSendedMessageIdRef.current) {
+                      socket.emit('messages:get', dialog.id, {
+                        orderBy: {
+                          createdAt: 'desc',
+                        },
+                        take: 1,
+                        where: {
+                          id: {
+                            lt: minMessageId,
+                          },
+                        },
+                      });
+                      lastMinSendedMessageIdRef.current = minMessageId;
+                    }
+                  }
+                }}
+              />
+            )}
           </div>
         </div>
         <div className="relative">
@@ -292,7 +379,7 @@ export const MiddleColumn = () => {
               'xl:w-6/12',
             )}
             onSubmit={sendMessageForm.handleSubmit((values) => {
-              socket.emit('messages:add', dialog.chatId, values.message);
+              socket.emit('message:add', dialog.chatId, values.message);
               sendMessageForm.reset();
             })}
           >
