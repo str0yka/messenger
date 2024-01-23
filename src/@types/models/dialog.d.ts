@@ -5,6 +5,6 @@ type Dialog = {
   partnerId: number;
   lastMessageId: number | null;
   chatId: number;
-  updatedAt: Date;
-  createdAt: Date;
+  updatedAt: string;
+  createdAt: string;
 };
