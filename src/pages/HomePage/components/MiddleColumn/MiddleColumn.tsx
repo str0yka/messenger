@@ -204,12 +204,9 @@ export const MiddleColumn = () => {
                   rootMargin: '0px 0px 150px',
                 }}
                 observe={(entry) => {
-                  console.log(entry);
                   const maxMessageId = messages.at(0)!.id;
                   if (entry?.isIntersecting) {
                     if (canRequestMessages.current.lower) {
-                      console.log('maxMessageId', maxMessageId);
-
                       canRequestMessages.current.lower = false;
                       socket.emit('messages:get', dialog.id, {
                         orderBy: {
@@ -329,7 +326,6 @@ export const MiddleColumn = () => {
                   const minMessageId = messages.at(-1)!.id;
                   if (entry?.isIntersecting) {
                     if (canRequestMessages.current.upper) {
-                      console.log('minMessageId', minMessageId);
                       canRequestMessages.current.upper = false;
                       socket.emit('messages:get', dialog.id, {
                         orderBy: {
