@@ -4,13 +4,19 @@ interface ServerToClientEvents {
       user: User;
       partner: User;
       lastMessage: Message | null;
-      _count: { messages: number };
+      unreadedMessagesCount: number;
     })[],
   ) => void;
-  'dialog:put': (dialog: Dialog & { user: User; partner: User }) => void;
+  'dialog:put': (
+    dialog: Dialog & { user: User; partner: User; unreadedMessagesCount: number },
+  ) => void;
+  'dialog:patch': (
+    dialog: Partial<Dialog & { user: User; partner: User; unreadedMessagesCount: number }>,
+  ) => void;
   'dialogs:updateRequired': () => void;
+  'dialog:updateRequired': () => void;
   'messages:patch': (messages: Message[]) => void;
-  'message:patch': (message: Message) => void;
+  'message:patch': (message: Partial<Message>) => void;
   'message:add': (message: Message) => void;
   'message:delete': (message: Message) => void;
 }

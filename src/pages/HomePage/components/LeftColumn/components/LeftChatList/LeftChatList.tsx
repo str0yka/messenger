@@ -46,7 +46,7 @@ export const LeftChatList = () => {
               lastMessage={d.lastMessage}
               lastMessageSentByUser={d.lastMessage?.userId === user?.id}
               // eslint-disable-next-line no-underscore-dangle
-              unreadedMessagesCount={d._count.messages}
+              unreadedMessagesCount={d.unreadedMessagesCount}
             />
           </Link>
         </li>

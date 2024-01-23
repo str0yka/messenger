@@ -43,10 +43,8 @@ export const MiddleColumn = () => {
   );
   const [messages, setMessages] = useState<Message[]>([]);
   const [deleteMessage, setDeleteMessage] = useState<Message | null>(null);
-  const lastMinSendedMessageIdRef = useRef<null | number>(null);
-  const lastMaxSendedMessageIdRef = useRef<null | number>(null);
-  const dialogRef = useRef(dialog);
-  const messageListNodeRef = useRef<HTMLDivElement>(null);
+
+  const canRequestMessages = useRef({ lower: false, upper: false });
   const chatNodeRef = useRef<HTMLDivElement>(null);
   const goDownNodeRef = useRef<HTMLDivElement>(null);
 
@@ -56,62 +54,47 @@ export const MiddleColumn = () => {
     },
   });
 
-  console.log('messages', messages);
-
   useLayoutEffect(() => {
-    const isDialogCurrentlyOpen = !dialogRef.current;
-    const isLastMessageSendByUser = messages.at(-1)?.userId === user!.id;
+    if (!chatNodeRef.current) return () => {};
 
-    if (chatNodeRef.current) {
-      if (
-        isDialogCurrentlyOpen ||
-        isLastMessageSendByUser ||
-        chatNodeRef.current.scrollTop + chatNodeRef.current.offsetHeight + 500 >
-          chatNodeRef.current.scrollHeight
-      ) {
-        chatNodeRef.current?.scrollTo({ top: chatNodeRef.current.scrollHeight });
-      }
+    const chatNode = chatNodeRef.current;
+    const goDownNode = goDownNodeRef.current;
+
+    if (messages.length) {
+      chatNode.scrollTo({ top: chatNode.scrollHeight });
     }
 
-    dialogRef.current = dialog;
-
-    console.log(
-      chatNodeRef.current?.scrollTop,
-      chatNodeRef.current?.offsetHeight,
-      chatNodeRef.current?.scrollHeight,
-    );
-
     const onChatScroll = () => {
-      if (!chatNodeRef.current) return;
-      const {
-        scrollTop: chatScrollTop,
-        offsetHeight: chatOffsetHeight,
-        scrollHeight: chatScrollHeight,
-      } = chatNodeRef.current;
-
       const hideClassName = 'hidden';
-      const scrollBottom = chatScrollHeight - (chatScrollTop + chatOffsetHeight);
+      const scrollBottom = chatNode.scrollHeight - (chatNode.scrollTop + chatNode.offsetHeight);
 
       if (scrollBottom === 0) {
-        goDownNodeRef.current?.classList.add(hideClassName);
+        goDownNode?.classList.add(hideClassName);
       } else {
-        goDownNodeRef.current?.classList.remove(hideClassName);
+        goDownNode?.classList.remove(hideClassName);
       }
     };
 
-    onChatScroll();
-
-    chatNodeRef.current?.addEventListener('scroll', onChatScroll);
+    chatNode.addEventListener('scroll', onChatScroll);
 
     return () => {
-      chatNodeRef.current?.removeEventListener('scroll', onChatScroll);
+      chatNode.removeEventListener('scroll', onChatScroll);
     };
   }, [messages.length !== 0]);
 
   useEffect(() => {
+    setMessages([]);
+
+    const onDialogUpdateRequired: ServerToClientEvents['dialog:updateRequired'] = () => {
+      console.log('dialog:updateRequired');
+      socket.emit('dialog:getOrCreate', Number(partnerId));
+    };
+
     const onMessagesPatch: ServerToClientEvents['messages:patch'] = (msgs) => {
       console.log('messages:patch', msgs);
       if (msgs.length) {
+        canRequestMessages.current.lower = true;
+        canRequestMessages.current.upper = true;
         setMessages((prevMessages) => {
           if (!prevMessages.length) {
             return msgs;
@@ -130,39 +113,29 @@ export const MiddleColumn = () => {
       }
     };
 
-    const onMessageAdd: ServerToClientEvents['message:add'] = (message) => {
-      console.log('message:add', message);
-      setMessages((prevMessages) => [...prevMessages, message]);
+    const onMessageAdd: ServerToClientEvents['message:add'] = (msg) => {
+      console.log('message:add', msg);
+      canRequestMessages.current.lower = true;
     };
 
-    const onMessageDelete: ServerToClientEvents['message:delete'] = (message) => {
-      console.log('message:delete', message);
-      setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== message.id));
+    const onMessageDelete: ServerToClientEvents['message:delete'] = (msg) => {
+      console.log('message:delete', msg);
+      setMessages((prevMessages) => prevMessages.filter((message) => message.id !== msg.id));
     };
 
     const onDialogPut: ServerToClientEvents['dialog:put'] = (d) => {
       console.log('dialog:put', d);
       setDialog(d);
-
-      socket.emit('messages:get', d.id, {
-        orderBy: { createdAt: 'desc' },
-        take: 1,
-        where: { id: { lte: 30 } },
-      });
     };
 
-    const onMessagePatch: ServerToClientEvents['message:patch'] = (message) => {
+    const onMessagePatch: ServerToClientEvents['message:patch'] = (msg) => {
       console.log('message:patch');
       setMessages((prevMessages) =>
-        prevMessages.map((msg) => {
-          if (msg.id === message.id) {
-            return message;
-          }
-          return msg;
-        }),
+        prevMessages.map((message) => (msg.id === message.id ? { ...message, ...msg } : message)),
       );
     };
 
+    socket.on('dialog:updateRequired', onDialogUpdateRequired);
     socket.on('messages:patch', onMessagesPatch);
     socket.on('message:patch', onMessagePatch);
     socket.on('message:delete', onMessageDelete);
@@ -172,6 +145,7 @@ export const MiddleColumn = () => {
     socket.emit('dialog:getOrCreate', Number(partnerId));
 
     return () => {
+      socket.off('dialog:updateRequired', onDialogUpdateRequired);
       socket.off('messages:patch', onMessagesPatch);
       socket.off('message:patch', onMessagePatch);
       socket.off('message:add', onMessageAdd);
@@ -179,6 +153,15 @@ export const MiddleColumn = () => {
       socket.off('dialog:put', onDialogPut);
     };
   }, [partnerId]);
+
+  useEffect(() => {
+    if (dialog && !messages.length) {
+      socket.emit('messages:get', dialog.id, {
+        orderBy: { createdAt: 'desc' },
+        take: 20,
+      });
+    }
+  }, [dialog]);
 
   if (!dialog) {
     return (
@@ -207,7 +190,6 @@ export const MiddleColumn = () => {
           className={cn('grow overflow-auto px-2', 'md:px-0')}
         >
           <div
-            ref={messageListNodeRef}
             className={cn(
               'mx-auto my-2 flex flex-col-reverse gap-2 break-words',
               'md:w-8/12',
@@ -216,28 +198,30 @@ export const MiddleColumn = () => {
           >
             {!!messages.length && (
               <Observer
-                key={`down-observer-${messages.at(0)?.id}`}
+                key={Math.random()}
                 observerParams={{
                   root: chatNodeRef.current,
-                  rootMargin: '0px 0px 75px',
+                  rootMargin: '0px 0px 150px',
                 }}
                 observe={(entry) => {
+                  console.log(entry);
                   const maxMessageId = messages.at(0)!.id;
                   if (entry?.isIntersecting) {
-                    console.log('DOWN INTERSECTING');
-                    if (maxMessageId !== lastMaxSendedMessageIdRef.current) {
+                    if (canRequestMessages.current.lower) {
+                      console.log('maxMessageId', maxMessageId);
+
+                      canRequestMessages.current.lower = false;
                       socket.emit('messages:get', dialog.id, {
                         orderBy: {
                           createdAt: 'asc',
                         },
-                        take: 1,
+                        take: 40,
                         where: {
                           id: {
                             gt: maxMessageId,
                           },
                         },
                       });
-                      lastMaxSendedMessageIdRef.current = maxMessageId;
                     }
                   }
                 }}
@@ -276,13 +260,7 @@ export const MiddleColumn = () => {
                 );
               }
 
-              const onClickCopy = async () => {
-                try {
-                  await navigator.clipboard.writeText(message.message);
-                } catch (error) {
-                  console.log('Something went wrong: ', error);
-                }
-              };
+              const onClickCopy = () => navigator.clipboard.writeText(message.message).catch();
 
               const onClickDelete = () => setDeleteMessage(message);
 
@@ -342,28 +320,28 @@ export const MiddleColumn = () => {
             })}
             {!!messages.length && (
               <Observer
-                key={`up-observer-${messages.at(-1)?.id}`}
+                key={Math.random()}
                 observerParams={{
                   root: chatNodeRef.current,
-                  rootMargin: '75px 0px 0px',
+                  rootMargin: '150px 0px 0px',
                 }}
                 observe={(entry) => {
                   const minMessageId = messages.at(-1)!.id;
                   if (entry?.isIntersecting) {
-                    console.log('UP INTERSECTING');
-                    if (minMessageId !== lastMinSendedMessageIdRef.current) {
+                    if (canRequestMessages.current.upper) {
+                      console.log('minMessageId', minMessageId);
+                      canRequestMessages.current.upper = false;
                       socket.emit('messages:get', dialog.id, {
                         orderBy: {
                           createdAt: 'desc',
                         },
-                        take: 1,
+                        take: 40,
                         where: {
                           id: {
                             lt: minMessageId,
                           },
                         },
                       });
-                      lastMinSendedMessageIdRef.current = minMessageId;
                     }
                   }
                 }}
@@ -416,6 +394,11 @@ export const MiddleColumn = () => {
               >
                 <IconChevronDown />
               </IconButton>
+              {!!dialog.unreadedMessagesCount && (
+                <div className="pointer-events-none absolute -left-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary-400 text-xs">
+                  {dialog.unreadedMessagesCount}
+                </div>
+              )}
             </div>
           </form>
         </div>
