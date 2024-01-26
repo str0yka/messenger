@@ -15,6 +15,7 @@ interface ServerToClientEvents {
   ) => void;
   'dialogs:updateRequired': () => void;
   'dialog:updateRequired': () => void;
+  'messages:put': (messages: Message[]) => void;
   'messages:patch': (messages: Message[]) => void;
   'message:patch': (message: Pick<Message, 'id'> & Partial<Message>) => void;
   'message:add': (message: Message) => void;
@@ -24,9 +25,9 @@ interface ServerToClientEvents {
 interface ClientToServerEvents {
   'dialog:getOrCreate': (partnerId: number) => void;
   'dialogs:get': () => void;
-  'messages:get': (
-    dialogId: number,
-    sort?: {
+  'messages:get': (params: {
+    dialogId: number;
+    filter?: {
       orderBy?: {
         createdAt?: 'desc' | 'asc';
       };
@@ -39,17 +40,18 @@ interface ClientToServerEvents {
           gte?: Message['id'];
         };
         createdAt?: {
-          lt?: Message['createdAt'];
-          lte?: Message['createdAt'];
-          gt?: Message['createdAt'];
-          gte?: Message['createdAt'];
+          lt?: number;
+          lte?: number;
+          gt?: number;
+          gte?: number;
         };
       };
-    },
-  ) => void;
+    };
+    method?: 'put' | 'patch';
+  }) => void;
   'message:read': (messageId: number) => void;
   'message:delete': (messageId: number, dialogId: number, deleteForEveryone?: boolean) => void;
-  'message:add': (chatId: number, message: string) => void;
+  'message:add': (chatId: number, message: { message: string; createdAt: number }) => void;
 }
 
 namespace IO {
