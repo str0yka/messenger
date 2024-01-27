@@ -1,1 +1,2 @@
-export * from './MessageList/Chat';
+export * from './MiddleColumnMain/MiddleColumnMain';
+export * from './MiddleColumnHeader/MiddleColumnHeader';

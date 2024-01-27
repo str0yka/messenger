@@ -7,26 +7,29 @@ interface ServerToClientEvents {
       unreadedMessagesCount: number;
     })[],
   ) => void;
+  'dialogs:updateRequired': () => void;
   'dialog:put': (
     dialog: Dialog & { user: User; partner: User; unreadedMessagesCount: number },
   ) => void;
   'dialog:patch': (
     dialog: Partial<Dialog & { user: User; partner: User; unreadedMessagesCount: number }>,
   ) => void;
-  'dialogs:updateRequired': () => void;
   'dialog:updateRequired': () => void;
-  'messages:put': (messages: Message[]) => void;
-  'messages:patch': (messages: Message[]) => void;
   'message:patch': (message: Pick<Message, 'id'> & Partial<Message>) => void;
   'message:add': (message: Message) => void;
   'message:delete': (message: Message) => void;
+  'messages:put': (messages: Message[]) => void;
+  'messages:patch': (messages: Message[]) => void;
+  'messages:read': (lastReadMessageId: Message['id']) => void;
 }
 
 interface ClientToServerEvents {
-  'dialog:getOrCreate': (partnerId: number) => void;
+  'dialog:getOrCreate': (params: { partnerId: number }) => void;
   'dialogs:get': () => void;
+  'messages:read': (params: { lastReadMessageId: Message['id'] }) => void;
+  'message:delete': (params: { messageId: number; deleteForEveryone?: boolean }) => void;
+  'message:add': (message: { message: string; createdAt: number }) => void;
   'messages:get': (params: {
-    dialogId: number;
     filter?: {
       orderBy?: {
         createdAt?: 'desc' | 'asc';
@@ -49,9 +52,6 @@ interface ClientToServerEvents {
     };
     method?: 'put' | 'patch';
   }) => void;
-  'message:read': (messageId: number) => void;
-  'message:delete': (messageId: number, dialogId: number, deleteForEveryone?: boolean) => void;
-  'message:add': (chatId: number, message: { message: string; createdAt: number }) => void;
 }
 
 namespace IO {
