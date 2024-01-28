@@ -9,11 +9,11 @@ import { useChatStore, useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../../../contexts';
 
-import { ChatFooter, DeleteMessageDialog, MessageList } from './components';
+import { DeleteMessageDialog, MessageList } from './components';
 
 export const MiddleColumnMain = () => {
   const user = useUserStore((state) => state.user);
-  const { messages, dialog, setLastReadMessageId } = useChatStore(
+  const chatStore = useChatStore(
     useShallow((state) => ({
       messages: state.messages,
       dialog: state.dialog,
@@ -27,6 +27,7 @@ export const MiddleColumnMain = () => {
   const chatNodeRef = useRef<HTMLDivElement>(null);
   const goDownNodeRef = useRef<HTMLDivElement>(null);
   const lastReadMessageIdRef = useRef<number | null>(null);
+  const lastUnreadMessageNodeRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (!chatNodeRef.current) return;
@@ -37,7 +38,7 @@ export const MiddleColumnMain = () => {
     if (scrollBottom < 75) {
       chatNode.scrollTo({ top: chatNode.scrollHeight });
     }
-  }, [messages]);
+  }, [chatStore.messages]);
 
   useLayoutEffect(() => {
     if (!chatNodeRef.current) return () => {};
@@ -45,7 +46,10 @@ export const MiddleColumnMain = () => {
     const chatNode = chatNodeRef.current;
     const goDownNode = goDownNodeRef.current;
 
-    if (messages.length) {
+    if (chatStore.messages.length) {
+      if (lastUnreadMessageNodeRef.current) {
+        return lastUnreadMessageNodeRef.current.scrollIntoView();
+      }
       chatNode.scrollTo({ top: chatNode.scrollHeight });
     }
 
@@ -53,7 +57,7 @@ export const MiddleColumnMain = () => {
       const hideClassName = 'hidden';
       const scrollBottom = chatNode.scrollHeight - (chatNode.scrollTop + chatNode.offsetHeight);
 
-      if (scrollBottom === 0) {
+      if (scrollBottom < 50) {
         goDownNode?.classList.add(hideClassName);
       } else {
         goDownNode?.classList.remove(hideClassName);
@@ -65,9 +69,9 @@ export const MiddleColumnMain = () => {
     return () => {
       chatNode.removeEventListener('scroll', onChatScroll);
     };
-  }, [messages.length !== 0]);
+  }, [chatStore.messages.length !== 0]);
 
-  if (!dialog) return null; // $FIXME
+  if (!chatStore.dialog) return null; // $FIXME
 
   return (
     <>
@@ -83,26 +87,26 @@ export const MiddleColumnMain = () => {
           )}
         >
           <MessageList
-            messages={messages}
+            lastUnreadMessageRef={lastUnreadMessageNodeRef}
+            messages={chatStore.messages}
             onRead={(message) => {
               if (!lastReadMessageIdRef.current || message.id > lastReadMessageIdRef.current) {
-                console.log('[HERE]: ', message.id);
                 lastReadMessageIdRef.current = message.id;
-                setLastReadMessageId(message.id);
+                chatStore.setLastReadMessageId(message.id);
               }
             }}
             setDeleteMessage={setDeleteMessage}
             userId={user!.id}
           />
-          {!!messages.length && (
+          {!!chatStore.messages.length && (
             <Observer
               key={Math.random()}
               observerParams={{
                 root: chatNodeRef.current,
-                rootMargin: '75px 0px 0px',
+                rootMargin: '250px 0px 0px 0px',
               }}
               observe={(entry) => {
-                const minMessageId = messages.at(-1)!.id;
+                const minMessageId = chatStore.messages.at(-1)!.id;
                 if (entry?.isIntersecting) {
                   socket.emit('messages:get', {
                     method: 'patch',
@@ -127,7 +131,7 @@ export const MiddleColumnMain = () => {
       <div className="relative">
         <div
           ref={goDownNodeRef}
-          className="absolute bottom-full right-2 -translate-y-2 transform"
+          className="absolute bottom-0 right-3"
         >
           <IconButton
             color="neutral"
@@ -141,21 +145,12 @@ export const MiddleColumnMain = () => {
           >
             <IconChevronDown />
           </IconButton>
-          {!!dialog.unreadedMessagesCount && (
+          {!!chatStore.dialog.unreadedMessagesCount && (
             <div className="pointer-events-none absolute -left-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary-400 text-xs">
-              {dialog.unreadedMessagesCount}
+              {chatStore.dialog.unreadedMessagesCount}
             </div>
           )}
         </div>
-        <ChatFooter
-          onMessageSend={(messageText) => {
-            const message = {
-              message: messageText,
-              createdAt: new Date().valueOf(),
-            };
-            socket.emit('message:add', message);
-          }}
-        />
       </div>
       <DeleteMessageDialog
         open={!!deleteMessage}

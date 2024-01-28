@@ -3,7 +3,7 @@ import cn from 'classnames';
 import { CircularProgress } from '~/components/common';
 import { useChatStore } from '~/utils/store';
 
-import { MiddleColumnMain, MiddleColumnHeader } from './components';
+import { MiddleColumnMain, MiddleColumnHeader, MiddleColumnFooter } from './components';
 
 export const MiddleColumn = () => {
   const dialog = useChatStore((state) => state.dialog);
@@ -21,6 +21,7 @@ export const MiddleColumn = () => {
       <MiddleColumnHeader />
       <div className="flex w-full grow flex-col overflow-hidden">
         <MiddleColumnMain />
+        <MiddleColumnFooter />
       </div>
     </div>
   );

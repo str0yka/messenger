@@ -16,17 +16,18 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { id: partnerId } = useParams();
 
   const user = useUserStore((state) => state.user);
-  const { dialog, lastReadMessageId, setDialog, setMessages, setLastReadMessageId } = useChatStore(
+  const chatStore = useChatStore(
     useShallow((state) => ({
-      dialog: state.dialog,
+      messages: state.messages,
       lastReadMessageId: state.lastReadMessageId,
       setDialog: state.setDialog,
       setMessages: state.setMessages,
       setLastReadMessageId: state.setLastReadMessageId,
+      reset: state.reset,
     })),
   );
 
-  const debouncedLastReadMessageId = useDebounce(lastReadMessageId, 50);
+  const debouncedLastReadMessageId = useDebounce(chatStore.lastReadMessageId, 100);
 
   const socketRef = useRef<IO.Socket>(
     io(import.meta.env.VITE_SOCKET_URL as string, {
@@ -37,6 +38,12 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const socket = socketRef.current;
 
   useEffect(() => {
+    const onGetDialogResponse: ServerToClientEvents['SERVER:GET_DIALOG_RESPONSE'] = (data) => {
+      console.log('[SERVER:GET_DIALOG_RESPONSE]: ', data);
+      chatStore.setDialog(data.dialog);
+      chatStore.setMessages(data.messages);
+    };
+
     const onDialogUpdateRequired: ServerToClientEvents['dialog:updateRequired'] = () => {
       console.log('dialog:updateRequired');
       socket.emit('dialog:getOrCreate', { partnerId: Number(partnerId) });
@@ -44,18 +51,18 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
     const onDialogPut: ServerToClientEvents['dialog:put'] = (d) => {
       console.log('dialog:put', d);
-      setDialog(d);
+      chatStore.setDialog(d);
     };
 
     const onMessagesPut: ServerToClientEvents['messages:put'] = (msgs) => {
       console.log('messages:put', msgs);
-      setMessages(msgs);
+      chatStore.setMessages(msgs);
     };
 
     const onMessagesPatch: ServerToClientEvents['messages:patch'] = (msgs) => {
       console.log('messages:patch', msgs);
       if (msgs.length) {
-        setMessages((prevMessages) => {
+        chatStore.setMessages((prevMessages) => {
           if (!prevMessages.length) return msgs;
           if (msgs.at(0)!.id < prevMessages.at(-1)!.id) return [...prevMessages, ...msgs];
           if (msgs.at(-1)!.id > prevMessages.at(0)!.id) return [...msgs.reverse(), ...prevMessages];
@@ -66,24 +73,26 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
     const onMessageAdd: ServerToClientEvents['message:add'] = (msg) => {
       console.log('message:add', msg);
-      setMessages((prevMessages) => [msg, ...prevMessages].slice(0, 40));
+      chatStore.setMessages((prevMessages) => [msg, ...prevMessages].slice(0, 40));
     };
 
     const onMessageDelete: ServerToClientEvents['message:delete'] = (msg) => {
       console.log('message:delete', msg);
-      setMessages((prevMessages) => prevMessages.filter((message) => message.id !== msg.id));
+      chatStore.setMessages((prevMessages) =>
+        prevMessages.filter((message) => message.id !== msg.id),
+      );
     };
 
     const onMessagePatch: ServerToClientEvents['message:patch'] = (msg) => {
       console.log('message:patch');
-      setMessages((prevMessages) =>
+      chatStore.setMessages((prevMessages) =>
         prevMessages.map((message) => (msg.id === message.id ? { ...message, ...msg } : message)),
       );
     };
 
     const onMessagesRead: ServerToClientEvents['messages:read'] = (lastReadMsgId) => {
       console.log('messages:read', lastReadMsgId);
-      setMessages((prevMessages) =>
+      chatStore.setMessages((prevMessages) =>
         prevMessages.map((prevMessage) =>
           !prevMessage.read && prevMessage.id <= lastReadMsgId
             ? { ...prevMessage, read: true }
@@ -92,6 +101,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       );
     };
 
+    socket.on('SERVER:GET_DIALOG_RESPONSE', onGetDialogResponse);
     socket.on('dialog:put', onDialogPut);
     socket.on('dialog:updateRequired', onDialogUpdateRequired);
     socket.on('message:patch', onMessagePatch);
@@ -102,6 +112,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     socket.on('messages:read', onMessagesRead);
 
     return () => {
+      socket.off('SERVER:GET_DIALOG_RESPONSE', onGetDialogResponse);
       socket.off('dialog:put', onDialogPut);
       socket.off('dialog:updateRequired', onDialogUpdateRequired);
       socket.off('message:patch', onMessagePatch);
@@ -114,29 +125,19 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   }, [partnerId]);
 
   useEffect(() => {
-    if (dialog) {
-      socket.emit('messages:get', {
-        filter: {
-          orderBy: {
-            createdAt: 'desc',
-          },
-          take: 40,
-        },
-        method: 'put',
-      });
-    }
-  }, [dialog?.id]);
-
-  useEffect(() => {
     if (partnerId) {
-      socket.emit('dialog:getOrCreate', { partnerId: Number(partnerId) });
+      socket.emit('CLIENT:GET_DIALOG', { partnerId: Number(partnerId) });
     }
+
+    return () => {
+      chatStore.reset();
+    };
   }, [partnerId]);
 
   useEffect(() => {
     if (debouncedLastReadMessageId) {
       socket.emit('messages:read', { lastReadMessageId: debouncedLastReadMessageId });
-      setLastReadMessageId(null);
+      chatStore.setLastReadMessageId(null);
     }
   }, [debouncedLastReadMessageId]);
 

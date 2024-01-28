@@ -1,4 +1,8 @@
 interface ServerToClientEvents {
+  'SERVER:GET_DIALOG_RESPONSE': (response: {
+    dialog: Dialog & { user: User; partner: User; unreadedMessagesCount: number };
+    messages: Message[];
+  }) => void;
   'dialogs:put': (
     dialogs: (Dialog & {
       user: User;
@@ -24,6 +28,7 @@ interface ServerToClientEvents {
 }
 
 interface ClientToServerEvents {
+  'CLIENT:GET_DIALOG': (params: { partnerId: number }) => void;
   'dialog:getOrCreate': (params: { partnerId: number }) => void;
   'dialogs:get': () => void;
   'messages:read': (params: { lastReadMessageId: Message['id'] }) => void;
@@ -36,11 +41,12 @@ interface ClientToServerEvents {
       };
       take?: number;
       where?: {
+        read?: boolean;
         id?: {
-          lt?: Message['id'];
-          lte?: Message['id'];
-          gt?: Message['id'];
-          gte?: Message['id'];
+          lt?: number;
+          lte?: number;
+          gt?: number;
+          gte?: number;
         };
         createdAt?: {
           lt?: number;

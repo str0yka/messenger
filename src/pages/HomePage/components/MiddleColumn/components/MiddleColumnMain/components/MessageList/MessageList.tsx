@@ -5,12 +5,12 @@ import { IconPapers, IconTrash } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { createDate, isDateEqual } from '~/utils/helpers';
 
-import { MessageItem } from '../MessageItem/MessageItem';
-import { MessageItemWithObserver } from '../MessageItemWithObserver/MessageItemWithObserver';
+import { MessageItem, MessageItemWithObserver } from './components';
 
 interface MessageListProps {
   userId: number;
   messages: Message[];
+  lastUnreadMessageRef: React.RefObject<HTMLDivElement>;
   setDeleteMessage: (message: Message) => void;
   onRead: (message: Message) => void;
 }
@@ -18,12 +18,18 @@ interface MessageListProps {
 export const MessageList: React.FC<MessageListProps> = ({
   userId,
   messages,
+  lastUnreadMessageRef,
   setDeleteMessage,
   onRead,
 }) => {
   const intl = useIntl();
 
+  const lastUnreadMessage = [...messages]
+    .reverse()
+    .find((message) => !message.read && message.userId !== userId);
+
   return messages.map((message, index) => {
+    const isLastUnreadMessage = lastUnreadMessage?.id === message.id;
     const isLastInArray = index === messages.length - 1;
     const isMessageSendByUser = userId === message.userId;
     const messageDate = new Date(message.createdAt);
@@ -84,6 +90,14 @@ export const MessageList: React.FC<MessageListProps> = ({
             )}
           </ContextMenu.Content>
         </ContextMenu.Root>
+        {isLastUnreadMessage && (
+          <div
+            ref={isLastUnreadMessage ? lastUnreadMessageRef : undefined}
+            className="rounded bg-primary-700/25 text-center text-sm font-medium text-white"
+          >
+            Unreaded messages
+          </div>
+        )}
         {needToDisplayDate && (
           <Dialog.Root>
             <Dialog.Trigger asChild>

@@ -18,6 +18,7 @@ interface ChatStore {
   setLastReadMessageId: (
     lastReadMessageId: number | null | ((lastReadMessageId: number | null) => number | null),
   ) => void;
+  reset: () => void;
 }
 
 export const useChatStore = create<ChatStore>()(
@@ -38,5 +39,6 @@ export const useChatStore = create<ChatStore>()(
             ? lastReadMessageId(state.lastReadMessageId)
             : lastReadMessageId,
       })),
+    reset: () => set(() => ({ dialog: null, messages: [], lastReadMessageId: null })),
   })),
 );
