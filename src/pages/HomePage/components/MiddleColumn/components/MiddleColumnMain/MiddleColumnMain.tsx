@@ -1,33 +1,35 @@
 import cn from 'classnames';
-import { useState, useRef, useLayoutEffect } from 'react';
-import { useShallow } from 'zustand/react/shallow';
+import { useState, useRef, useLayoutEffect, Fragment } from 'react';
 
 import { Observer } from '~/components';
-import { IconButton } from '~/components/common';
-import { IconChevronDown } from '~/components/common/icons';
-import { useChatStore, useUserStore } from '~/utils/store';
+import { isDateEqual } from '~/utils/helpers';
+import { useUserStore } from '~/utils/store';
 
-import { useSocket } from '../../../../contexts';
+import { useMessages, useSocket } from '../../../../contexts';
 
-import { DeleteMessageDialog, MessageList } from './components';
+import {
+  DateButton,
+  DateDialog,
+  DeleteMessageDialog,
+  MessageContextMenu,
+  MessageItem,
+  ScrollDownButton,
+} from './components';
 
 export const MiddleColumnMain = () => {
   const user = useUserStore((state) => state.user);
-  const chatStore = useChatStore(
-    useShallow((state) => ({
-      messages: state.messages,
-      dialog: state.dialog,
-      setLastReadMessageId: state.setLastReadMessageId,
-    })),
-  );
   const socket = useSocket();
+  const messages = useMessages();
 
   const [deleteMessage, setDeleteMessage] = useState<Message | null>(null);
 
   const chatNodeRef = useRef<HTMLDivElement>(null);
-  const goDownNodeRef = useRef<HTMLDivElement>(null);
-  const lastReadMessageIdRef = useRef<number | null>(null);
+  const scrollDownNodeRef = useRef<HTMLDivElement>(null);
   const lastUnreadMessageNodeRef = useRef<HTMLDivElement>(null);
+
+  const lastUnreadMessage = [...messages]
+    .reverse()
+    .find((message) => !message.read && message.userId !== user?.id);
 
   useLayoutEffect(() => {
     if (!chatNodeRef.current) return;
@@ -38,15 +40,15 @@ export const MiddleColumnMain = () => {
     if (scrollBottom < 75) {
       chatNode.scrollTo({ top: chatNode.scrollHeight });
     }
-  }, [chatStore.messages]);
+  }, [messages]);
 
   useLayoutEffect(() => {
     if (!chatNodeRef.current) return () => {};
 
     const chatNode = chatNodeRef.current;
-    const goDownNode = goDownNodeRef.current;
+    const scrollDownNode = scrollDownNodeRef.current;
 
-    if (chatStore.messages.length) {
+    if (messages.length) {
       if (lastUnreadMessageNodeRef.current) {
         return lastUnreadMessageNodeRef.current.scrollIntoView();
       }
@@ -58,9 +60,9 @@ export const MiddleColumnMain = () => {
       const scrollBottom = chatNode.scrollHeight - (chatNode.scrollTop + chatNode.offsetHeight);
 
       if (scrollBottom < 50) {
-        goDownNode?.classList.add(hideClassName);
+        scrollDownNode?.classList.add(hideClassName);
       } else {
-        goDownNode?.classList.remove(hideClassName);
+        scrollDownNode?.classList.remove(hideClassName);
       }
     };
 
@@ -69,9 +71,7 @@ export const MiddleColumnMain = () => {
     return () => {
       chatNode.removeEventListener('scroll', onChatScroll);
     };
-  }, [chatStore.messages.length !== 0]);
-
-  if (!chatStore.dialog) return null; // $FIXME
+  }, [messages.length !== 0]);
 
   return (
     <>
@@ -86,19 +86,42 @@ export const MiddleColumnMain = () => {
             'xl:w-6/12',
           )}
         >
-          <MessageList
-            lastUnreadMessageRef={lastUnreadMessageNodeRef}
-            messages={chatStore.messages}
-            onRead={(message) => {
-              if (!lastReadMessageIdRef.current || message.id > lastReadMessageIdRef.current) {
-                lastReadMessageIdRef.current = message.id;
-                chatStore.setLastReadMessageId(message.id);
-              }
-            }}
-            setDeleteMessage={setDeleteMessage}
-            userId={user!.id}
-          />
-          {!!chatStore.messages.length && (
+          {messages.map((message, index) => {
+            const isLastUnreadMessage = lastUnreadMessage?.id === message.id;
+            const isLastInArray = index === messages.length - 1;
+            const messageDate = new Date(message.createdAt);
+            const nextMessageDate = new Date(messages[index + 1]?.createdAt);
+            const needToDisplayDate = isLastInArray || !isDateEqual(messageDate, nextMessageDate);
+
+            const onClickCopy = () => navigator.clipboard.writeText(message.message).catch();
+            const onClickDelete = () => setDeleteMessage(message);
+
+            return (
+              <Fragment key={message.id}>
+                <MessageContextMenu
+                  onClickCopy={onClickCopy}
+                  onClickDelete={onClickDelete}
+                  showDeleteButton={message.userId === user?.id}
+                >
+                  <MessageItem message={message} />
+                </MessageContextMenu>
+                {isLastUnreadMessage && (
+                  <div
+                    ref={isLastUnreadMessage ? lastUnreadMessageNodeRef : undefined}
+                    className="rounded bg-primary-700/25 text-center text-sm font-medium text-white"
+                  >
+                    Unreaded messages
+                  </div>
+                )}
+                {needToDisplayDate && (
+                  <DateDialog>
+                    <DateButton date={messageDate} />
+                  </DateDialog>
+                )}
+              </Fragment>
+            );
+          })}
+          {!!messages.length && (
             <Observer
               key={Math.random()}
               observerParams={{
@@ -106,9 +129,9 @@ export const MiddleColumnMain = () => {
                 rootMargin: '250px 0px 0px 0px',
               }}
               observe={(entry) => {
-                const minMessageId = chatStore.messages.at(-1)!.id;
+                const minMessageId = messages.at(-1)!.id;
                 if (entry?.isIntersecting) {
-                  socket.emit('messages:get', {
+                  socket.emit('CLIENT:MESSAGES_GET', {
                     method: 'patch',
                     filter: {
                       orderBy: {
@@ -129,35 +152,25 @@ export const MiddleColumnMain = () => {
         </div>
       </div>
       <div className="relative">
-        <div
-          ref={goDownNodeRef}
-          className="absolute bottom-0 right-3"
-        >
-          <IconButton
-            color="neutral"
-            s="l"
-            onClick={() =>
-              chatNodeRef.current?.scrollTo({
-                top: chatNodeRef.current.scrollHeight,
-                behavior: 'smooth',
-              })
-            }
-          >
-            <IconChevronDown />
-          </IconButton>
-          {!!chatStore.dialog.unreadedMessagesCount && (
-            <div className="pointer-events-none absolute -left-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary-400 text-xs">
-              {chatStore.dialog.unreadedMessagesCount}
-            </div>
-          )}
-        </div>
+        <ScrollDownButton
+          ref={scrollDownNodeRef}
+          onScrollDown={() => {
+            chatNodeRef.current?.scrollTo({
+              top: chatNodeRef.current.scrollHeight,
+              behavior: 'smooth',
+            });
+          }}
+        />
       </div>
       <DeleteMessageDialog
         open={!!deleteMessage}
         onOpenChange={(open) => !open && setDeleteMessage(null)}
         onDelete={(deleteForEveryone) => {
           if (deleteMessage) {
-            socket.emit('message:delete', { messageId: deleteMessage.id, deleteForEveryone });
+            socket.emit('CLIENT:MESSAGE_DELETE', {
+              messageId: deleteMessage.id,
+              deleteForEveryone,
+            });
             setDeleteMessage(null);
           }
         }}

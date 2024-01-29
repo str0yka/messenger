@@ -11,41 +11,43 @@ export const LeftChatList = () => {
   const user = useUserStore((state) => state.user);
   const socket = useSocket();
 
-  const [dialogs, setDialogs] = useState<Parameters<ServerToClientEvents['dialogs:put']>['0']>([]);
+  const [dialogs, setDialogs] = useState<
+    Parameters<ServerToClientEvents['SERVER:DIALOGS_PUT']>['0']['dialogs']
+  >([]);
 
   useEffect(() => {
-    const onDialogsPut: ServerToClientEvents['dialogs:put'] = (ds) => {
-      console.log('dialogs:put', ds);
-      setDialogs(ds);
+    const onDialogsPut: ServerToClientEvents['SERVER:DIALOGS_PUT'] = ({ dialogs: dialogsData }) => {
+      console.log('[SERVER:DIALOGS_PUT]: ', dialogsData);
+      setDialogs(dialogsData);
     };
 
-    const onDialogsUpdateRequired: ServerToClientEvents['dialogs:updateRequired'] = () => {
-      console.log('dialogs:updateRequired');
-      socket.emit('dialogs:get');
+    const onDialogsNeedToUpdate: ServerToClientEvents['SERVER:DIALOGS_NEED_TO_UPDATE'] = () => {
+      console.log('[SERVER:DIALOGS_NEED_TO_UPDATE]: ');
+      socket.emit('CLIENT:DIALOGS_GET');
     };
 
-    socket.on('dialogs:put', onDialogsPut);
-    socket.on('dialogs:updateRequired', onDialogsUpdateRequired);
+    socket.on('SERVER:DIALOGS_PUT', onDialogsPut);
+    socket.on('SERVER:DIALOGS_NEED_TO_UPDATE', onDialogsNeedToUpdate);
 
-    socket.emit('dialogs:get');
+    socket.emit('CLIENT:DIALOGS_GET');
 
     return () => {
-      socket.off('dialogs:put', onDialogsPut);
-      socket.off('dialogs:updateRequired', onDialogsUpdateRequired);
+      socket.off('SERVER:DIALOGS_PUT', onDialogsPut);
+      socket.off('SERVER:DIALOGS_NEED_TO_UPDATE', onDialogsNeedToUpdate);
     };
   }, []);
 
   return (
     <ul className="flex grow flex-col overflow-auto p-2">
-      {dialogs.map((d, index) => (
+      {dialogs.map((dialog, index) => (
         <li key={index}>
-          <Link to={PRIVATE_ROUTE.USER(d.partnerId)}>
+          <Link to={PRIVATE_ROUTE.USER(dialog.dialog.partnerId)}>
             <ChatItem
-              title={d.partner.email}
-              avatarFallback={d.partner.email[0]}
-              lastMessage={d.lastMessage}
-              lastMessageSentByUser={d.lastMessage?.userId === user?.id}
-              unreadedMessagesCount={d.unreadedMessagesCount}
+              title={dialog.dialog.partner.email}
+              avatarFallback={dialog.dialog.partner.email[0]}
+              lastMessage={dialog.lastMessage}
+              lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
+              unreadedMessagesCount={dialog.unreadedMessagesCount}
             />
           </Link>
         </li>

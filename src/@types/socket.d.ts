@@ -1,40 +1,38 @@
 interface ServerToClientEvents {
   'SERVER:GET_DIALOG_RESPONSE': (response: {
-    dialog: Dialog & { user: User; partner: User; unreadedMessagesCount: number };
+    dialog: Dialog & { user: User; partner: User };
+    unreadedMessagesCount: number;
     messages: Message[];
   }) => void;
-  'dialogs:put': (
-    dialogs: (Dialog & {
-      user: User;
-      partner: User;
+  'SERVER:MESSAGE_READ_RESPONSE': (response: { unreadedMessagesCount: number }) => void;
+  'SERVER:MESSAGE_READ': (response: { readMessage: Message }) => void;
+  'SERVER:DIALOGS_PUT': (params: {
+    dialogs: {
+      dialog: Dialog & {
+        user: User;
+        partner: User;
+      };
       lastMessage: Message | null;
       unreadedMessagesCount: number;
-    })[],
-  ) => void;
-  'dialogs:updateRequired': () => void;
-  'dialog:put': (
-    dialog: Dialog & { user: User; partner: User; unreadedMessagesCount: number },
-  ) => void;
-  'dialog:patch': (
-    dialog: Partial<Dialog & { user: User; partner: User; unreadedMessagesCount: number }>,
-  ) => void;
-  'dialog:updateRequired': () => void;
-  'message:patch': (message: Pick<Message, 'id'> & Partial<Message>) => void;
-  'message:add': (message: Message) => void;
-  'message:delete': (message: Message) => void;
-  'messages:put': (messages: Message[]) => void;
-  'messages:patch': (messages: Message[]) => void;
-  'messages:read': (lastReadMessageId: Message['id']) => void;
+    }[];
+  }) => void;
+  'SERVER:DIALOGS_NEED_TO_UPDATE': () => void;
+  'SERVER:DIALOG_PUT': (params: { dialog: Dialog & { user: User; partner: User } }) => void;
+  'SERVER:DIALOG_NEED_TO_UPDATE': () => void;
+  'SERVER:MESSAGE_ADD': (message: Message) => void;
+  'SERVER:MESSAGE_DELETE': (message: Message) => void;
+  'SERVER:MESSAGES_PUT': (messages: Message[]) => void;
+  'SERVER:MESSAGES_PATCH': (messages: Message[]) => void;
 }
 
 interface ClientToServerEvents {
-  'CLIENT:GET_DIALOG': (params: { partnerId: number }) => void;
-  'dialog:getOrCreate': (params: { partnerId: number }) => void;
-  'dialogs:get': () => void;
-  'messages:read': (params: { lastReadMessageId: Message['id'] }) => void;
-  'message:delete': (params: { messageId: number; deleteForEveryone?: boolean }) => void;
-  'message:add': (message: { message: string; createdAt: number }) => void;
-  'messages:get': (params: {
+  'CLIENT:DIALOG_JOIN': (params: { partnerId: number }) => void;
+  'CLIENT:DIALOG_GET': () => void;
+  'CLIENT:DIALOGS_GET': () => void;
+  'CLIENT:MESSAGE_READ': (params: { readMessage: Message }) => void;
+  'CLIENT:MESSAGE_DELETE': (params: { messageId: number; deleteForEveryone?: boolean }) => void;
+  'CLIENT:MESSAGE_ADD': (message: { message: string; createdAt: number }) => void;
+  'CLIENT:MESSAGES_GET': (params: {
     filter?: {
       orderBy?: {
         createdAt?: 'desc' | 'asc';
@@ -59,7 +57,6 @@ interface ClientToServerEvents {
     method?: 'put' | 'patch';
   }) => void;
 }
-
 namespace IO {
   type Socket = import('socket.io-client').Socket<ServerToClientEvents, ClientToServerEvents>;
   type Server = import('socket.io-client').Server<ServerToClientEvents, ClientToServerEvents>;

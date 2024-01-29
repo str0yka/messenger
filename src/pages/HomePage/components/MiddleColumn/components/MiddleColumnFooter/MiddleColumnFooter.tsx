@@ -26,7 +26,7 @@ export const MiddleColumnFooter = () => {
           message: values.messageText,
           createdAt: new Date().valueOf(),
         };
-        socket.emit('message:add', message);
+        socket.emit('CLIENT:MESSAGE_ADD', message);
         sendMessageForm.reset();
       })}
     >
