@@ -36,8 +36,6 @@ export const ScrollDownButton = forwardRef<HTMLDivElement, ScrollDownButtonProps
       };
     }, []);
 
-    console.log(unreadedMessagesCount);
-
     return (
       <div
         ref={ref}

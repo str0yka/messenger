@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import { useShallow } from 'zustand/react/shallow';
 
-import { useChatStore, useUserStore } from '~/utils/store';
+import { useUserStore } from '~/utils/store';
 
+import { useSetDialog } from '../dialog';
 import { useSetMessages } from '../messages';
 
 import { SocketContext } from './SocketContext';
@@ -17,12 +17,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { id: partnerId } = useParams();
 
   const user = useUserStore((state) => state.user);
-  const chatStore = useChatStore(
-    useShallow((state) => ({
-      setDialog: state.setDialog,
-      reset: state.reset,
-    })),
-  );
+  const setDialog = useSetDialog();
 
   const setMessages = useSetMessages();
 
@@ -37,7 +32,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   useEffect(() => {
     const onGetDialogResponse: ServerToClientEvents['SERVER:GET_DIALOG_RESPONSE'] = (data) => {
       console.log('[SERVER:GET_DIALOG_RESPONSE]: ', data);
-      chatStore.setDialog(data.dialog);
+      setDialog(data.dialog);
       setMessages(data.messages);
     };
 
@@ -48,7 +43,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
     const onDialogPut: ServerToClientEvents['SERVER:DIALOG_PUT'] = ({ dialog }) => {
       console.log('[SERVER:DIALOG_PUT]: ', dialog);
-      chatStore.setDialog(dialog);
+      setDialog(dialog);
     };
 
     const onMessagesPut: ServerToClientEvents['SERVER:MESSAGES_PUT'] = (msgs) => {
@@ -101,10 +96,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     if (partnerId) {
       socket.emit('CLIENT:DIALOG_JOIN', { partnerId: Number(partnerId) });
     }
-
-    return () => {
-      chatStore.reset();
-    };
   }, [partnerId]);
 
   return <SocketContext.Provider value={socketRef.current}>{children}</SocketContext.Provider>;

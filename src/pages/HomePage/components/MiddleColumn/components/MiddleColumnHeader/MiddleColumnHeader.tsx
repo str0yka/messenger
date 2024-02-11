@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { IconButton, Avatar } from '~/components/common';
 import { IconCross } from '~/components/common/icons';
 import { PRIVATE_ROUTE } from '~/utils/constants';
-import { useChatStore } from '~/utils/store';
+
+import { useDialog } from '../../../../contexts';
 
 export const MiddleColumnHeader = () => {
-  const dialog = useChatStore((state) => state.dialog);
+  const dialog = useDialog();
 
   if (!dialog) return null; // $FIXME
 
