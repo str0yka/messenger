@@ -38,25 +38,15 @@ interface ClientToServerEvents {
         createdAt?: 'desc' | 'asc';
       };
       take?: number;
-      where?: {
-        read?: boolean;
-        id?: {
-          lt?: number;
-          lte?: number;
-          gt?: number;
-          gte?: number;
-        };
-        createdAt?: {
-          lt?: number;
-          lte?: number;
-          gt?: number;
-          gte?: number;
-        };
+      cursor?: {
+        id: number;
       };
+      skip?: number;
     };
-    method?: 'put' | 'patch';
+    method?: 'PUT' | 'PATCH';
   }) => void;
 }
+
 namespace IO {
   type Socket = import('socket.io-client').Socket<ServerToClientEvents, ClientToServerEvents>;
   type Server = import('socket.io-client').Server<ServerToClientEvents, ClientToServerEvents>;
