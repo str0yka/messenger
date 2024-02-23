@@ -4,7 +4,6 @@ import { forwardRef } from 'react';
 interface IconButtonProps extends React.ComponentProps<'button'> {
   color?: 'primary' | 'warning' | 'error' | 'neutral' | 'success' | 'transparent';
   s?: 'base' | 'l' | 'xl';
-  children: React.ReactNode;
 }
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(

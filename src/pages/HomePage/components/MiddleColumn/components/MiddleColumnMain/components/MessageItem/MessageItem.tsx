@@ -33,9 +33,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
     };
   }, []);
 
-  if (isSentByUser) return <OutcomingMessage message={message} />;
+  if (isSentByUser) return <OutcomingMessage message={{ ...message, read: isRead }} />;
 
-  if (isRead) return <IncomingMessage message={message} />;
+  if (isRead) return <IncomingMessage message={{ ...message, read: isRead }} />;
 
   return (
     <Observer
@@ -45,7 +45,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         }
       }}
     >
-      <IncomingMessage message={message} />
+      <IncomingMessage message={{ ...message, read: isRead }} />
     </Observer>
   );
 };

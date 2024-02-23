@@ -1,8 +1,9 @@
 interface ServerToClientEvents {
-  'SERVER:GET_DIALOG_RESPONSE': (response: {
+  'SERVER:DIALOG_JOIN_RESPONSE': (response: {
     dialog: Dialog & { user: User; partner: User };
     unreadedMessagesCount: number;
     messages: Message[];
+    lastMessage: Message | undefined;
   }) => void;
   'SERVER:MESSAGE_READ_RESPONSE': (response: { unreadedMessagesCount: number }) => void;
   'SERVER:MESSAGE_READ': (response: { readMessage: Message }) => void;
@@ -17,7 +18,11 @@ interface ServerToClientEvents {
     }[];
   }) => void;
   'SERVER:DIALOGS_NEED_TO_UPDATE': () => void;
-  'SERVER:DIALOG_PUT': (params: { dialog: Dialog & { user: User; partner: User } }) => void;
+  'SERVER:DIALOG_GET_RESPONSE': (response: {
+    dialog: Dialog & { user: User; partner: User };
+    unreadedMessagesCount: number;
+    lastMessage: Message | undefined;
+  }) => void;
   'SERVER:DIALOG_NEED_TO_UPDATE': () => void;
   'SERVER:MESSAGE_ADD': (message: Message) => void;
   'SERVER:MESSAGE_DELETE': (message: Message) => void;
@@ -45,8 +50,8 @@ interface ClientToServerEvents {
     };
     method?: 'PUT' | 'PATCH';
   }) => void;
+  'CLIENT:JUMP_TO_DATE': (params: { timestamp: number; take: number }) => void;
 }
-
 namespace IO {
   type Socket = import('socket.io-client').Socket<ServerToClientEvents, ClientToServerEvents>;
   type Server = import('socket.io-client').Server<ServerToClientEvents, ClientToServerEvents>;

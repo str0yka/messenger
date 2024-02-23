@@ -27,7 +27,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const socket = socketRef.current;
 
   useEffect(() => {
-    const onGetDialogResponse: ServerToClientEvents['SERVER:GET_DIALOG_RESPONSE'] = (data) => {
+    const onDialogJoinResponse: ServerToClientEvents['SERVER:DIALOG_JOIN_RESPONSE'] = (data) => {
       console.log('[SERVER:GET_DIALOG_RESPONSE]: ', data);
       setDialog(data.dialog);
     };
@@ -37,20 +37,22 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       socket.emit('CLIENT:DIALOG_GET');
     };
 
-    const onDialogPut: ServerToClientEvents['SERVER:DIALOG_PUT'] = ({ dialog }) => {
+    const onDialogGetResponse: ServerToClientEvents['SERVER:DIALOG_GET_RESPONSE'] = ({
+      dialog,
+    }) => {
       console.log('[SERVER:DIALOG_PUT]: ', dialog);
       setDialog(dialog);
     };
 
-    socket.on('SERVER:GET_DIALOG_RESPONSE', onGetDialogResponse);
-    socket.on('SERVER:DIALOG_PUT', onDialogPut);
+    socket.on('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
+    socket.on('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
     socket.on('SERVER:DIALOG_NEED_TO_UPDATE', onDialogNeedToUpdate);
 
     return () => {
       setDialog(null);
 
-      socket.off('SERVER:GET_DIALOG_RESPONSE', onGetDialogResponse);
-      socket.off('SERVER:DIALOG_PUT', onDialogPut);
+      socket.off('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
+      socket.off('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
       socket.off('SERVER:DIALOG_NEED_TO_UPDATE', onDialogNeedToUpdate);
     };
   }, [partnerId]);

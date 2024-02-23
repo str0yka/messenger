@@ -1,27 +1,63 @@
-import { forwardRef } from 'react';
+import { useState } from 'react';
 
+import { Button, Calendar, Dialog } from '~/components/common';
 import { useIntl } from '~/features/i18n';
+import { useSocket } from '~/pages/HomePage/contexts';
 import { createDate } from '~/utils/helpers';
 
 interface DateButtonProps {
   date: Date;
 }
 
-export const DateButton = forwardRef<HTMLButtonElement, DateButtonProps>(({ date }, ref) => {
-  const intl = useIntl();
+export const DateButton: React.FC<DateButtonProps> = ({ date }) => {
+  const { locale } = useIntl();
+  const socket = useSocket();
 
-  const { dayNumber, month } = createDate({
-    date,
-    locale: intl.locale,
-  });
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(date);
+
+  const { dayNumber, dayShort, month } = createDate({ date, locale });
 
   return (
-    <button
-      ref={ref}
-      className="select-none self-center rounded-3xl bg-neutral-950/40 px-2 py-1 text-sm font-medium text-neutral-50"
-      type="button"
-    >
-      {dayNumber} {month}
-    </button>
+    <Dialog.Root>
+      <Dialog.Trigger asChild>
+        <button
+          className="sticky top-2 select-none self-center rounded-3xl bg-neutral-950/40 px-2 py-1 text-sm font-medium text-neutral-50"
+          type="button"
+        >
+          {dayNumber} {month}
+        </button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Content className="rounded-xl bg-neutral-800 p-4">
+          <Dialog.Title>
+            {dayShort}, {month} {dayNumber}
+          </Dialog.Title>
+          <Calendar
+            className="mb-4 mt-4"
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+          />
+          <div className="flex items-center justify-between gap-4">
+            <Button
+              onClick={() => {
+                if (selectedDate) {
+                  socket.emit('CLIENT:JUMP_TO_DATE', {
+                    timestamp: selectedDate.valueOf(),
+                    take: 80,
+                  });
+                }
+              }}
+            >
+              TO DATE
+            </Button>
+            <Dialog.Close asChild>
+              <Button>CANCEL</Button>
+            </Dialog.Close>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
-});
+};
