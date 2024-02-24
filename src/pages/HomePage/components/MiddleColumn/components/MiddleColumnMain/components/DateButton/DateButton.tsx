@@ -10,13 +10,13 @@ interface DateButtonProps {
 }
 
 export const DateButton: React.FC<DateButtonProps> = ({ date }) => {
-  const { locale } = useIntl();
+  const intl = useIntl();
   const socket = useSocket();
 
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(date);
 
-  const { dayNumber, dayShort, month } = createDate({ date, locale });
+  const { dayNumber, dayShort, month } = createDate({ date: selectedDate, locale: intl.locale });
 
   return (
     <Dialog.Root
@@ -61,10 +61,10 @@ export const DateButton: React.FC<DateButtonProps> = ({ date }) => {
                 }
               }}
             >
-              TO DATE
+              {intl.t('page.home.middleColumn.dateDialog.jumpToDate')}
             </Button>
             <Dialog.Close asChild>
-              <Button>CANCEL</Button>
+              <Button>{intl.t('page.home.middleColumn.dateDialog.cancel')}</Button>
             </Dialog.Close>
           </div>
         </Dialog.Content>

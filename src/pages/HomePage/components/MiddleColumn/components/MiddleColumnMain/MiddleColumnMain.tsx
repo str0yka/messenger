@@ -77,7 +77,7 @@ export const MiddleColumnMain = () => {
                         }}
                         className="rounded bg-primary-700/25 text-center text-sm font-medium text-white"
                       >
-                        Unreaded messages
+                        {state.intl.t('page.home.middleColumn.unreadedMessages')}
                       </div>
                     )}
                   </Fragment>
