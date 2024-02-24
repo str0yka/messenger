@@ -13,12 +13,19 @@ export const DateButton: React.FC<DateButtonProps> = ({ date }) => {
   const { locale } = useIntl();
   const socket = useSocket();
 
+  const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(date);
 
   const { dayNumber, dayShort, month } = createDate({ date, locale });
 
   return (
-    <Dialog.Root>
+    <Dialog.Root
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) setSelectedDate(date);
+        setOpen(isOpen);
+      }}
+    >
       <Dialog.Trigger asChild>
         <button
           className="sticky top-2 select-none self-center rounded-3xl bg-neutral-950/40 px-2 py-1 text-sm font-medium text-neutral-50"
@@ -36,6 +43,9 @@ export const DateButton: React.FC<DateButtonProps> = ({ date }) => {
           <Calendar
             className="mb-4 mt-4"
             mode="single"
+            defaultMonth={selectedDate}
+            toMonth={new Date()}
+            disabled={{ after: new Date() }}
             selected={selectedDate}
             onSelect={setSelectedDate}
           />
@@ -43,6 +53,7 @@ export const DateButton: React.FC<DateButtonProps> = ({ date }) => {
             <Button
               onClick={() => {
                 if (selectedDate) {
+                  setOpen(false);
                   socket.emit('CLIENT:JUMP_TO_DATE', {
                     timestamp: selectedDate.valueOf(),
                     take: 80,

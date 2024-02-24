@@ -28,6 +28,10 @@ interface ServerToClientEvents {
   'SERVER:MESSAGE_DELETE': (message: Message) => void;
   'SERVER:MESSAGES_PUT': (messages: Message[]) => void;
   'SERVER:MESSAGES_PATCH': (messages: Message[]) => void;
+  'SERVER:JUMP_TO_DATE_RESPONSE': (params: {
+    messages: Message[];
+    firstFoundMessage: Message;
+  }) => void;
 }
 
 interface ClientToServerEvents {

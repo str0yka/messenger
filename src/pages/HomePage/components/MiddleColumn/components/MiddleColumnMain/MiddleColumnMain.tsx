@@ -47,6 +47,7 @@ export const MiddleColumnMain = () => {
               {dateGroup.messages.map((message) => {
                 const isLastUnreadMessage =
                   refs.lastUnreadMessageRef.current.message?.id === message.id;
+                const isFirstFoundMessage = state.scrollToMessage?.id === message.id;
 
                 const onClickCopy = () => navigator.clipboard.writeText(message.message).catch();
                 const onClickDelete = () => functions.setDeleteMessage(message);
@@ -58,7 +59,14 @@ export const MiddleColumnMain = () => {
                       onClickDelete={onClickDelete}
                       showDeleteButton={message.userId === state.user?.id}
                     >
-                      <MessageItem message={message} />
+                      <MessageItem
+                        ref={(node) => {
+                          if (isFirstFoundMessage) {
+                            refs.scrollToMessageNodeRef.current = node;
+                          }
+                        }}
+                        message={message}
+                      />
                     </MessageContextMenu>
                     {isLastUnreadMessage && (
                       <div

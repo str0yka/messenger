@@ -19,6 +19,7 @@ export const Calendar = ({ classNames, showOutsideDays = true, ...props }: Calen
         'flex h-9 w-9 items-center justify-center rounded-full text-neutral-400',
         'hover:bg-neutral-700/50',
         'active:bg-neutral-700/75',
+        'disabled:hidden',
       ),
       nav_button_previous: 'absolute left-0',
       nav_button_next: 'absolute right-0',
@@ -36,7 +37,7 @@ export const Calendar = ({ classNames, showOutsideDays = true, ...props }: Calen
       day_selected: cn('bg-primary-400', 'hover:bg-primary-500'),
       day_today: 'bg-neutral-700/50',
       day_outside: 'opacity-50 aria-selected:bg-primary-400/50',
-      day_disabled: 'opacity-50',
+      day_disabled: 'opacity-50 pointer-events-none',
       day_range_start:
         'rounded-r-3xl aria-selected:bg-primary-400 aria-selected:hover:bg-primary-500',
       day_range_middle:

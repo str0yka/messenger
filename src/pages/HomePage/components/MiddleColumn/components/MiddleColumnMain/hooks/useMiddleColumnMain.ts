@@ -15,14 +15,16 @@ export const useMiddleColumnMain = () => {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [deleteMessage, setDeleteMessage] = useState<Message | null>(null);
+  const [scrollToMessage, setScrollToMessage] = useState<Message | null>(null);
 
   const lastMessageRef = useRef<Message | null>(null);
   const lastUnreadMessageRef = useRef<{ message: Message | null; node: HTMLElement | null }>({
     message: null,
     node: null,
   });
-  const chatNodeRef = useRef<HTMLDivElement>(null);
-  const scrollDownNodeRef = useRef<HTMLDivElement>(null);
+  const scrollToMessageNodeRef = useRef<HTMLDivElement | null>(null);
+  const chatNodeRef = useRef<HTMLDivElement | null>(null);
+  const scrollDownNodeRef = useRef<HTMLDivElement | null>(null);
 
   const isDeleteMessageDialogOpen = !!deleteMessage;
 
@@ -100,6 +102,13 @@ export const useMiddleColumnMain = () => {
     });
   };
 
+  useLayoutEffect(() => {
+    if (scrollToMessage) {
+      scrollToMessageNodeRef.current?.scrollIntoView({ block: 'center' });
+      setScrollToMessage(null);
+    }
+  }, [scrollToMessage]);
+
   useEffect(() => {
     const onDialogJoinResponse: ServerToClientEvents['SERVER:DIALOG_JOIN_RESPONSE'] = (data) => {
       console.log('[SERVER:DIALOG_JOIN_RESPONSE]: ', data);
@@ -152,11 +161,18 @@ export const useMiddleColumnMain = () => {
       setMessages((prevMessages) => prevMessages.filter((message) => message.id !== msg.id));
     };
 
+    const onJumpToDateResponse: ServerToClientEvents['SERVER:JUMP_TO_DATE_RESPONSE'] = (data) => {
+      console.log('[SERVER:JUMP_TO_DATE_RESPONSE]: ', data);
+      setMessages(data.messages);
+      setScrollToMessage(data.firstFoundMessage);
+    };
+
     socket.on('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
     socket.on('SERVER:MESSAGE_DELETE', onMessageDelete);
     socket.on('SERVER:MESSAGE_ADD', onMessageAdd);
     socket.on('SERVER:MESSAGES_PATCH', onMessagesPatch);
     socket.on('SERVER:MESSAGES_PUT', onMessagesPut);
+    socket.on('SERVER:JUMP_TO_DATE_RESPONSE', onJumpToDateResponse);
 
     return () => {
       setMessages([]);
@@ -166,6 +182,7 @@ export const useMiddleColumnMain = () => {
       socket.on('SERVER:MESSAGE_ADD', onMessageAdd);
       socket.off('SERVER:MESSAGES_PATCH', onMessagesPatch);
       socket.off('SERVER:MESSAGES_PUT', onMessagesPut);
+      socket.off('SERVER:JUMP_TO_DATE_RESPONSE', onJumpToDateResponse);
     };
   }, [partnerId]);
 
@@ -227,6 +244,7 @@ export const useMiddleColumnMain = () => {
       messages,
       deleteMessage,
       isDeleteMessageDialogOpen,
+      scrollToMessage,
     },
     functions: {
       setDeleteMessage,
@@ -241,6 +259,7 @@ export const useMiddleColumnMain = () => {
       scrollDownNodeRef,
       lastUnreadMessageRef,
       lastMessageRef,
+      scrollToMessageNodeRef,
     },
   };
 };
