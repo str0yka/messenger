@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 import { Button, Checkbox, Dialog } from '~/components/common';
 import { useIntl } from '~/features/i18n';
@@ -22,9 +22,10 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
         <Dialog.Content className="w-72 rounded-xl bg-neutral-800 p-4">
           <form
             className="flex flex-col gap-2"
-            onSubmit={deleteMessageForm.handleSubmit(({ deleteForEveryone }) =>
-              onDelete(deleteForEveryone),
-            )}
+            onSubmit={deleteMessageForm.handleSubmit(({ deleteForEveryone }) => {
+              console.log(deleteForEveryone);
+              onDelete(deleteForEveryone);
+            })}
           >
             <Dialog.Title>
               {intl.t('page.home.middleColumn.deleteMessageDialog.title')}
@@ -35,7 +36,16 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
                 'hover:bg-neutral-700/50',
               )}
             >
-              <Checkbox {...deleteMessageForm.register('deleteForEveryone')} />
+              <Controller
+                name="deleteForEveryone"
+                control={deleteMessageForm.control}
+                render={({ field }) => (
+                  <Checkbox
+                    checked={field.value as boolean}
+                    onCheckedChange={field.onChange}
+                  />
+                )}
+              />
               <span className="font-medium">
                 {intl.t('page.home.middleColumn.deleteMessageDialog.deleteForEveryone')}
               </span>

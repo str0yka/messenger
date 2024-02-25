@@ -119,6 +119,11 @@ export const useMiddleColumnMain = () => {
       lastMessageInChatRef.current = data.lastMessage;
     };
 
+    const onDialogGetResponse: ServerToClientEvents['SERVER:DIALOG_GET_RESPONSE'] = (data) => {
+      console.log('[SERVER:DIALOG_GET_RESPONSE]: ', data);
+      lastMessageInChatRef.current = data.lastMessage;
+    };
+
     const onMessagesPut: ServerToClientEvents['SERVER:MESSAGES_PUT'] = (msgs) => {
       console.log('[SERVER:MESSAGES_PUT]: ', msgs);
       setMessages(msgs);
@@ -166,6 +171,7 @@ export const useMiddleColumnMain = () => {
     };
 
     socket.on('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
+    socket.on('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
     socket.on('SERVER:MESSAGE_DELETE', onMessageDelete);
     socket.on('SERVER:MESSAGE_ADD', onMessageAdd);
     socket.on('SERVER:MESSAGES_PATCH', onMessagesPatch);
@@ -176,6 +182,7 @@ export const useMiddleColumnMain = () => {
       setMessages([]);
 
       socket.off('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
+      socket.off('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
       socket.off('SERVER:MESSAGE_DELETE', onMessageDelete);
       socket.off('SERVER:MESSAGE_ADD', onMessageAdd);
       socket.off('SERVER:MESSAGES_PATCH', onMessagesPatch);

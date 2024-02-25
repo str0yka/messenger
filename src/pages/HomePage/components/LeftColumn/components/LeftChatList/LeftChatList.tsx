@@ -22,7 +22,7 @@ export const LeftChatList = () => {
     };
 
     const onDialogsNeedToUpdate: ServerToClientEvents['SERVER:DIALOGS_NEED_TO_UPDATE'] = () => {
-      console.log('[SERVER:DIALOGS_NEED_TO_UPDATE]: ');
+      console.log('[SERVER:DIALOGS_NEED_TO_UPDATE]');
       socket.emit('CLIENT:DIALOGS_GET');
     };
 
