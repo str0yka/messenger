@@ -47,6 +47,9 @@
   "page.home.middleColumn.deleteMessageDialog.deleteForEveryone": "Удалить у всех",
   "page.home.middleColumn.deleteMessageDialog.cancel": "ЗАКРЫТЬ",
   "page.home.middleColumn.deleteMessageDialog.delete": "УДАЛИТЬ",
+  "page.home.middleColumn.dateDialog.jumpToDate": "К ДАТЕ",
+  "page.home.middleColumn.dateDialog.cancel": "ЗАКРЫТЬ",
+  "page.home.middleColumn.unreadedMessages": "Непрочитанные сообщения",
 
   "page.home.settings": "Настройки",
   "page.home.theme": "Тема",

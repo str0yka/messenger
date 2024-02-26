@@ -47,6 +47,9 @@
   "page.home.middleColumn.deleteMessageDialog.deleteForEveryone": "Also delete for everyone",
   "page.home.middleColumn.deleteMessageDialog.cancel": "CANCEL",
   "page.home.middleColumn.deleteMessageDialog.delete": "DELETE",
+  "page.home.middleColumn.dateDialog.jumpToDate": "TO DATE",
+  "page.home.middleColumn.dateDialog.cancel": "CANCEL",
+  "page.home.middleColumn.unreadedMessages": "Unreaded messages",
 
   "page.home.settings": "Settings",
   "page.home.theme": "Theme",

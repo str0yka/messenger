@@ -1,6 +1,5 @@
 export * from './DeleteMessageDialog/DeleteMessageDialog';
 export * from './DateButton/DateButton';
-export * from './DateDialog/DateDialog';
 export * from './IncomingMessage/IncomingMessage';
 export * from './MessageContextMenu/MessageContextMenu';
 export * from './MessageItem/MessageItem';

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
 import { Observer } from '~/components';
 import { useUserStore } from '~/utils/store';
@@ -11,7 +11,10 @@ interface MessageItemProps {
   message: Message;
 }
 
-export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
+export const MessageItem = forwardRef<
+  React.ElementRef<typeof OutcomingMessage | typeof IncomingMessage>,
+  MessageItemProps
+>(({ message }, ref) => {
   const user = useUserStore((state) => state.user);
   const socket = useSocket();
 
@@ -33,9 +36,21 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
     };
   }, []);
 
-  if (isSentByUser) return <OutcomingMessage message={message} />;
+  if (isSentByUser)
+    return (
+      <OutcomingMessage
+        ref={ref}
+        message={{ ...message, read: isRead }}
+      />
+    );
 
-  if (isRead) return <IncomingMessage message={message} />;
+  if (isRead)
+    return (
+      <IncomingMessage
+        ref={ref}
+        message={{ ...message, read: isRead }}
+      />
+    );
 
   return (
     <Observer
@@ -45,7 +60,10 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         }
       }}
     >
-      <IncomingMessage message={message} />
+      <IncomingMessage
+        ref={ref}
+        message={{ ...message, read: isRead }}
+      />
     </Observer>
   );
-};
+});
