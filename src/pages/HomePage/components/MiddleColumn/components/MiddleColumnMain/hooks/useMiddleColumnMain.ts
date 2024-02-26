@@ -83,15 +83,20 @@ export const useMiddleColumnMain = () => {
   };
 
   const onClickScrollDownButton = () => {
-    socket.emit('CLIENT:MESSAGES_GET', {
-      filter: {
-        take: MAX_NUMBER_OF_MESSAGES,
-        orderBy: {
-          createdAt: 'desc',
+    if (
+      !lastMessageInChatRef.current ||
+      !messages.find((message) => lastMessageInChatRef.current?.id === message.id)
+    ) {
+      socket.emit('CLIENT:MESSAGES_GET', {
+        filter: {
+          take: MAX_NUMBER_OF_MESSAGES,
+          orderBy: {
+            createdAt: 'desc',
+          },
         },
-      },
-      method: 'PUT',
-    });
+        method: 'PUT',
+      });
+    }
 
     chatNodeRef.current?.scrollTo({
       top: chatNodeRef.current.scrollHeight,

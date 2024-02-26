@@ -1,4 +1,5 @@
 import cn from 'classnames';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
@@ -50,7 +51,7 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
   return (
     <aside
       className={cn(
-        'flex flex-col border-r border-r-neutral-700 bg-neutral-800',
+        'flex w-screen flex-col border-r border-r-neutral-700 bg-neutral-800',
         'lg:min-w-[400px] lg:max-w-[400px]',
         '2xl:min-w-[450px] 2xl:max-w-[450px]',
         {
@@ -62,9 +63,15 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
         {mode === 'chatList' && (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <IconButton aria-label="Customise options">
-                <IconHamburgerMenu />
-              </IconButton>
+              <motion.div
+                initial={{ rotate: 180 }}
+                animate={{ rotate: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <IconButton aria-label="Customise options">
+                  <IconHamburgerMenu className="h-6 w-6" />
+                </IconButton>
+              </motion.div>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content
               className="w-56"
@@ -122,9 +129,15 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
           </DropdownMenu.Root>
         )}
         {mode === 'searchList' && (
-          <IconButton onClick={onCloseSearchList}>
-            <IconChevronLeft />
-          </IconButton>
+          <motion.div
+            initial={{ rotate: -180 }}
+            animate={{ rotate: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <IconButton onClick={onCloseSearchList}>
+              <IconChevronLeft className="h-6 w-6" />
+            </IconButton>
+          </motion.div>
         )}
         <div className="grow">
           <Controller
@@ -142,13 +155,22 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
           />
         </div>
       </div>
-      {mode === 'chatList' && <LeftChatList />}
-      {mode === 'searchList' && (
-        <LeftSearchList
-          query={debouncedQuery}
-          onClose={onCloseSearchList}
-        />
-      )}
+      <motion.div
+        key={mode}
+        className="flex grow flex-col overflow-auto"
+        initial={{ y: 10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -10, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        {mode === 'chatList' && <LeftChatList />}
+        {mode === 'searchList' && (
+          <LeftSearchList
+            query={debouncedQuery}
+            onClose={onCloseSearchList}
+          />
+        )}
+      </motion.div>
     </aside>
   );
 };

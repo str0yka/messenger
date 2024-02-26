@@ -26,16 +26,16 @@ interface ServerToClientEvents {
   'SERVER:DIALOG_NEED_TO_UPDATE': () => void;
   'SERVER:MESSAGE_ADD': (message: Message) => void;
   'SERVER:MESSAGE_DELETE': (message: Message) => void;
-  'SERVER:MESSAGES_PUT': (messages: Message[]) => void;
-  'SERVER:MESSAGES_PATCH': (messages: Message[]) => void;
   'SERVER:JUMP_TO_DATE_RESPONSE': (params: {
     messages: Message[];
     firstFoundMessage: Message;
   }) => void;
+  'SERVER:MESSAGES_PUT': (messages: Message[]) => void;
+  'SERVER:MESSAGES_PATCH': (messages: Message[]) => void;
 }
 
 interface ClientToServerEvents {
-  'CLIENT:DIALOG_JOIN': (params: { partnerId: number }) => void;
+  'CLIENT:DIALOG_JOIN': (params: { partnerId: number; messagesLimit?: number }) => void;
   'CLIENT:DIALOG_GET': () => void;
   'CLIENT:DIALOGS_GET': () => void;
   'CLIENT:MESSAGE_READ': (params: { readMessage: Message }) => void;
@@ -56,6 +56,7 @@ interface ClientToServerEvents {
   }) => void;
   'CLIENT:JUMP_TO_DATE': (params: { timestamp: number; take: number }) => void;
 }
+
 namespace IO {
   type Socket = import('socket.io-client').Socket<ServerToClientEvents, ClientToServerEvents>;
   type Server = import('socket.io-client').Server<ServerToClientEvents, ClientToServerEvents>;

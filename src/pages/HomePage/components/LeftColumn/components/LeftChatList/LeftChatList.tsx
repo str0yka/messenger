@@ -4,12 +4,13 @@ import { Link } from 'react-router-dom';
 import { PRIVATE_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
-import { useSocket } from '../../../../contexts';
+import { useDialog, useSocket } from '../../../../contexts';
 import { ChatItem } from '../ChatItem/ChatItem';
 
 export const LeftChatList = () => {
   const user = useUserStore((state) => state.user);
   const socket = useSocket();
+  const activeDialog = useDialog();
 
   const [dialogs, setDialogs] = useState<
     Parameters<ServerToClientEvents['SERVER:DIALOGS_PUT']>['0']['dialogs']
@@ -48,6 +49,7 @@ export const LeftChatList = () => {
               lastMessage={dialog.lastMessage}
               lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
               unreadedMessagesCount={dialog.unreadedMessagesCount}
+              active={activeDialog?.id === dialog.dialog.id}
             />
           </Link>
         </li>

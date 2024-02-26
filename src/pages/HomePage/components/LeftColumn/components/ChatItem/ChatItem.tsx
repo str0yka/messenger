@@ -11,6 +11,7 @@ interface ChatItemProps {
   lastMessage?: Message | null;
   lastMessageSentByUser?: boolean;
   unreadedMessagesCount?: number;
+  active?: boolean;
 }
 
 export const ChatItem: React.FC<ChatItemProps> = ({
@@ -19,16 +20,17 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   lastMessage,
   lastMessageSentByUser,
   unreadedMessagesCount,
+  active,
 }) => {
   const intl = useIntl();
 
   return (
     <div
-      className={cn(
-        'flex cursor-pointer select-none gap-2 rounded-lg p-2',
-        'hover:bg-neutral-700/50',
-        'active:bg-neutral-600/50',
-      )}
+      className={cn('flex cursor-pointer select-none gap-2 rounded-lg p-2', {
+        'bg-primary-400': active,
+        'hover:bg-neutral-700/50': !active,
+        'active:bg-neutral-600/50': !active,
+      })}
     >
       <Avatar
         className="h-14 w-14"
@@ -36,10 +38,22 @@ export const ChatItem: React.FC<ChatItemProps> = ({
       />
       <div className="flex min-w-[0] grow flex-col">
         <div className="flex items-center gap-2">
-          <h2 className="grow truncate font-semibold text-neutral-50">{title}</h2>
+          <h2
+            className={cn('grow truncate font-semibold', {
+              'text-neutral-50': !active,
+              'text-white': active,
+            })}
+          >
+            {title}
+          </h2>
           {lastMessage && (
             <>
-              <p className="text-xs text-neutral-400">
+              <p
+                className={cn('shrink-0 text-xs font-medium text-neutral-400', {
+                  'text-white': active,
+                  'text-neutral-400': !active,
+                })}
+              >
                 {(() => {
                   const date = new Date(lastMessage.createdAt);
                   const { hours, minutes } = formatTime(date);
@@ -48,16 +62,33 @@ export const ChatItem: React.FC<ChatItemProps> = ({
                 })()}
               </p>
               {lastMessageSentByUser && lastMessage.read && (
-                <IconDoubleCheck className="w-4 text-neutral-100" />
+                <IconDoubleCheck
+                  className={cn('w-4', {
+                    'text-neutral-50': !active,
+                    'text-white': active,
+                  })}
+                />
               )}
               {lastMessageSentByUser && !lastMessage.read && (
-                <IconCheck className="w-4 text-neutral-100" />
+                <IconCheck
+                  className={cn('w-4', {
+                    'text-neutral-50': !active,
+                    'text-white': active,
+                  })}
+                />
               )}
             </>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <p className="grow truncate text-neutral-400">{lastMessage?.message}</p>
+          <p
+            className={cn('grow truncate font-medium', {
+              'text-neutral-400': !active,
+              'text-white/90': active,
+            })}
+          >
+            {lastMessage?.message}
+          </p>
           {!!unreadedMessagesCount && (
             <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-400 text-xs font-medium text-white">
               {unreadedMessagesCount}
