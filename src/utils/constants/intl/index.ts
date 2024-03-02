@@ -13,10 +13,12 @@ export const LANGUAGE: Record<keyof typeof LOCALE, Language> = {
   RU: {
     locale: 'ru-RU',
     name: 'Русский',
+    englishName: 'Russian',
   },
   EN: {
     locale: 'en-US',
     name: 'English',
+    englishName: 'English',
   },
 } as const;
 

@@ -1,3 +1,3 @@
-export * from './LeftSearchList/LeftSearchList';
-export * from './LeftChatList/LeftChatList';
-export * from './ChatItem/ChatItem';
+export * from './LeftColumnMainTab/LeftColumnMainTab';
+export * from './LeftColumnSettingsTab/LeftColumnSettingsTab';
+export * from './LeftColumnLanguageTab/LeftColumnLanguageTab';

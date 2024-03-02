@@ -18,3 +18,8 @@ export * from './IconPaperPlane';
 export * from './IconPapers';
 export * from './IconSmilingFace';
 export * from './IconTrash';
+export * from './IconPencil';
+export * from './IconDotsVertical';
+export * from './IconEnvelopeClosed';
+export * from './IconAtSign';
+export * from './IconTranslate';
