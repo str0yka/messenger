@@ -1,17 +1,11 @@
 import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 
 import { Input, Button, Link, Alert } from '~/components/common';
 import { IconChevronLeft } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
-import { postVerifyById } from '~/utils/api';
-import type {
-  PostVerifyByIdFailureResponse,
-  PostVerifyByIdSuccessResponse,
-  VerifyByIdParams,
-} from '~/utils/api';
+import { useVerifyByIdMutation } from '~/utils/api';
 import { ACCESS_TOKEN_LOCAL_STORAGE_KEY, PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
@@ -22,13 +16,7 @@ export const VerifyPage = () => {
     useShallow((state) => ({ user: state.user, setUser: state.setUser })),
   );
 
-  const verifyMutation = useMutation<
-    PostVerifyByIdSuccessResponse,
-    PostVerifyByIdFailureResponse,
-    VerifyByIdParams
-  >({
-    mutationKey: 'VerifyPageVerifyMutation',
-    mutationFn: postVerifyById,
+  const verifyMutation = useVerifyByIdMutation({
     onSuccess: (data) => {
       localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, data.accessToken);
       setUser(data.user);
@@ -36,7 +24,7 @@ export const VerifyPage = () => {
     },
   });
 
-  const verifyForm = useForm<VerifyByIdParams['body']>();
+  const verifyForm = useForm<{ verificationCode: string }>();
 
   if (!user) {
     return <Navigate to={PUBLIC_ROUTE.HOME} />;
@@ -66,9 +54,11 @@ export const VerifyPage = () => {
         </p>
         <form
           className="flex w-full flex-col gap-4"
-          onSubmit={verifyForm.handleSubmit(async (values) => {
+          onSubmit={verifyForm.handleSubmit(async ({ verificationCode }) => {
             try {
-              await verifyMutation.mutateAsync({ userId: (user as User).id, body: values });
+              await verifyMutation.mutateAsync({
+                params: { userId: (user as User).id, verificationCode },
+              });
             } catch {
               console.log('Error'); // $FIXME
             }

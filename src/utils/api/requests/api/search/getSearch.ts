@@ -1,6 +1,6 @@
 import { $api } from '~/utils/api';
 
-export interface SearchParams<SearchType extends ApiSearchType> {
+export interface GetSearchParams<SearchType extends ApiSearchType> {
   query: string;
   type: SearchType;
   limit?: number;
@@ -18,17 +18,19 @@ export type GetSearchSuccessResponse<SearchType extends ApiSearchType> = SearchT
 
 export type GetSearchFailureResponse = ApiErrorResponse;
 
+export type GetSearchRequestConfig<SearchType extends ApiSearchType> = RequestConfig<
+  GetSearchParams<SearchType>
+>;
+
 export const getSearch = async <SearchType extends ApiSearchType>({
-  type,
-  query,
-  limit,
-  page,
-}: SearchParams<SearchType>) => {
+  params: { query, type, limit, page },
+  config,
+}: GetSearchRequestConfig<SearchType>) => {
   const searchParams = new URLSearchParams({ type, query });
   if (limit) searchParams.set('limit', limit.toString());
   if (page) searchParams.set('page', page.toString());
 
   return $api
-    .get<GetSearchSuccessResponse<SearchType>>(`/search?${searchParams.toString()}`)
+    .get<GetSearchSuccessResponse<SearchType>>(`/search?${searchParams.toString()}`, config)
     .then((res) => res.data);
 };

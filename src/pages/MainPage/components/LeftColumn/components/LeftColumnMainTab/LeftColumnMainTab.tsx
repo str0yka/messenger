@@ -1,15 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
 
 import { DropdownMenu, IconButton, Input } from '~/components/common';
 import { IconChevronLeft, IconHamburgerMenu, IconMagnifyingGlass } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
-import { useTheme } from '~/features/theme';
-import { postLogout } from '~/utils/api';
-import type { PostLogoutSuccessResponse, PostLogoutFailureResponse } from '~/utils/api';
-import { EXTENDED_THEMES, LANGUAGES } from '~/utils/constants';
+import { useLogoutMutation } from '~/utils/api';
 import { useDebounce } from '~/utils/hooks';
 import { useUserStore } from '~/utils/store';
 
@@ -20,20 +16,13 @@ import { LeftChatList, LeftSearchList } from './components';
 
 export const LeftColumnMainTab = () => {
   const intl = useIntl();
-  const { theme, setTheme } = useTheme();
   const resetUser = useUserStore((state) => state.resetUser);
 
   const setTab = useSetTab();
 
   const [mode, setMode] = useState<'chatList' | 'searchList'>('chatList');
 
-  const logoutMutation = useMutation<PostLogoutSuccessResponse, PostLogoutFailureResponse>({
-    mutationKey: 'LeftColumnLogoutMutation',
-    mutationFn: postLogout,
-    onSuccess: () => {
-      resetUser();
-    },
-  });
+  const logoutMutation = useLogoutMutation({ onSuccess: resetUser });
 
   const searchForm = useForm({
     defaultValues: {
@@ -70,53 +59,11 @@ export const LeftColumnMainTab = () => {
             >
               <DropdownMenu.Label>{intl.t('page.home.settings')}</DropdownMenu.Label>
               <DropdownMenu.Separator />
-              <DropdownMenu.Sub>
-                <DropdownMenu.SubTrigger>Language</DropdownMenu.SubTrigger>
-                <DropdownMenu.SubContent>
-                  <DropdownMenu.RadioGroup
-                    value={intl.locale}
-                    onValueChange={(value) => intl.setLocale(value as Locale)}
-                  >
-                    {LANGUAGES.map((language) => (
-                      <DropdownMenu.RadioItem
-                        key={language.locale}
-                        value={language.locale}
-                      >
-                        {language.name}
-                      </DropdownMenu.RadioItem>
-                    ))}
-                  </DropdownMenu.RadioGroup>
-                </DropdownMenu.SubContent>
-              </DropdownMenu.Sub>
-              <DropdownMenu.Sub>
-                <DropdownMenu.SubTrigger>{intl.t('page.home.theme')}</DropdownMenu.SubTrigger>
-                <DropdownMenu.SubContent>
-                  <DropdownMenu.RadioGroup
-                    value={theme}
-                    onValueChange={(value) => setTheme(value as Theme)}
-                  >
-                    {EXTENDED_THEMES.map((extendedTheme) => (
-                      <DropdownMenu.RadioItem
-                        key={extendedTheme.theme}
-                        className="flex gap-1"
-                        value={extendedTheme.theme}
-                      >
-                        <div className={`h-4 w-4 rounded-full ${extendedTheme.tailwind.bg}`} />
-                        <div
-                          className={`h-4 w-4 rounded-full ${
-                            extendedTheme.mode === 'light' ? 'bg-white' : 'bg-black'
-                          }`}
-                        />
-                      </DropdownMenu.RadioItem>
-                    ))}
-                  </DropdownMenu.RadioGroup>
-                </DropdownMenu.SubContent>
-              </DropdownMenu.Sub>
               <DropdownMenu.Item onClick={() => setTab(TAB.SETTINGS)}>
                 {intl.t('page.home.leftColumn.settings')}
               </DropdownMenu.Item>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item onClick={() => logoutMutation.mutate()}>
+              <DropdownMenu.Item onClick={() => logoutMutation.mutateAsync({})}>
                 {intl.t('page.home.logOut')}
               </DropdownMenu.Item>
             </DropdownMenu.Content>

@@ -4,5 +4,7 @@ export type PostLogoutSuccessResponse = Record<string, never>;
 
 export type PostLogoutFailureResponse = ApiErrorResponse;
 
-export const postLogout = async () =>
-  $api.post<PostLogoutSuccessResponse>('/logout').then((res) => res.data);
+export type PostLogoutRequestConfig = RequestConfig;
+
+export const postLogout = async ({ config }: PostLogoutRequestConfig) =>
+  $api.post<PostLogoutSuccessResponse>('/logout', {}, config).then((res) => res.data);

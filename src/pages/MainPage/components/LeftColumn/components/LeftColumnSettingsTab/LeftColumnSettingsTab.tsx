@@ -1,5 +1,4 @@
 import cn from 'classnames';
-import { useMutation } from 'react-query';
 
 import { DropdownMenu, IconButton } from '~/components/common';
 import {
@@ -13,8 +12,7 @@ import {
   IconTranslate,
 } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
-import { postLogout } from '~/utils/api';
-import type { PostLogoutSuccessResponse, PostLogoutFailureResponse } from '~/utils/api';
+import { useLogoutMutation } from '~/utils/api';
 import { getLanguage } from '~/utils/helpers';
 import { useExtendedTheme } from '~/utils/hooks';
 import { useUserStore } from '~/utils/store';
@@ -29,13 +27,7 @@ export const LeftColumnSettingsTab = () => {
 
   const setTab = useSetTab();
 
-  const logoutMutation = useMutation<PostLogoutSuccessResponse, PostLogoutFailureResponse>({
-    mutationKey: 'LeftColumnLogoutMutation',
-    mutationFn: postLogout,
-    onSuccess: () => {
-      resetUser();
-    },
-  });
+  const logoutMutation = useLogoutMutation({ onSuccess: resetUser });
 
   const language = getLanguage(intl.locale);
 
@@ -58,7 +50,7 @@ export const LeftColumnSettingsTab = () => {
             </IconButton>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content align="end">
-            <DropdownMenu.Item onClick={() => logoutMutation.mutate()}>
+            <DropdownMenu.Item onClick={() => logoutMutation.mutateAsync({})}>
               {intl.t('page.home.logOut')}
             </DropdownMenu.Item>
           </DropdownMenu.Content>

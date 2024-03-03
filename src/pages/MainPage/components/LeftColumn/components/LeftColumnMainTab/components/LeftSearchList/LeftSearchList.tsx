@@ -1,10 +1,9 @@
 import cn from 'classnames';
 import { useEffect } from 'react';
-import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 
 import { useIntl } from '~/features/i18n';
-import { getSearch } from '~/utils/api';
+import { useSearchQuery } from '~/utils/api';
 import { PRIVATE_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
@@ -19,20 +18,14 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
   const user = useUserStore((state) => state.user);
   const intl = useIntl();
 
-  const searchDialogsQuery = useQuery({
-    queryKey: 'LeftSearchListSearchDialogsQuery',
-    queryFn: () => getSearch({ query, type: 'dialog', limit: 5 }),
-    initialData: [],
-    enabled: false,
-    retry: false,
+  const searchDialogsQuery = useSearchQuery({
+    params: { query, type: 'dialog', limit: 5 },
+    options: { queryKey: ['searchDialogsQuery'], initialData: [], enabled: false, retry: false },
   });
 
-  const searchUsersQuery = useQuery({
-    queryKey: 'LeftSearchListSearchUsersQuery',
-    queryFn: () => getSearch({ query, type: 'user', limit: 5 }),
-    initialData: [],
-    enabled: false,
-    retry: false,
+  const searchUsersQuery = useSearchQuery({
+    params: { query, type: 'user', limit: 5 },
+    options: { queryKey: ['searchUsersQuery'], initialData: [], enabled: false, retry: false },
   });
 
   useEffect(() => {
