@@ -1,4 +1,9 @@
 {
+  "theme.violet-dark": "Фиалковая тёмная",
+  "theme.violet-light": "Фиалковая светлая",
+  "theme.sky-light": "Небесная светлая",
+  "theme.sky-dark": "Небесная тёмная",
+
   "button.logIn": "Войти",
   "button.register": "Зарегистрироваться",
   "button.verify": "Подтвердить",

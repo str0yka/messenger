@@ -1,4 +1,9 @@
 {
+  "theme.violet-dark": "Violet Dark",
+  "theme.violet-light": "Violet Light",
+  "theme.sky-light": "Sky Light",
+  "theme.sky-dark": "Sky Dark",
+
   "button.logIn": "Log in",
   "button.register": "Register",
   "button.verify": "Verify",

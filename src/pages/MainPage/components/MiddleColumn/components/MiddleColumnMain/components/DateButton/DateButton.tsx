@@ -2,8 +2,9 @@ import { useState } from 'react';
 
 import { Button, Calendar, Dialog } from '~/components/common';
 import { useIntl } from '~/features/i18n';
-import { useSocket } from '~/pages/MainPage/contexts';
 import { createDate } from '~/utils/helpers';
+
+import { useSocket } from '../../../../../../contexts';
 
 interface DateButtonProps {
   date: Date;
