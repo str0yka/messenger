@@ -67,7 +67,16 @@ export const LeftColumnProfileTab = () => {
             <Input
               s="l"
               placeholder={intl.t('page.home.leftColumn.settings.name')}
-              {...updateProfileForm.register('name')}
+              {...updateProfileForm.register('name', {
+                required: {
+                  value: true,
+                  message: intl.t('page.home.leftColumn.settings.profile.name.required'),
+                },
+                maxLength: {
+                  value: 25,
+                  message: intl.t('page.home.leftColumn.settings.profile.name.maxLength'),
+                },
+              })}
               {...(updateProfileForm.formState.errors.name && {
                 error: true,
                 helperText: updateProfileForm.formState.errors.name.message,

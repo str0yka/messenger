@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useIntl } from '~/features/i18n';
 import { useSearchQuery } from '~/utils/api';
 import { PRIVATE_ROUTE } from '~/utils/constants';
-import { getUserName } from '~/utils/helpers';
+import { getUserLink, getUserName } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { ChatItem } from '../ChatItem/ChatItem';
@@ -66,7 +66,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
           {searchDialogsQuery.data.map((dialog) => (
             <Link
               key={dialog.id}
-              to={PRIVATE_ROUTE.USER(dialog.partnerId)}
+              to={PRIVATE_ROUTE.USER(getUserLink(dialog.partner))}
               onClick={onClose}
             >
               <ChatItem
@@ -97,7 +97,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
           {searchUsersQuery.data.map((searchUser) => (
             <Link
               key={searchUser.id}
-              to={PRIVATE_ROUTE.USER(searchUser.id)}
+              to={PRIVATE_ROUTE.USER(getUserLink(searchUser))}
               onClick={onClose}
             >
               <ChatItem

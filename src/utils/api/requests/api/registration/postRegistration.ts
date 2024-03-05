@@ -1,6 +1,7 @@
 import { $api } from '~/utils/api';
 
 export interface PostRegistrationParams {
+  name: string;
   email: string;
   password: string;
 }

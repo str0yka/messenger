@@ -1,1 +1,2 @@
-export * from './getUsername';
+export * from './getUserLink';
+export * from './getUserName';

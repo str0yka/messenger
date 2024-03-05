@@ -2,7 +2,6 @@ import cn from 'classnames';
 import { Fragment } from 'react';
 
 import { Observer } from '~/components';
-import { CircularProgress } from '~/components/common';
 
 import {
   DateButton,
@@ -96,11 +95,6 @@ export const MiddleColumnMain = () => {
               }}
               observe={functions.observeUpperBorder}
             />
-          </div>
-        )}
-        {!state.messages.length && (
-          <div className="flex h-full items-center justify-center">
-            <CircularProgress />
           </div>
         )}
       </div>

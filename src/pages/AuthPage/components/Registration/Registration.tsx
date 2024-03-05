@@ -22,7 +22,7 @@ export const Registration = () => {
   });
 
   const registerForm = useForm<PostRegistrationParams>({
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: '', password: '', name: '' },
   });
 
   return (
@@ -47,6 +47,21 @@ export const Registration = () => {
           }
         })}
       >
+        <Input
+          placeholder={intl.t('input.label.name')}
+          type="text"
+          disabled={registerForm.formState.isSubmitting}
+          error={!!registerForm.formState.errors.name?.message}
+          helperText={registerForm.formState.errors.name?.message}
+          rounded
+          {...registerForm.register('name', {
+            required: intl.t('page.auth.registration.input.name.helperText.required'),
+            maxLength: {
+              value: 25,
+              message: intl.t('page.auth.registration.input.name.helperText.maxLength'),
+            },
+          })}
+        />
         <Input
           placeholder={intl.t('input.label.email')}
           type="email"

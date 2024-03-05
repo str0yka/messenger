@@ -59,7 +59,13 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (partnerId) {
-      socket.emit('CLIENT:DIALOG_JOIN', { partnerId: Number(partnerId) });
+      socket.emit('CLIENT:DIALOG_JOIN', {
+        partner: {
+          ...(partnerId.charAt(0) === '@'
+            ? { username: partnerId.slice(1) }
+            : { id: Number(partnerId) }),
+        },
+      });
     }
   }, [partnerId]);
 

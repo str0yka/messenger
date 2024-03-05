@@ -35,7 +35,10 @@ interface ServerToClientEvents {
 }
 
 interface ClientToServerEvents {
-  'CLIENT:DIALOG_JOIN': (params: { partnerId: number; messagesLimit?: number }) => void;
+  'CLIENT:DIALOG_JOIN': (params: {
+    partner: { id: number } | { username: string };
+    messagesLimit?: number;
+  }) => void;
   'CLIENT:DIALOG_GET': () => void;
   'CLIENT:DIALOGS_GET': () => void;
   'CLIENT:MESSAGE_READ': (params: { readMessage: Message }) => void;
@@ -56,7 +59,6 @@ interface ClientToServerEvents {
   }) => void;
   'CLIENT:JUMP_TO_DATE': (params: { timestamp: number; take: number }) => void;
 }
-
 namespace IO {
   type Socket = import('socket.io-client').Socket<ServerToClientEvents, ClientToServerEvents>;
   type Server = import('socket.io-client').Server<ServerToClientEvents, ClientToServerEvents>;

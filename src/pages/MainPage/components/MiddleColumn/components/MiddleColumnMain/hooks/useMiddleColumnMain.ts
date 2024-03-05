@@ -156,12 +156,11 @@ export const useMiddleColumnMain = () => {
           (message) => message.id === lastMessageInChatRef.current?.id,
         );
 
-        lastMessageInChatRef.current = msg;
-
-        return isMessagesContainLastMessageInChat
+        return isMessagesContainLastMessageInChat || !lastMessageInChatRef.current
           ? [msg, ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES)
           : prevMessages;
       });
+      lastMessageInChatRef.current = msg;
     };
 
     const onMessageDelete: ServerToClientEvents['SERVER:MESSAGE_DELETE'] = (msg) => {
