@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { IconButton, Avatar } from '~/components/common';
 import { IconCross } from '~/components/common/icons';
 import { PRIVATE_ROUTE } from '~/utils/constants';
+import { getUserName } from '~/utils/helpers';
 
 import { useDialog } from '../../../../contexts';
 
@@ -20,8 +21,8 @@ export const MiddleColumnHeader = () => {
           </IconButton>
         </Link>
       </div>
-      <Avatar fallback={dialog.title[0]} />
-      <h2 className="truncate font-semibold text-neutral-50">{dialog.title}</h2>
+      <Avatar fallback={getUserName(dialog.partner)[0]} />
+      <h2 className="truncate font-semibold text-neutral-50">{getUserName(dialog.partner)}</h2>
     </div>
   );
 };

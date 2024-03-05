@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useIntl } from '~/features/i18n';
 import { useSearchQuery } from '~/utils/api';
 import { PRIVATE_ROUTE } from '~/utils/constants';
+import { getUserName } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { ChatItem } from '../ChatItem/ChatItem';
@@ -69,8 +70,8 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
               onClick={onClose}
             >
               <ChatItem
-                title={dialog.title}
-                avatarFallback={dialog.title[0]}
+                title={getUserName(dialog.partner)}
+                avatarFallback={getUserName(dialog.partner)[0]}
                 lastMessage={dialog.lastMessage}
                 lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
                 // eslint-disable-next-line no-underscore-dangle
@@ -100,8 +101,8 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
               onClick={onClose}
             >
               <ChatItem
-                title={searchUser.email}
-                avatarFallback={searchUser.email[0]}
+                title={getUserName(searchUser)}
+                avatarFallback={getUserName(searchUser)[0]}
               />
             </Link>
           ))}

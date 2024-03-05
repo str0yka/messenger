@@ -5,6 +5,7 @@ import { useState } from 'react';
 import {
   LeftColumnLanguageTab,
   LeftColumnMainTab,
+  LeftColumnProfileTab,
   LeftColumnSettingsTab,
   LeftColumnThemeTab,
 } from './components';
@@ -82,6 +83,7 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
                   [TAB.SETTINGS]: <LeftColumnSettingsTab />,
                   [TAB.LANGUAGE]: <LeftColumnLanguageTab />,
                   [TAB.THEME]: <LeftColumnThemeTab />,
+                  [TAB.PROFILE]: <LeftColumnProfileTab />,
                 }[tab]
               }
             </motion.div>

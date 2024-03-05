@@ -5,7 +5,7 @@ import { Input, Button, Alert } from '~/components/common';
 import { useIntl } from '~/features/i18n';
 import { useLoginMutation } from '~/utils/api';
 import type { PostLoginParams } from '~/utils/api';
-import { PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
+import { ACCESS_TOKEN_LOCAL_STORAGE_KEY, PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
 export const Login = () => {
@@ -18,6 +18,7 @@ export const Login = () => {
     onSuccess: (data) => {
       setUser(data.user);
       if (data.user.isVerified) {
+        localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, data.accessToken);
         navigate(PRIVATE_ROUTE.HOME);
       } else {
         navigate(PUBLIC_ROUTE.VERIFY);

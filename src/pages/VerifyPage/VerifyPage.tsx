@@ -57,7 +57,7 @@ export const VerifyPage = () => {
           onSubmit={verifyForm.handleSubmit(async ({ verificationCode }) => {
             try {
               await verifyMutation.mutateAsync({
-                params: { userId: (user as User).id, verificationCode },
+                params: { userId: user.id, verificationCode },
               });
             } catch {
               console.log('Error'); // $FIXME

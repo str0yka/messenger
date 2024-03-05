@@ -1,11 +1,14 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { PRIVATE_ROUTE } from '~/utils/constants';
+import { getUserName } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { useDialog, useSocket } from '../../../../../../contexts';
 import { ChatItem } from '../ChatItem/ChatItem';
+import { ChatItemSkeleton } from '../ChatItemSkeleton/ChatItemSkeleton';
 
 export const LeftChatList = () => {
   const user = useUserStore((state) => state.user);
@@ -39,21 +42,40 @@ export const LeftChatList = () => {
   }, []);
 
   return (
-    <ul className="flex grow flex-col overflow-auto p-2">
-      {dialogs.map((dialog, index) => (
-        <li key={index}>
-          <Link to={PRIVATE_ROUTE.USER(dialog.dialog.partnerId)}>
-            <ChatItem
-              title={dialog.dialog.partner.email}
-              avatarFallback={dialog.dialog.partner.email[0]}
-              lastMessage={dialog.lastMessage}
-              lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
-              unreadedMessagesCount={dialog.unreadedMessagesCount}
-              active={activeDialog?.id === dialog.dialog.id}
-            />
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <AnimatePresence mode="wait">
+      <ul className="flex grow flex-col overflow-auto p-2">
+        {!!dialogs.length &&
+          dialogs.map((dialog, index) => (
+            <motion.li
+              key={index}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.1 * index }}
+            >
+              <Link to={PRIVATE_ROUTE.USER(dialog.dialog.partnerId)}>
+                <ChatItem
+                  title={getUserName(dialog.dialog.partner)}
+                  avatarFallback={getUserName(dialog.dialog.partner)[0]}
+                  lastMessage={dialog.lastMessage}
+                  lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
+                  unreadedMessagesCount={dialog.unreadedMessagesCount}
+                  active={activeDialog?.id === dialog.dialog.id}
+                />
+              </Link>
+            </motion.li>
+          ))}
+        {!dialogs.length &&
+          new Array(15).fill(null).map((_, index) => (
+            <motion.li
+              key={index}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.1 * index }}
+            >
+              <ChatItemSkeleton />
+            </motion.li>
+          ))}
+      </ul>
+    </AnimatePresence>
   );
 };
