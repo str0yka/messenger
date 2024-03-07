@@ -55,6 +55,7 @@
   "page.home.leftColumn.settings.profile.bio.maxLength": "Максимальное допустимое количество символов {number}",
   "page.home.leftColumn.settings.profile.username.minLength": "Минимальное допустимое количество символов {number}",
   "page.home.leftColumn.settings.profile.username.maxLength": "Максимальное допустимое количество символов {number}",
+  "page.home.leftColumn.settings.profile.username.format": "Допустимо использовать только латинский алфавит и цифры",
   "page.home.leftColumn.settings.language": "Язык",
   "page.home.leftColumn.settings.theme": "Тема",
   "page.home.leftColumn.settings.email": "Почта",

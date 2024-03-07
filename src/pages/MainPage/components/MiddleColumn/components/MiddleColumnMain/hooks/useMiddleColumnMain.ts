@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useIntl } from '~/features/i18n';
+import { getBottomDistance } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../../../../contexts';
@@ -9,24 +9,26 @@ import { MAX_NUMBER_OF_MESSAGES } from '../contants';
 
 export const useMiddleColumnMain = () => {
   const { id: partnerId } = useParams();
-  const intl = useIntl();
 
   const user = useUserStore((state) => state.user);
   const socket = useSocket();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [deleteMessage, setDeleteMessage] = useState<Message | null>(null);
+  const [firstUnreadMessage, setFirstUnreadMessage] = useState<Message | null>(null);
   const [scrollToMessage, setScrollToMessage] = useState<Message | null>(null);
+  const [lastMessageInChat, setLastMessageInChat] = useState<Message | null>(null);
 
-  const lastMessageInChatRef = useRef<Message>();
-  const lastUnreadMessageRef = useRef<{ message?: Message; node: HTMLElement | null }>({
-    node: null,
-  });
   const scrollToMessageNodeRef = useRef<HTMLDivElement | null>(null);
   const chatNodeRef = useRef<HTMLDivElement | null>(null);
   const scrollDownNodeRef = useRef<HTMLDivElement | null>(null);
+  const isMessagesContainLastMessageInChat = useRef(
+    !!messages.find((message) => message.id === lastMessageInChat?.id),
+  );
 
-  const isDeleteMessageDialogOpen = !!deleteMessage;
+  isMessagesContainLastMessageInChat.current = !!messages.find(
+    (message) => message.id === lastMessageInChat?.id,
+  );
 
   const onDeleteMessageDialogOpenChange = (open: boolean) => !open && setDeleteMessage(null);
 
@@ -40,13 +42,9 @@ export const useMiddleColumnMain = () => {
     }
   };
 
-  const observeLowerBorder = (entry: IntersectionObserverEntry | undefined) => {
+  const observeLowerBorder = (entry?: IntersectionObserverEntry) => {
     const lastMessage = messages.at(0);
-    const isMessagesContainLastMessageInChat = !!messages.find(
-      (message) => message.id === lastMessageInChatRef.current?.id,
-    );
-
-    if (entry?.isIntersecting && lastMessage && !isMessagesContainLastMessageInChat) {
+    if (entry?.isIntersecting && lastMessage && !isMessagesContainLastMessageInChat.current) {
       socket.emit('CLIENT:MESSAGES_GET', {
         method: 'PATCH',
         filter: {
@@ -63,7 +61,7 @@ export const useMiddleColumnMain = () => {
     }
   };
 
-  const observeUpperBorder = (entry: IntersectionObserverEntry | undefined) => {
+  const observeUpperBorder = (entry?: IntersectionObserverEntry) => {
     const firstMessage = messages.at(-1);
     if (entry?.isIntersecting && firstMessage) {
       socket.emit('CLIENT:MESSAGES_GET', {
@@ -83,10 +81,7 @@ export const useMiddleColumnMain = () => {
   };
 
   const onClickScrollDownButton = () => {
-    if (
-      !lastMessageInChatRef.current ||
-      !messages.find((message) => lastMessageInChatRef.current?.id === message.id)
-    ) {
+    if (!lastMessageInChat || !isMessagesContainLastMessageInChat.current) {
       socket.emit('CLIENT:MESSAGES_GET', {
         filter: {
           take: MAX_NUMBER_OF_MESSAGES,
@@ -97,15 +92,11 @@ export const useMiddleColumnMain = () => {
         method: 'PUT',
       });
     }
-
-    chatNodeRef.current?.scrollTo({
-      top: chatNodeRef.current.scrollHeight,
-      behavior: 'smooth',
-    });
   };
 
   useLayoutEffect(() => {
     if (scrollToMessage) {
+      console.log('effect', scrollToMessage, scrollToMessageNodeRef.current);
       scrollToMessageNodeRef.current?.scrollIntoView({ block: 'center' });
       setScrollToMessage(null);
     }
@@ -116,21 +107,36 @@ export const useMiddleColumnMain = () => {
       console.log('[SERVER:DIALOG_JOIN_RESPONSE]: ', data);
       setMessages(data.messages);
 
-      const lastUnreadMessage = [...data.messages]
+      if (data.lastMessage) {
+        setLastMessageInChat(data.lastMessage);
+      }
+
+      const firstUnreadMsg = [...data.messages]
         .reverse()
         .find((message) => !message.read && message.userId !== user?.id);
 
-      lastUnreadMessageRef.current.message = lastUnreadMessage;
-      lastMessageInChatRef.current = data.lastMessage;
-    };
-
-    const onDialogGetResponse: ServerToClientEvents['SERVER:DIALOG_GET_RESPONSE'] = (data) => {
-      console.log('[SERVER:DIALOG_GET_RESPONSE]: ', data);
-      lastMessageInChatRef.current = data.lastMessage;
+      if (firstUnreadMsg) {
+        setFirstUnreadMessage(firstUnreadMsg);
+        setScrollToMessage(firstUnreadMessage);
+      } else {
+        setScrollToMessage(data.messages.at(0) ?? null);
+      }
     };
 
     const onMessagesPut: ServerToClientEvents['SERVER:MESSAGES_PUT'] = (msgs) => {
       console.log('[SERVER:MESSAGES_PUT]: ', msgs);
+
+      const firstUnreadMsg = [...msgs]
+        .reverse()
+        .find((message) => !message.read && message.userId !== user?.id);
+
+      if (firstUnreadMsg) {
+        setFirstUnreadMessage(firstUnreadMsg);
+        setScrollToMessage(firstUnreadMessage);
+      } else {
+        setScrollToMessage(msgs.at(0) ?? null);
+      }
+
       setMessages(msgs);
     };
 
@@ -151,16 +157,15 @@ export const useMiddleColumnMain = () => {
     const onMessageAdd: ServerToClientEvents['SERVER:MESSAGE_ADD'] = (msg) => {
       console.log('[SERVER:MESSAGE_ADD]: ', msg);
 
-      setMessages((prevMessages) => {
-        const isMessagesContainLastMessageInChat = !!prevMessages.find(
-          (message) => message.id === lastMessageInChatRef.current?.id,
-        );
+      if (isMessagesContainLastMessageInChat.current || !lastMessageInChat) {
+        setMessages((prevMessages) => [msg, ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES));
 
-        return isMessagesContainLastMessageInChat || !lastMessageInChatRef.current
-          ? [msg, ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES)
-          : prevMessages;
-      });
-      lastMessageInChatRef.current = msg;
+        if (chatNodeRef.current && getBottomDistance(chatNodeRef.current) < 150) {
+          setScrollToMessage(msg);
+        }
+      }
+
+      setLastMessageInChat(msg);
     };
 
     const onMessageDelete: ServerToClientEvents['SERVER:MESSAGE_DELETE'] = (msg) => {
@@ -174,78 +179,60 @@ export const useMiddleColumnMain = () => {
       setScrollToMessage(data.firstFoundMessage);
     };
 
+    const onMessageReadResponse: ServerToClientEvents['SERVER:MESSAGE_READ_RESPONSE'] = ({
+      unreadedMessagesCount,
+    }) => {
+      if (!unreadedMessagesCount) {
+        setFirstUnreadMessage(null);
+      }
+    };
+
     socket.on('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
-    socket.on('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
     socket.on('SERVER:MESSAGE_DELETE', onMessageDelete);
     socket.on('SERVER:MESSAGE_ADD', onMessageAdd);
     socket.on('SERVER:MESSAGES_PATCH', onMessagesPatch);
     socket.on('SERVER:MESSAGES_PUT', onMessagesPut);
     socket.on('SERVER:JUMP_TO_DATE_RESPONSE', onJumpToDateResponse);
+    socket.on('SERVER:MESSAGE_READ_RESPONSE', onMessageReadResponse);
 
     return () => {
       setMessages([]);
 
       socket.off('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
-      socket.off('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
       socket.off('SERVER:MESSAGE_DELETE', onMessageDelete);
       socket.off('SERVER:MESSAGE_ADD', onMessageAdd);
       socket.off('SERVER:MESSAGES_PATCH', onMessagesPatch);
       socket.off('SERVER:MESSAGES_PUT', onMessagesPut);
       socket.off('SERVER:JUMP_TO_DATE_RESPONSE', onJumpToDateResponse);
+      socket.off('SERVER:MESSAGE_READ_RESPONSE', onMessageReadResponse);
     };
   }, [partnerId]);
 
   useEffect(() => {
-    if (!chatNodeRef.current) throw new Error('chatNodeRef is missing');
-
-    const chatNode = chatNodeRef.current;
-    const scrollDownNode = scrollDownNodeRef.current;
-
     const toggleScrollButton = () => {
       const hideClassName = 'hidden';
-      const chatNodeScrollBottom =
-        chatNode.scrollHeight - (chatNode.scrollTop + chatNode.offsetHeight);
 
-      if (chatNodeScrollBottom < 50) scrollDownNode?.classList.add(hideClassName);
-      else scrollDownNode?.classList.remove(hideClassName);
+      if (chatNodeRef.current && getBottomDistance(chatNodeRef.current) < 50) {
+        scrollDownNodeRef.current?.classList.add(hideClassName);
+      } else {
+        scrollDownNodeRef.current?.classList.remove(hideClassName);
+      }
     };
 
-    chatNode.addEventListener('scroll', toggleScrollButton);
+    chatNodeRef.current?.addEventListener('scroll', toggleScrollButton);
 
     return () => {
-      chatNode.removeEventListener('scroll', toggleScrollButton);
+      chatNodeRef.current?.removeEventListener('scroll', toggleScrollButton);
     };
   }, []);
-
-  useLayoutEffect(() => {
-    if (!chatNodeRef.current) throw new Error('chatNodeRef is missing');
-
-    const chatNode = chatNodeRef.current;
-    const chatNodeScrollBottom =
-      chatNode.scrollHeight - (chatNode.scrollTop + chatNode.offsetHeight);
-
-    if (chatNodeScrollBottom < 75) chatNode.scrollTo({ top: chatNode.scrollHeight });
-  }, [messages]);
-
-  useLayoutEffect(() => {
-    if (!chatNodeRef.current) throw new Error('chatNodeRef is missing');
-
-    const chatNode = chatNodeRef.current;
-    const lastUnreadMessageNode = lastUnreadMessageRef.current.node;
-
-    if (messages.length) {
-      if (lastUnreadMessageNode) lastUnreadMessageNode.scrollIntoView();
-      else chatNode.scrollTo({ top: chatNode.scrollHeight });
-    }
-  }, [!!messages.length]);
 
   return {
     state: {
       user,
-      intl,
       messages,
-      isDeleteMessageDialogOpen,
+      isDeleteMessageDialogOpen: !!deleteMessage,
       scrollToMessage,
+      firstUnreadMessage,
     },
     functions: {
       setDeleteMessage,
@@ -258,7 +245,6 @@ export const useMiddleColumnMain = () => {
     refs: {
       chatNodeRef,
       scrollDownNodeRef,
-      lastUnreadMessageRef,
       scrollToMessageNodeRef,
     },
   };

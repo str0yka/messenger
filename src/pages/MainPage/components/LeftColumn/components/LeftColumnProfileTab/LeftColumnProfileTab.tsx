@@ -141,6 +141,15 @@ export const LeftColumnProfileTab = () => {
                     number: 5,
                   }),
                 },
+                validate: {
+                  format: (value) => {
+                    if (!value) return true;
+                    return (
+                      /^[a-zA-Z0-9]*$/.test(value) ||
+                      intl.t('page.home.leftColumn.settings.profile.username.format')
+                    );
+                  },
+                },
               })}
               {...(updateProfileForm.formState.errors.username && {
                 error: true,

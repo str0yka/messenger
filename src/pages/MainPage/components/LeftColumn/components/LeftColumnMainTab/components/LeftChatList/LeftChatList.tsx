@@ -58,6 +58,7 @@ export const LeftChatList = () => {
                 lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
                 unreadedMessagesCount={dialog.unreadedMessagesCount}
                 active={activeDialog?.id === dialog.dialog.id}
+                status={dialog.dialog.partner.status}
               />
             </Link>
           </motion.li>

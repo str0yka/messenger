@@ -12,6 +12,7 @@ interface ChatItemProps {
   lastMessageSentByUser?: boolean;
   unreadedMessagesCount?: number;
   active?: boolean;
+  status?: User['status'];
 }
 
 export const ChatItem: React.FC<ChatItemProps> = ({
@@ -21,6 +22,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   lastMessageSentByUser,
   unreadedMessagesCount,
   active,
+  status,
 }) => {
   const intl = useIntl();
 
@@ -32,10 +34,15 @@ export const ChatItem: React.FC<ChatItemProps> = ({
         'active:bg-neutral-600/50': !active,
       })}
     >
-      <Avatar
-        className="h-14 w-14"
-        fallback={avatarFallback}
-      />
+      <div className="relative">
+        <Avatar
+          className="h-14 w-14"
+          fallback={avatarFallback}
+        />
+        {status === 'ONLINE' && (
+          <div className="absolute bottom-[3px] right-[3px] h-3 w-3 rounded-full border-2 border-primary-900/25 bg-white" />
+        )}
+      </div>
       <div className="flex min-w-[0] grow flex-col">
         <div className="flex items-center gap-2">
           <h2

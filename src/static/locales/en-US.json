@@ -55,6 +55,7 @@
   "page.home.leftColumn.settings.profile.bio.maxLength": "The maximum number of characters allowed is {number}",
   "page.home.leftColumn.settings.profile.username.minLength": "The minimum number of characters allowed is {number}",
   "page.home.leftColumn.settings.profile.username.maxLength": "The maximum number of characters allowed is {number}",
+  "page.home.leftColumn.settings.profile.username.format": "Only the Latin alphabet and numerals may be used",
   "page.home.leftColumn.settings.language": "Language",
   "page.home.leftColumn.settings.theme": "Theme",
   "page.home.leftColumn.settings.email": "Email",

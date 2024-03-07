@@ -2,6 +2,7 @@ import cn from 'classnames';
 import { Fragment } from 'react';
 
 import { Observer } from '~/components';
+import { useIntl } from '~/features/i18n';
 
 import {
   DateButton,
@@ -14,6 +15,7 @@ import { groupMessagesByDate } from './helpers';
 import { useMiddleColumnMain } from './hooks';
 
 export const MiddleColumnMain = () => {
+  const intl = useIntl();
   const { state, refs, functions } = useMiddleColumnMain();
 
   return (
@@ -45,9 +47,8 @@ export const MiddleColumnMain = () => {
                   className="flex flex-col-reverse gap-2"
                 >
                   {dateGroup.messages.map((message) => {
-                    const isLastUnreadMessage =
-                      refs.lastUnreadMessageRef.current.message?.id === message.id;
-                    const isFirstFoundMessage = state.scrollToMessage?.id === message.id;
+                    const isFirstUnreadMessage = state.firstUnreadMessage?.id === message.id;
+                    const needScrollToMessage = state.scrollToMessage?.id === message.id;
 
                     const onClickCopy = () =>
                       navigator.clipboard.writeText(message.message).catch();
@@ -62,23 +63,16 @@ export const MiddleColumnMain = () => {
                         >
                           <MessageItem
                             ref={(node) => {
-                              if (isFirstFoundMessage) {
+                              if (needScrollToMessage) {
                                 refs.scrollToMessageNodeRef.current = node;
                               }
                             }}
                             message={message}
                           />
                         </MessageContextMenu>
-                        {isLastUnreadMessage && (
-                          <div
-                            ref={(node) => {
-                              if (isLastUnreadMessage) {
-                                refs.lastUnreadMessageRef.current.node = node;
-                              }
-                            }}
-                            className="rounded bg-primary-700/25 text-center text-sm font-medium text-white"
-                          >
-                            {state.intl.t('page.home.middleColumn.unreadedMessages')}
+                        {isFirstUnreadMessage && (
+                          <div className="rounded bg-primary-700/25 text-center text-sm font-medium text-white">
+                            {intl.t('page.home.middleColumn.unreadedMessages')}
                           </div>
                         )}
                       </Fragment>
