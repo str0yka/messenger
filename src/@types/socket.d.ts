@@ -1,37 +1,19 @@
 interface ServerToClientEvents {
-  'SERVER:DIALOG_JOIN_RESPONSE': (response: {
-    dialog: Dialog & { user: User; partner: User };
-    unreadedMessagesCount: number;
-    messages: Message[];
-    lastMessage: Message | undefined;
-  }) => void;
-  'SERVER:MESSAGE_READ_RESPONSE': (response: { unreadedMessagesCount: number }) => void;
-  'SERVER:MESSAGE_READ': (response: { readMessage: Message }) => void;
-  'SERVER:DIALOGS_PUT': (params: {
-    dialogs: {
-      dialog: Dialog & {
-        user: User;
-        partner: User;
-      };
-      lastMessage: Message | null;
-      unreadedMessagesCount: number;
-    }[];
-  }) => void;
+  'SERVER:DIALOG_JOIN_RESPONSE': (params: { dialog: Dialog; messages: Message[] }) => void;
+  'SERVER:MESSAGE_READ_RESPONSE': (params: { unreadedMessagesCount: number }) => void;
+  'SERVER:MESSAGE_READ': (params: { message: Message }) => void;
+  'SERVER:DIALOGS_PUT': (params: { dialogs: Dialog[] }) => void;
   'SERVER:DIALOGS_NEED_TO_UPDATE': () => void;
-  'SERVER:DIALOG_GET_RESPONSE': (response: {
-    dialog: Dialog & { user: User; partner: User };
-    unreadedMessagesCount: number;
-    lastMessage: Message | undefined;
-  }) => void;
+  'SERVER:DIALOG_GET_RESPONSE': (params: { dialog: Dialog }) => void;
   'SERVER:DIALOG_NEED_TO_UPDATE': () => void;
-  'SERVER:MESSAGE_ADD': (message: Message) => void;
-  'SERVER:MESSAGE_DELETE': (message: Message) => void;
+  'SERVER:MESSAGE_ADD': (params: { message: Message }) => void;
+  'SERVER:MESSAGE_DELETE': (params: { message: Message }) => void;
   'SERVER:JUMP_TO_DATE_RESPONSE': (params: {
     messages: Message[];
-    firstFoundMessage: Message;
+    firstFoundMessage?: Message;
   }) => void;
-  'SERVER:MESSAGES_PUT': (messages: Message[]) => void;
-  'SERVER:MESSAGES_PATCH': (messages: Message[]) => void;
+  'SERVER:MESSAGES_PUT': (params: { messages: Message[] }) => void;
+  'SERVER:MESSAGES_PATCH': (params: { messages: Message[] }) => void;
 }
 
 interface ClientToServerEvents {
@@ -43,7 +25,7 @@ interface ClientToServerEvents {
   'CLIENT:DIALOGS_GET': () => void;
   'CLIENT:MESSAGE_READ': (params: { readMessage: Message }) => void;
   'CLIENT:MESSAGE_DELETE': (params: { messageId: number; deleteForEveryone?: boolean }) => void;
-  'CLIENT:MESSAGE_ADD': (message: { message: string; createdAt: number }) => void;
+  'CLIENT:MESSAGE_ADD': (params: { message: { message: string; createdAt: number } }) => void;
   'CLIENT:MESSAGES_GET': (params: {
     filter?: {
       orderBy?: {
@@ -58,7 +40,9 @@ interface ClientToServerEvents {
     method?: 'PUT' | 'PATCH';
   }) => void;
   'CLIENT:JUMP_TO_DATE': (params: { timestamp: number; take: number }) => void;
+  'CLIENT:UPDATE_DIALOG_STATUS': (params: { status: Dialog['status'] }) => void;
 }
+
 namespace IO {
   type Socket = import('socket.io-client').Socket<ServerToClientEvents, ClientToServerEvents>;
   type Server = import('socket.io-client').Server<ServerToClientEvents, ClientToServerEvents>;

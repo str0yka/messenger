@@ -1,4 +1,5 @@
 import cn from 'classnames';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { IconButton, Input } from '~/components/common';
@@ -12,11 +13,33 @@ export const MiddleColumnFooter = () => {
 
   const socket = useSocket();
 
+  const [isTyping, setIsTyping] = useState(false);
+
   const sendMessageForm = useForm({
     defaultValues: {
       messageText: '',
     },
   });
+
+  const messageText = sendMessageForm.watch('messageText');
+
+  useEffect(() => {
+    setIsTyping(!!messageText);
+
+    const timer = setTimeout(() => {
+      setIsTyping(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [messageText]);
+
+  useEffect(() => {
+    socket.emit('CLIENT:UPDATE_DIALOG_STATUS', {
+      status: isTyping ? 'TYPING' : 'NONE',
+    });
+  }, [isTyping]);
 
   return (
     <form
@@ -26,7 +49,7 @@ export const MiddleColumnFooter = () => {
           message: values.messageText,
           createdAt: new Date().valueOf(),
         };
-        socket.emit('CLIENT:MESSAGE_ADD', message);
+        socket.emit('CLIENT:MESSAGE_ADD', { message });
         sendMessageForm.reset();
       })}
     >

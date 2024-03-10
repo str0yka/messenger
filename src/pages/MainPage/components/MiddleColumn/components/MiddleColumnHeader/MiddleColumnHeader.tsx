@@ -22,7 +22,10 @@ export const MiddleColumnHeader = () => {
         </Link>
       </div>
       <Avatar fallback={getUserName(dialog.partner)[0]} />
-      <h2 className="truncate font-semibold text-neutral-50">{getUserName(dialog.partner)}</h2>
+      <div>
+        <h2 className="truncate font-semibold text-neutral-50">{getUserName(dialog.partner)}</h2>
+        {dialog.status === 'TYPING' && <p className="leading-3 text-neutral-400">печатает...</p>}
+      </div>
     </div>
   );
 };

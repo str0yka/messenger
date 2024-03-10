@@ -40,47 +40,45 @@ export const MiddleColumnMain = () => {
               }}
               observe={functions.observeLowerBorder}
             />
-            {!!state.messages.length &&
-              groupMessagesByDate(state.messages).map((dateGroup) => (
-                <div
-                  key={dateGroup.date.valueOf()}
-                  className="flex flex-col-reverse gap-2"
-                >
-                  {dateGroup.messages.map((message) => {
-                    const isFirstUnreadMessage = state.firstUnreadMessage?.id === message.id;
-                    const needScrollToMessage = state.scrollToMessage?.id === message.id;
+            {groupMessagesByDate(state.messages).map((dateGroup) => (
+              <div
+                key={dateGroup.date.valueOf()}
+                className="flex flex-col-reverse gap-2"
+              >
+                {dateGroup.messages.map((message) => {
+                  const isFirstUnreadMessage = state.firstUnreadMessage?.id === message.id;
+                  const needScrollToMessage = state.scrollToMessage?.id === message.id;
 
-                    const onClickCopy = () =>
-                      navigator.clipboard.writeText(message.message).catch();
-                    const onClickDelete = () => functions.setDeleteMessage(message);
+                  const onClickCopy = () => navigator.clipboard.writeText(message.message).catch();
+                  const onClickDelete = () => functions.setDeleteMessage(message);
 
-                    return (
-                      <Fragment key={message.id}>
-                        <MessageContextMenu
-                          onClickCopy={onClickCopy}
-                          onClickDelete={onClickDelete}
-                          showDeleteButton={message.userId === state.user?.id}
-                        >
-                          <MessageItem
-                            ref={(node) => {
-                              if (needScrollToMessage) {
-                                refs.scrollToMessageNodeRef.current = node;
-                              }
-                            }}
-                            message={message}
-                          />
-                        </MessageContextMenu>
-                        {isFirstUnreadMessage && (
-                          <div className="rounded bg-primary-700/25 text-center text-sm font-medium text-white">
-                            {intl.t('page.home.middleColumn.unreadedMessages')}
-                          </div>
-                        )}
-                      </Fragment>
-                    );
-                  })}
-                  <DateButton date={dateGroup.date} />
-                </div>
-              ))}
+                  return (
+                    <Fragment key={message.id}>
+                      <MessageContextMenu
+                        onClickCopy={onClickCopy}
+                        onClickDelete={onClickDelete}
+                        showDeleteButton={message.userId === state.user?.id}
+                      >
+                        <MessageItem
+                          ref={(node) => {
+                            if (needScrollToMessage) {
+                              refs.scrollToMessageNodeRef.current = node;
+                            }
+                          }}
+                          message={message}
+                        />
+                      </MessageContextMenu>
+                      {isFirstUnreadMessage && (
+                        <div className="rounded bg-primary-700/25 text-center text-sm font-medium text-white">
+                          {intl.t('page.home.middleColumn.unreadedMessages')}
+                        </div>
+                      )}
+                    </Fragment>
+                  );
+                })}
+                <DateButton date={dateGroup.date} />
+              </div>
+            ))}
             <Observer
               key={Math.random()}
               observerParams={{

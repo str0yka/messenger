@@ -14,14 +14,15 @@ export const ScrollDownButton = forwardRef<HTMLDivElement, ScrollDownButtonProps
 
   useEffect(() => {
     const onDialogJoinResponse: ServerToClientEvents['SERVER:DIALOG_JOIN_RESPONSE'] = (data) => {
-      console.log('ScrollDownButton-[SERVER:DIALOG_JOIN_RESPONSE]: ', data);
-      setUnreadedMessagesCount(data.unreadedMessagesCount);
+      console.log('ScrollDownButton:[SERVER:DIALOG_JOIN_RESPONSE]: ', data);
+      setUnreadedMessagesCount(data.dialog.unreadedMessagesCount);
     };
     const onDialogGetResponse: ServerToClientEvents['SERVER:DIALOG_GET_RESPONSE'] = (data) => {
-      setUnreadedMessagesCount(data.unreadedMessagesCount);
+      console.log('ScrollDownButton:[SERVER:DIALOG_GET_RESPONSE]: ', data);
+      setUnreadedMessagesCount(data.dialog.unreadedMessagesCount);
     };
     const onMessagesReadResponse: ServerToClientEvents['SERVER:MESSAGE_READ_RESPONSE'] = (data) => {
-      console.log('[SERVER:MESSAGE_READ_RESPONSE]: ', data.unreadedMessagesCount);
+      console.log('[ScrollDownButton:SERVER:MESSAGE_READ_RESPONSE]: ', data);
       setUnreadedMessagesCount(data.unreadedMessagesCount);
     };
 

@@ -23,9 +23,10 @@ export const MessageItem = forwardRef<
   const isSentByUser = message.userId === user?.id;
 
   useEffect(() => {
-    const onMessagesRead: ServerToClientEvents['SERVER:MESSAGE_READ'] = ({ readMessage }) => {
-      if (readMessage.id === message.id) {
-        setIsRead(readMessage.read);
+    const onMessagesRead: ServerToClientEvents['SERVER:MESSAGE_READ'] = (data) => {
+      console.log('[MessageItem:SERVER:MESSAGE_READ]', data);
+      if (data.message.id === message.id) {
+        setIsRead(data.message.read);
       }
     };
 

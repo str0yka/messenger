@@ -19,24 +19,17 @@ export const LeftChatList = () => {
   >([]);
 
   useEffect(() => {
-    const onDialogsPut: ServerToClientEvents['SERVER:DIALOGS_PUT'] = ({ dialogs: dialogsData }) => {
-      console.log('[SERVER:DIALOGS_PUT]: ', dialogsData);
-      setDialogs(dialogsData);
-    };
+    socket.emit('CLIENT:DIALOGS_GET');
 
-    const onDialogsNeedToUpdate: ServerToClientEvents['SERVER:DIALOGS_NEED_TO_UPDATE'] = () => {
-      console.log('[SERVER:DIALOGS_NEED_TO_UPDATE]');
-      socket.emit('CLIENT:DIALOGS_GET');
+    const onDialogsPut: ServerToClientEvents['SERVER:DIALOGS_PUT'] = (data) => {
+      console.log('[LeftChatList:SERVER:DIALOGS_PUT]: ', data);
+      setDialogs(data.dialogs);
     };
 
     socket.on('SERVER:DIALOGS_PUT', onDialogsPut);
-    socket.on('SERVER:DIALOGS_NEED_TO_UPDATE', onDialogsNeedToUpdate);
-
-    socket.emit('CLIENT:DIALOGS_GET');
 
     return () => {
       socket.off('SERVER:DIALOGS_PUT', onDialogsPut);
-      socket.off('SERVER:DIALOGS_NEED_TO_UPDATE', onDialogsNeedToUpdate);
     };
   }, []);
 
@@ -50,15 +43,15 @@ export const LeftChatList = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.1 * index }}
           >
-            <Link to={PRIVATE_ROUTE.USER(getUserLink(dialog.dialog.partner))}>
+            <Link to={PRIVATE_ROUTE.USER(getUserLink(dialog.partner))}>
               <ChatItem
-                title={getUserName(dialog.dialog.partner)}
-                avatarFallback={getUserName(dialog.dialog.partner)[0]}
+                title={getUserName(dialog.partner)}
+                avatarFallback={getUserName(dialog.partner)[0]}
                 lastMessage={dialog.lastMessage}
                 lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
                 unreadedMessagesCount={dialog.unreadedMessagesCount}
-                active={activeDialog?.id === dialog.dialog.id}
-                status={dialog.dialog.partner.status}
+                active={activeDialog?.id === dialog.id}
+                status={dialog.partner.status}
               />
             </Link>
           </motion.li>

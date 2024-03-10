@@ -22,10 +22,12 @@ export const useMiddleColumnMain = () => {
   const scrollToMessageNodeRef = useRef<HTMLDivElement | null>(null);
   const chatNodeRef = useRef<HTMLDivElement | null>(null);
   const scrollDownNodeRef = useRef<HTMLDivElement | null>(null);
+  const lastMessageInChatRef = useRef(lastMessageInChat);
   const isMessagesContainLastMessageInChat = useRef(
     !!messages.find((message) => message.id === lastMessageInChat?.id),
   );
 
+  lastMessageInChatRef.current = lastMessageInChat;
   isMessagesContainLastMessageInChat.current = !!messages.find(
     (message) => message.id === lastMessageInChat?.id,
   );
@@ -96,7 +98,6 @@ export const useMiddleColumnMain = () => {
 
   useLayoutEffect(() => {
     if (scrollToMessage) {
-      console.log('effect', scrollToMessage, scrollToMessageNodeRef.current);
       scrollToMessageNodeRef.current?.scrollIntoView({ block: 'center' });
       setScrollToMessage(null);
     }
@@ -104,11 +105,11 @@ export const useMiddleColumnMain = () => {
 
   useEffect(() => {
     const onDialogJoinResponse: ServerToClientEvents['SERVER:DIALOG_JOIN_RESPONSE'] = (data) => {
-      console.log('[SERVER:DIALOG_JOIN_RESPONSE]: ', data);
+      console.log('[MiddleColumnMain:SERVER:DIALOG_JOIN_RESPONSE]: ', data);
       setMessages(data.messages);
 
-      if (data.lastMessage) {
-        setLastMessageInChat(data.lastMessage);
+      if (data.dialog.lastMessage) {
+        setLastMessageInChat(data.dialog.lastMessage);
       }
 
       const firstUnreadMsg = [...data.messages]
@@ -117,72 +118,77 @@ export const useMiddleColumnMain = () => {
 
       if (firstUnreadMsg) {
         setFirstUnreadMessage(firstUnreadMsg);
-        setScrollToMessage(firstUnreadMessage);
+        setScrollToMessage(firstUnreadMsg);
       } else {
         setScrollToMessage(data.messages.at(0) ?? null);
       }
     };
 
-    const onMessagesPut: ServerToClientEvents['SERVER:MESSAGES_PUT'] = (msgs) => {
-      console.log('[SERVER:MESSAGES_PUT]: ', msgs);
+    const onMessagesPut: ServerToClientEvents['SERVER:MESSAGES_PUT'] = (data) => {
+      console.log('[MiddleColumnMain:SERVER:MESSAGES_PUT]: ', data);
 
-      const firstUnreadMsg = [...msgs]
+      const firstUnreadMsg = [...data.messages]
         .reverse()
         .find((message) => !message.read && message.userId !== user?.id);
 
       if (firstUnreadMsg) {
         setFirstUnreadMessage(firstUnreadMsg);
-        setScrollToMessage(firstUnreadMessage);
+        setScrollToMessage(firstUnreadMsg);
       } else {
-        setScrollToMessage(msgs.at(0) ?? null);
+        setScrollToMessage(data.messages.at(0) ?? null);
       }
 
-      setMessages(msgs);
+      setMessages(data.messages);
     };
 
-    const onMessagesPatch: ServerToClientEvents['SERVER:MESSAGES_PATCH'] = (msgs) => {
-      console.log('[SERVER:MESSAGES_PATCH]: ', msgs);
-      if (msgs.length) {
+    const onMessagesPatch: ServerToClientEvents['SERVER:MESSAGES_PATCH'] = (data) => {
+      console.log('[MiddleColumnMain:SERVER:MESSAGES_PATCH]: ', data);
+      if (data.messages.length) {
         setMessages((prevMessages) => {
-          if (!prevMessages.length) return msgs;
-          if (msgs.at(0)!.id < prevMessages.at(-1)!.id)
-            return [...prevMessages, ...msgs].slice(-MAX_NUMBER_OF_MESSAGES);
-          if (msgs.at(-1)!.id > prevMessages.at(0)!.id)
-            return [...msgs.reverse(), ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES);
+          if (!prevMessages.length) return data.messages;
+          if (data.messages.at(0)!.id < prevMessages.at(-1)!.id)
+            return [...prevMessages, ...data.messages].slice(-MAX_NUMBER_OF_MESSAGES);
+          if (data.messages.at(-1)!.id > prevMessages.at(0)!.id)
+            return [...data.messages.reverse(), ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES);
           return prevMessages;
         });
       }
     };
 
-    const onMessageAdd: ServerToClientEvents['SERVER:MESSAGE_ADD'] = (msg) => {
-      console.log('[SERVER:MESSAGE_ADD]: ', msg);
+    const onMessageAdd: ServerToClientEvents['SERVER:MESSAGE_ADD'] = (data) => {
+      console.log('[MiddleColumnMain:SERVER:MESSAGE_ADD]: ', data);
 
-      if (isMessagesContainLastMessageInChat.current || !lastMessageInChat) {
-        setMessages((prevMessages) => [msg, ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES));
+      if (isMessagesContainLastMessageInChat.current || !lastMessageInChatRef.current) {
+        setMessages((prevMessages) =>
+          [data.message, ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES),
+        );
 
         if (chatNodeRef.current && getBottomDistance(chatNodeRef.current) < 150) {
-          setScrollToMessage(msg);
+          setScrollToMessage(data.message);
         }
       }
 
-      setLastMessageInChat(msg);
+      setLastMessageInChat(data.message);
     };
 
-    const onMessageDelete: ServerToClientEvents['SERVER:MESSAGE_DELETE'] = (msg) => {
-      console.log('[SERVER:MESSAGE_DELETE]: ', msg);
-      setMessages((prevMessages) => prevMessages.filter((message) => message.id !== msg.id));
+    const onMessageDelete: ServerToClientEvents['SERVER:MESSAGE_DELETE'] = (data) => {
+      console.log('[MiddleColumnMain:SERVER:MESSAGE_DELETE]: ', data);
+      setMessages((prevMessages) =>
+        prevMessages.filter((message) => message.id !== data.message.id),
+      );
     };
 
     const onJumpToDateResponse: ServerToClientEvents['SERVER:JUMP_TO_DATE_RESPONSE'] = (data) => {
-      console.log('[SERVER:JUMP_TO_DATE_RESPONSE]: ', data);
+      console.log('[MiddleColumnMain:SERVER:JUMP_TO_DATE_RESPONSE]: ', data);
       setMessages(data.messages);
-      setScrollToMessage(data.firstFoundMessage);
+      if (data.firstFoundMessage) {
+        setScrollToMessage(data.firstFoundMessage);
+      }
     };
 
-    const onMessageReadResponse: ServerToClientEvents['SERVER:MESSAGE_READ_RESPONSE'] = ({
-      unreadedMessagesCount,
-    }) => {
-      if (!unreadedMessagesCount) {
+    const onMessageReadResponse: ServerToClientEvents['SERVER:MESSAGE_READ_RESPONSE'] = (data) => {
+      console.log('[MiddleColumnMain:SERVER:MESSAGE_READ_RESPONSE]: ', data);
+      if (!data.unreadedMessagesCount) {
         setFirstUnreadMessage(null);
       }
     };
