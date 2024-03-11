@@ -9,6 +9,7 @@ interface InputProps extends React.ComponentProps<'input'> {
   variant?: 'outlined' | 'contained';
   startAdornment?: React.ReactNode;
   endAdornment?: React.ReactNode;
+  labelProps?: React.ComponentProps<'label'>;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -21,6 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       s = 'base',
       startAdornment,
       endAdornment,
+      labelProps,
       ...props
     },
     ref,
@@ -30,6 +32,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <label
+        {...labelProps}
         htmlFor={inputId}
         data-error={error}
         className={cn(
@@ -49,7 +52,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             'focus-within:bg-neutral-800 focus-within:text-primary-400': variant === 'outlined',
             'bg-neutral-800 text-neutral-500': variant === 'contained',
           },
-          props.className,
+
+          labelProps?.className,
         )}
         aria-disabled={props.disabled}
       >
@@ -63,6 +67,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           className={cn(
             'grow self-stretch bg-transparent font-normal text-neutral-50 outline-none placeholder:select-none placeholder:text-neutral-500',
             'group-data-[error=true]:placeholder:text-red-400',
+            props.className,
           )}
         />
         <div className="shrink-0">{endAdornment}</div>

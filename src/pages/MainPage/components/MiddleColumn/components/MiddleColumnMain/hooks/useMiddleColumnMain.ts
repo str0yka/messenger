@@ -5,6 +5,7 @@ import { getBottomDistance } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../../../../contexts';
+import { useReply } from '../../../contexts';
 import { MAX_NUMBER_OF_MESSAGES } from '../contants';
 
 export const useMiddleColumnMain = () => {
@@ -12,6 +13,8 @@ export const useMiddleColumnMain = () => {
 
   const user = useUserStore((state) => state.user);
   const socket = useSocket();
+
+  const { setReplyMessage } = useReply();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [deleteMessage, setDeleteMessage] = useState<Message | null>(null);
@@ -247,6 +250,7 @@ export const useMiddleColumnMain = () => {
       onClickScrollDownButton,
       onDeleteMessageDialogOpenChange,
       onDeleteMessage,
+      setReplyMessage,
     },
     refs: {
       chatNodeRef,

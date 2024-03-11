@@ -7,14 +7,14 @@ import { useSocket } from '../../../../../../contexts';
 import { IncomingMessage } from '../IncomingMessage/IncomingMessage';
 import { OutcomingMessage } from '../OutcomingMessage/OutcomingMessage';
 
-interface MessageItemProps {
+interface MessageItemProps extends React.ComponentPropsWithoutRef<'div'> {
   message: Message;
 }
 
 export const MessageItem = forwardRef<
   React.ElementRef<typeof OutcomingMessage | typeof IncomingMessage>,
   MessageItemProps
->(({ message }, ref) => {
+>(({ message, ...props }, ref) => {
   const user = useUserStore((state) => state.user);
   const socket = useSocket();
 
@@ -42,6 +42,7 @@ export const MessageItem = forwardRef<
       <OutcomingMessage
         ref={ref}
         message={{ ...message, read: isRead }}
+        {...props}
       />
     );
 
@@ -50,6 +51,7 @@ export const MessageItem = forwardRef<
       <IncomingMessage
         ref={ref}
         message={{ ...message, read: isRead }}
+        {...props}
       />
     );
 
@@ -64,6 +66,7 @@ export const MessageItem = forwardRef<
       <IncomingMessage
         ref={ref}
         message={{ ...message, read: isRead }}
+        {...props}
       />
     </Observer>
   );

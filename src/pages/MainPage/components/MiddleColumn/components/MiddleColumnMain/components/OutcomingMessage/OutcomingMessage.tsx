@@ -3,12 +3,12 @@ import { forwardRef } from 'react';
 import { IconCheck, IconDoubleCheck } from '~/components/common/icons';
 import { formatTime } from '~/utils/helpers';
 
-interface OutcomingMessageProps {
+interface OutcomingMessageProps extends React.ComponentPropsWithoutRef<'div'> {
   message: Message;
 }
 
 export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps>(
-  ({ message }, ref) => {
+  ({ message, ...props }, ref) => {
     const messageDate = new Date(message.createdAt);
     const { hours, minutes } = formatTime(messageDate);
 
@@ -16,6 +16,7 @@ export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps
       <div
         ref={ref}
         className="w-fit max-w-[66%]  self-end rounded-l-2xl rounded-r-lg bg-primary-500 px-2 py-1 text-white"
+        {...props}
       >
         {message.message}
         <div className="relative top-1 float-right ml-2 flex gap-1 break-normal pb-0.5">

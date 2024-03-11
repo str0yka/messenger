@@ -23,3 +23,4 @@ export * from './IconDotsVertical';
 export * from './IconEnvelopeClosed';
 export * from './IconAtSign';
 export * from './IconTranslate';
+export * from './IconReply';

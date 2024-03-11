@@ -26,11 +26,7 @@ export const MiddleColumnMain = () => {
       >
         {!!state.messages.length && (
           <div
-            className={cn(
-              'mx-auto my-2 flex flex-col-reverse gap-2 break-words',
-              'md:w-8/12',
-              'xl:w-6/12',
-            )}
+            className={cn('mx-auto flex flex-col-reverse break-words', 'md:w-8/12', 'xl:w-6/12')}
           >
             <Observer
               key={Math.random()}
@@ -43,7 +39,7 @@ export const MiddleColumnMain = () => {
             {groupMessagesByDate(state.messages).map((dateGroup) => (
               <div
                 key={dateGroup.date.valueOf()}
-                className="flex flex-col-reverse gap-2"
+                className="flex flex-col-reverse"
               >
                 {dateGroup.messages.map((message) => {
                   const isFirstUnreadMessage = state.firstUnreadMessage?.id === message.id;
@@ -59,14 +55,19 @@ export const MiddleColumnMain = () => {
                         onClickDelete={onClickDelete}
                         showDeleteButton={message.userId === state.user?.id}
                       >
-                        <MessageItem
-                          ref={(node) => {
-                            if (needScrollToMessage) {
-                              refs.scrollToMessageNodeRef.current = node;
-                            }
-                          }}
-                          message={message}
-                        />
+                        <div
+                          className="my-1 w-full"
+                          onDoubleClick={() => functions.setReplyMessage(message)}
+                        >
+                          <MessageItem
+                            ref={(node) => {
+                              if (needScrollToMessage) {
+                                refs.scrollToMessageNodeRef.current = node;
+                              }
+                            }}
+                            message={message}
+                          />
+                        </div>
                       </MessageContextMenu>
                       {isFirstUnreadMessage && (
                         <div className="rounded bg-primary-700/25 text-center text-sm font-medium text-white">

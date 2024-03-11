@@ -25,7 +25,9 @@ interface ClientToServerEvents {
   'CLIENT:DIALOGS_GET': () => void;
   'CLIENT:MESSAGE_READ': (params: { readMessage: Message }) => void;
   'CLIENT:MESSAGE_DELETE': (params: { messageId: number; deleteForEveryone?: boolean }) => void;
-  'CLIENT:MESSAGE_ADD': (params: { message: { message: string; createdAt: number } }) => void;
+  'CLIENT:MESSAGE_ADD': (params: {
+    message: Pick<Message, 'message'> & Partial<{ createdAt: number; replyMessageId: number }>;
+  }) => void;
   'CLIENT:MESSAGES_GET': (params: {
     filter?: {
       orderBy?: {
