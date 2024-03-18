@@ -6,5 +6,6 @@ type Message = {
   replyMessageId: number | null;
   updatedAt: Date;
   createdAt: Date;
-  replies: Omit<Message, 'replies'>[];
+  replyMessage: Omit<Message, 'replyMessage'> | null;
+  user: User;
 };

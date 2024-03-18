@@ -64,6 +64,7 @@
   "page.home.leftColumn.settings.lastname": "Lastname",
   "page.home.leftColumn.settings.bio": "Bio",
   "page.home.middleColumn.footer.input.placeholder.message": "Message",
+  "page.home.middleColumn.footer.replyTo": "Reply to {name}",
   "page.home.middleColumn.main.contextMenu.item.copy": "Copy",
   "page.home.middleColumn.main.contextMenu.item.deleteMessage": "Delete message",
   "page.home.middleColumn.deleteMessageDialog.title": "Delete message",

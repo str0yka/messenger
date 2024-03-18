@@ -5,8 +5,8 @@ import { getBottomDistance } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../../../../contexts';
+import { MAX_NUMBER_OF_MESSAGES } from '../../../constants';
 import { useReply } from '../../../contexts';
-import { MAX_NUMBER_OF_MESSAGES } from '../contants';
 
 export const useMiddleColumnMain = () => {
   const { id: partnerId } = useParams();
@@ -44,6 +44,15 @@ export const useMiddleColumnMain = () => {
         deleteForEveryone,
       });
       setDeleteMessage(null);
+    }
+  };
+
+  const onClickReplyMessage = (replyMessage: Message['replyMessage']) => {
+    if (replyMessage) {
+      socket.emit('CLIENT:JUMP_TO_MESSAGE', {
+        messageId: replyMessage.id,
+        take: MAX_NUMBER_OF_MESSAGES,
+      });
     }
   };
 
@@ -189,6 +198,16 @@ export const useMiddleColumnMain = () => {
       }
     };
 
+    const onJumpToMessageResponse: ServerToClientEvents['SERVER:JUMP_TO_MESSAGE_RESPONSE'] = (
+      data,
+    ) => {
+      console.log('[MiddleColumnMain:SERVER:JUMP_TO_MESSAGE_RESPONSE]: ', data);
+      setMessages(data.messages);
+      if (data.target) {
+        setScrollToMessage(data.target);
+      }
+    };
+
     const onMessageReadResponse: ServerToClientEvents['SERVER:MESSAGE_READ_RESPONSE'] = (data) => {
       console.log('[MiddleColumnMain:SERVER:MESSAGE_READ_RESPONSE]: ', data);
       if (!data.unreadedMessagesCount) {
@@ -202,6 +221,7 @@ export const useMiddleColumnMain = () => {
     socket.on('SERVER:MESSAGES_PATCH', onMessagesPatch);
     socket.on('SERVER:MESSAGES_PUT', onMessagesPut);
     socket.on('SERVER:JUMP_TO_DATE_RESPONSE', onJumpToDateResponse);
+    socket.on('SERVER:JUMP_TO_MESSAGE_RESPONSE', onJumpToMessageResponse);
     socket.on('SERVER:MESSAGE_READ_RESPONSE', onMessageReadResponse);
 
     return () => {
@@ -213,6 +233,7 @@ export const useMiddleColumnMain = () => {
       socket.off('SERVER:MESSAGES_PATCH', onMessagesPatch);
       socket.off('SERVER:MESSAGES_PUT', onMessagesPut);
       socket.off('SERVER:JUMP_TO_DATE_RESPONSE', onJumpToDateResponse);
+      socket.off('SERVER:JUMP_TO_MESSAGE_RESPONSE', onJumpToMessageResponse);
       socket.off('SERVER:MESSAGE_READ_RESPONSE', onMessageReadResponse);
     };
   }, [partnerId]);
@@ -248,6 +269,7 @@ export const useMiddleColumnMain = () => {
       observeUpperBorder,
       observeLowerBorder,
       onClickScrollDownButton,
+      onClickReplyMessage,
       onDeleteMessageDialogOpenChange,
       onDeleteMessage,
       setReplyMessage,

@@ -2,15 +2,11 @@ import cn from 'classnames';
 import { Fragment } from 'react';
 
 import { Observer } from '~/components';
+import { ContextMenu } from '~/components/common';
+import { IconPapers, IconTrash } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 
-import {
-  DateButton,
-  DeleteMessageDialog,
-  MessageContextMenu,
-  MessageItem,
-  ScrollDownButton,
-} from './components';
+import { DateButton, DeleteMessageDialog, MessageItem, ScrollDownButton } from './components';
 import { groupMessagesByDate } from './helpers';
 import { useMiddleColumnMain } from './hooks';
 
@@ -50,13 +46,9 @@ export const MiddleColumnMain = () => {
 
                   return (
                     <Fragment key={message.id}>
-                      <MessageContextMenu
-                        onClickCopy={onClickCopy}
-                        onClickDelete={onClickDelete}
-                        showDeleteButton={message.userId === state.user?.id}
-                      >
-                        <div
-                          className="my-1 w-full"
+                      <ContextMenu.Root>
+                        <ContextMenu.Trigger
+                          className="flex flex-col py-1"
                           onDoubleClick={() => functions.setReplyMessage(message)}
                         >
                           <MessageItem
@@ -66,9 +58,29 @@ export const MiddleColumnMain = () => {
                               }
                             }}
                             message={message}
+                            onClickReplyMessage={functions.onClickReplyMessage}
                           />
-                        </div>
-                      </MessageContextMenu>
+                        </ContextMenu.Trigger>
+                        <ContextMenu.Content className="w-56">
+                          <ContextMenu.Item onClick={onClickCopy}>
+                            {intl.t('page.home.middleColumn.main.contextMenu.item.copy')}
+                            <ContextMenu.Shortcut>
+                              <IconPapers />
+                            </ContextMenu.Shortcut>
+                          </ContextMenu.Item>
+                          {message.userId === state.user?.id && (
+                            <ContextMenu.Item
+                              onClick={onClickDelete}
+                              className="text-red-400"
+                            >
+                              {intl.t('page.home.middleColumn.main.contextMenu.item.deleteMessage')}
+                              <ContextMenu.Shortcut>
+                                <IconTrash />
+                              </ContextMenu.Shortcut>
+                            </ContextMenu.Item>
+                          )}
+                        </ContextMenu.Content>
+                      </ContextMenu.Root>
                       {isFirstUnreadMessage && (
                         <div className="rounded bg-primary-700/25 text-center text-sm font-medium text-white">
                           {intl.t('page.home.middleColumn.unreadedMessages')}

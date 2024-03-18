@@ -14,6 +14,7 @@ import {
 import { useIntl } from '~/features/i18n';
 
 import { useSocket } from '../../../../contexts';
+import { MAX_NUMBER_OF_MESSAGES } from '../../constants';
 import { useReply } from '../../contexts';
 
 export const MiddleColumnFooter = () => {
@@ -62,9 +63,10 @@ export const MiddleColumnFooter = () => {
         };
         socket.emit('CLIENT:MESSAGE_ADD', { message });
         sendMessageForm.reset();
+        setReplyMessage(null);
       })}
     >
-      <div className="grow">
+      <div className="w-full grow">
         <AnimatePresence mode="popLayout">
           {replyMessage && (
             <motion.div
@@ -74,15 +76,38 @@ export const MiddleColumnFooter = () => {
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.3, type: 'spring' }}
             >
-              <div className="flex h-10 w-10 items-center justify-center">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center">
                 <IconReply className="text-primary-400" />
               </div>
-              <div className="h-10 grow rounded border-l-[3px] border-primary-400 bg-primary-400/25">
-                <p>{replyMessage.message}</p>
+              <div
+                className={cn(
+                  'flex h-10 grow cursor-pointer flex-col justify-center overflow-hidden rounded border-l-[3px] border-primary-400 bg-primary-400/10 px-1',
+                  'hover:bg-primary-400/25',
+                )}
+                role="button"
+                tabIndex={0}
+                aria-hidden
+                onClick={() =>
+                  socket.emit('CLIENT:JUMP_TO_MESSAGE', {
+                    messageId: replyMessage.id,
+                    take: MAX_NUMBER_OF_MESSAGES,
+                  })
+                }
+              >
+                <p className="block truncate text-sm leading-4 text-primary-500">
+                  {intl.t('page.home.middleColumn.footer.replyTo', {
+                    name: replyMessage.user.name,
+                  })}
+                </p>
+                <p className="truncate text-sm leading-5 text-neutral-300/75">
+                  {replyMessage.message}
+                </p>
               </div>
-              <IconButton onClick={() => setReplyMessage(null)}>
-                <IconCross className="text-primary-400" />
-              </IconButton>
+              <div className="shrink-0">
+                <IconButton onClick={() => setReplyMessage(null)}>
+                  <IconCross className="text-primary-400" />
+                </IconButton>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

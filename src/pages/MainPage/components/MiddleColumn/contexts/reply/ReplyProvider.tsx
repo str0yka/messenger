@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
-import { ReplyContext, ReplyState } from './ReplyContext';
+import { ReplyContext } from './ReplyContext';
+import type { ReplyState } from './ReplyContext';
 
 interface ReplyProviderProps {
   children?: React.ReactNode;
