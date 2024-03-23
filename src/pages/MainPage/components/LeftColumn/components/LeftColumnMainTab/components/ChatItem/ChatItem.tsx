@@ -3,6 +3,7 @@ import cn from 'classnames';
 import { Avatar } from '~/components/common';
 import { IconDoubleCheck, IconCheck } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
+import { USER_STATUS } from '~/utils/constants';
 import { createDate, formatTime, isToday } from '~/utils/helpers';
 
 interface ChatItemProps {
@@ -39,7 +40,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
           className="h-14 w-14"
           fallback={avatarFallback}
         />
-        {status === 'ONLINE' && (
+        {status === USER_STATUS.ONLINE && (
           <div className="absolute bottom-[3px] right-[3px] h-3 w-3 rounded-full border-2 border-primary-900/25 bg-white" />
         )}
       </div>

@@ -4,6 +4,9 @@
   "theme.sky-light": "Sky Light",
   "theme.sky-dark": "Sky Dark",
 
+  "user.status.OFFLINE": "offline",
+  "user.status.ONLINE": "online",
+
   "button.logIn": "Log in",
   "button.register": "Register",
   "button.verify": "Verify",
@@ -67,6 +70,13 @@
   "page.home.middleColumn.footer.replyTo": "Reply to {name}",
   "page.home.middleColumn.main.contextMenu.item.copy": "Copy",
   "page.home.middleColumn.main.contextMenu.item.deleteMessage": "Delete message",
+  "page.home.middleColumn.main.contextMenu.item.reply": "Reply",
+  "page.home.middleColumn.main.contextMenu.item.pin": "Pin",
+  "page.home.middleColumn.main.pinnedMessage": "Pinned message",
+  "page.home.middleColumn.header.userInfo": "User info",
+  "page.home.middleColumn.header.userInfo.email": "Email",
+  "page.home.middleColumn.header.userInfo.username": "Username",
+  "page.home.middleColumn.header.userInfo.bio": "Bio",
   "page.home.middleColumn.deleteMessageDialog.title": "Delete message",
   "page.home.middleColumn.deleteMessageDialog.deleteForEveryone": "Also delete for everyone",
   "page.home.middleColumn.deleteMessageDialog.cancel": "CANCEL",

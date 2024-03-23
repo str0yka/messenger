@@ -17,6 +17,7 @@ export const useMiddleColumnMain = () => {
   const { setReplyMessage } = useReply();
 
   const [messages, setMessages] = useState<Message[]>([]);
+  const [pinnedMessage, setPinnedMessage] = useState<Message | null>(null);
   const [deleteMessage, setDeleteMessage] = useState<Message | null>(null);
   const [firstUnreadMessage, setFirstUnreadMessage] = useState<Message | null>(null);
   const [scrollToMessage, setScrollToMessage] = useState<Message | null>(null);
@@ -105,6 +106,8 @@ export const useMiddleColumnMain = () => {
         },
         method: 'PUT',
       });
+    } else {
+      setScrollToMessage(lastMessageInChat);
     }
   };
 
@@ -119,6 +122,7 @@ export const useMiddleColumnMain = () => {
     const onDialogJoinResponse: ServerToClientEvents['SERVER:DIALOG_JOIN_RESPONSE'] = (data) => {
       console.log('[MiddleColumnMain:SERVER:DIALOG_JOIN_RESPONSE]: ', data);
       setMessages(data.messages);
+      setPinnedMessage(data.dialog.pinnedMessage);
 
       if (data.dialog.lastMessage) {
         setLastMessageInChat(data.dialog.lastMessage);
@@ -215,6 +219,13 @@ export const useMiddleColumnMain = () => {
       }
     };
 
+    const onDialogGetResponse: ServerToClientEvents['SERVER:DIALOG_GET_RESPONSE'] = (data) => {
+      console.log('[MiddleColumnMain:SERVER:DIALOG_GET_RESPONSE]: ', data);
+      if (pinnedMessage?.id !== data.dialog.pinnedMessage?.id) {
+        setPinnedMessage(data.dialog.pinnedMessage);
+      }
+    };
+
     socket.on('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
     socket.on('SERVER:MESSAGE_DELETE', onMessageDelete);
     socket.on('SERVER:MESSAGE_ADD', onMessageAdd);
@@ -223,6 +234,7 @@ export const useMiddleColumnMain = () => {
     socket.on('SERVER:JUMP_TO_DATE_RESPONSE', onJumpToDateResponse);
     socket.on('SERVER:JUMP_TO_MESSAGE_RESPONSE', onJumpToMessageResponse);
     socket.on('SERVER:MESSAGE_READ_RESPONSE', onMessageReadResponse);
+    socket.on('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
 
     return () => {
       setMessages([]);
@@ -235,6 +247,7 @@ export const useMiddleColumnMain = () => {
       socket.off('SERVER:JUMP_TO_DATE_RESPONSE', onJumpToDateResponse);
       socket.off('SERVER:JUMP_TO_MESSAGE_RESPONSE', onJumpToMessageResponse);
       socket.off('SERVER:MESSAGE_READ_RESPONSE', onMessageReadResponse);
+      socket.off('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
     };
   }, [partnerId]);
 
@@ -256,6 +269,19 @@ export const useMiddleColumnMain = () => {
     };
   }, []);
 
+  const onClickPinMessage = (message: Message) => () => {
+    socket.emit('CLIENT:PIN_MESSAGE', { messageId: message.id });
+  };
+
+  const onClickPinnedMessage = () => {
+    if (pinnedMessage) {
+      socket.emit('CLIENT:JUMP_TO_MESSAGE', {
+        messageId: pinnedMessage.id,
+        take: MAX_NUMBER_OF_MESSAGES,
+      });
+    }
+  };
+
   return {
     state: {
       user,
@@ -263,6 +289,7 @@ export const useMiddleColumnMain = () => {
       isDeleteMessageDialogOpen: !!deleteMessage,
       scrollToMessage,
       firstUnreadMessage,
+      pinnedMessage,
     },
     functions: {
       setDeleteMessage,
@@ -270,8 +297,10 @@ export const useMiddleColumnMain = () => {
       observeLowerBorder,
       onClickScrollDownButton,
       onClickReplyMessage,
+      onClickPinMessage,
       onDeleteMessageDialogOpenChange,
       onDeleteMessage,
+      onClickPinnedMessage,
       setReplyMessage,
     },
     refs: {

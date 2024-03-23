@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 
 import { Observer } from '~/components';
 import { ContextMenu } from '~/components/common';
-import { IconPapers, IconTrash } from '~/components/common/icons';
+import { IconPapers, IconPushPin, IconReply, IconTrash } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 
 import { DateButton, DeleteMessageDialog, MessageItem, ScrollDownButton } from './components';
@@ -16,6 +16,23 @@ export const MiddleColumnMain = () => {
 
   return (
     <>
+      {state.pinnedMessage && (
+        <div
+          className="flex shrink-0 cursor-pointer gap-2 bg-neutral-800 px-4 py-2"
+          role="button"
+          aria-hidden
+          tabIndex={0}
+          onClick={functions.onClickPinnedMessage}
+        >
+          <div className="w-0.5 bg-primary-400" />
+          <div className="flex flex-col truncate text-sm">
+            <span className="leading-5 text-primary-400">
+              {intl.t('page.home.middleColumn.main.pinnedMessage')}
+            </span>
+            <span className="truncate">{state.pinnedMessage.message}</span>
+          </div>
+        </div>
+      )}
       <div
         ref={refs.chatNodeRef}
         className={cn('grow overflow-auto px-2', 'md:px-0')}
@@ -41,6 +58,7 @@ export const MiddleColumnMain = () => {
                   const isFirstUnreadMessage = state.firstUnreadMessage?.id === message.id;
                   const needScrollToMessage = state.scrollToMessage?.id === message.id;
 
+                  const onClickReply = () => functions.setReplyMessage(message);
                   const onClickCopy = () => navigator.clipboard.writeText(message.message).catch();
                   const onClickDelete = () => functions.setDeleteMessage(message);
 
@@ -62,10 +80,22 @@ export const MiddleColumnMain = () => {
                           />
                         </ContextMenu.Trigger>
                         <ContextMenu.Content className="w-56">
+                          <ContextMenu.Item onClick={onClickReply}>
+                            {intl.t('page.home.middleColumn.main.contextMenu.item.reply')}
+                            <ContextMenu.Shortcut>
+                              <IconReply />
+                            </ContextMenu.Shortcut>
+                          </ContextMenu.Item>
                           <ContextMenu.Item onClick={onClickCopy}>
                             {intl.t('page.home.middleColumn.main.contextMenu.item.copy')}
                             <ContextMenu.Shortcut>
                               <IconPapers />
+                            </ContextMenu.Shortcut>
+                          </ContextMenu.Item>
+                          <ContextMenu.Item onClick={functions.onClickPinMessage(message)}>
+                            {intl.t('page.home.middleColumn.main.contextMenu.item.pin')}
+                            <ContextMenu.Shortcut>
+                              <IconPushPin />
                             </ContextMenu.Shortcut>
                           </ContextMenu.Item>
                           {message.userId === state.user?.id && (

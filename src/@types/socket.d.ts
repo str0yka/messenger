@@ -45,8 +45,8 @@ interface ClientToServerEvents {
   'CLIENT:JUMP_TO_DATE': (params: { timestamp: number; take?: number }) => void;
   'CLIENT:JUMP_TO_MESSAGE': (params: { messageId: number; take?: number }) => void;
   'CLIENT:UPDATE_DIALOG_STATUS': (params: { status: Dialog['status'] }) => void;
+  'CLIENT:PIN_MESSAGE': (params: { messageId: number }) => void;
 }
-
 namespace IO {
   type Socket = import('socket.io-client').Socket<ServerToClientEvents, ClientToServerEvents>;
   type Server = import('socket.io-client').Server<ServerToClientEvents, ClientToServerEvents>;

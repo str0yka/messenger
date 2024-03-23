@@ -65,9 +65,9 @@ export const LeftColumnSettingsTab = () => {
               'hover:bg-neutral-600/50',
             )}
           >
-            <IconEnvelopeClosed className="h-6 w-6 text-neutral-400" />
-            <div className="flex flex-col items-start">
-              {user?.email}
+            <IconEnvelopeClosed className="h-6 w-6 shrink-0 text-neutral-400" />
+            <div className="flex flex-col items-start overflow-hidden">
+              <span className="w-full truncate text-start">{user?.email}</span>
               <span className="text-sm text-neutral-400">
                 {intl.t('page.home.leftColumn.settings.email')}
               </span>
@@ -81,9 +81,9 @@ export const LeftColumnSettingsTab = () => {
                 'hover:bg-neutral-600/50',
               )}
             >
-              <IconAtSign className="h-6 w-6 text-neutral-400" />
-              <div className="flex flex-col items-start">
-                {user.username}
+              <IconAtSign className="h-6 w-6 shrink-0 text-neutral-400" />
+              <div className="flex flex-col items-start overflow-hidden">
+                <span className="w-full truncate text-start">{user.username}</span>
                 <span className="text-sm text-neutral-400">
                   {intl.t('page.home.leftColumn.settings.username')}
                 </span>
@@ -98,9 +98,9 @@ export const LeftColumnSettingsTab = () => {
                 'hover:bg-neutral-600/50',
               )}
             >
-              <IconInfoCircled className="h-6 w-6 text-neutral-400" />
-              <div className="flex flex-col items-start">
-                {user.bio}
+              <IconInfoCircled className="h-6 w-6 shrink-0 text-neutral-400" />
+              <div className="flex flex-col items-start overflow-hidden">
+                <span className="w-full truncate text-start">{user.bio}</span>
                 <span className="text-sm text-neutral-400">
                   {intl.t('page.home.leftColumn.settings.bio')}
                 </span>
