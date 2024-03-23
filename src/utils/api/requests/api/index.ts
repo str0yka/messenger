@@ -4,3 +4,4 @@ export * from './refresh/getRefresh';
 export * from './login/postLogin';
 export * from './logout/postLogout';
 export * from './search/getSearch';
+export * from './update/postProfileUpdate';

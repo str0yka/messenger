@@ -1,6 +1,7 @@
 import { $api } from '~/utils/api';
 
-export interface RegistrationParams {
+export interface PostRegistrationParams {
+  name: string;
   email: string;
   password: string;
 }
@@ -13,5 +14,9 @@ export interface PostRegistrationSuccessResponse {
 
 export type PostRegistrationFailureResponse = ApiErrorResponse;
 
-export const postRegistration = async (credentials: RegistrationParams) =>
-  $api.post<PostRegistrationSuccessResponse>('/registration', credentials).then((res) => res.data);
+export type PostRegistrationRequestConfig = RequestConfig<PostRegistrationParams>;
+
+export const postRegistration = async ({ params, config }: PostRegistrationRequestConfig) =>
+  $api
+    .post<PostRegistrationSuccessResponse>('/registration', params, config)
+    .then((res) => res.data);

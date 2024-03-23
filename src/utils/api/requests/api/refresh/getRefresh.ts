@@ -8,5 +8,7 @@ export interface GetRefreshSuccessResponse {
 
 export type GetRefreshFailureResponse = ApiErrorResponse;
 
-export const getRefresh = async () =>
-  $api.get<GetRefreshSuccessResponse>('/refresh').then((res) => res.data);
+export type GetRefreshRequestConfig = RequestConfig;
+
+export const getRefresh = async ({ config }: GetRefreshRequestConfig) =>
+  $api.get<GetRefreshSuccessResponse>('/refresh', config).then((res) => res.data);

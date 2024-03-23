@@ -1,6 +1,6 @@
 import { $api } from '~/utils/api';
 
-export interface LoginParams {
+export interface PostLoginParams {
   email: string;
   password: string;
 }
@@ -10,7 +10,10 @@ export interface PostLoginSuccessResponse {
   refreshToken: string;
   user: User;
 }
+
 export type PostLoginFailureResponse = ApiErrorResponse;
 
-export const postLogin = async (credentials: LoginParams) =>
-  $api.post<PostLoginSuccessResponse>('/login', credentials).then((res) => res.data);
+export type PostLoginRequestConfig = RequestConfig<PostLoginParams>;
+
+export const postLogin = async ({ params, config }: PostLoginRequestConfig) =>
+  $api.post<PostLoginSuccessResponse>('/login', params, config).then((res) => res.data);

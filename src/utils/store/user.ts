@@ -2,11 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 interface UserStore {
-  user: {
-    id: User['id'];
-    email: User['email'];
-    isVerified: User['isVerified'];
-  } | null;
+  user: User | null;
   setUser: (user: User) => void;
   resetUser: () => void;
 }

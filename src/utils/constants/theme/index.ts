@@ -15,6 +15,7 @@ export const EXTENDED_THEME: Record<keyof typeof THEME, ThemeExtended> = {
   VIOLET_DARK: {
     mode: 'dark',
     name: 'Violet Dark',
+    intl: 'theme.violet-dark',
     tailwind: {
       bg: 'bg-violet-400',
       text: 'text-violet-400',
@@ -25,6 +26,7 @@ export const EXTENDED_THEME: Record<keyof typeof THEME, ThemeExtended> = {
   VIOLET_LIGHT: {
     mode: 'light',
     name: 'Violet Light',
+    intl: 'theme.violet-light',
     tailwind: {
       bg: 'bg-violet-400',
       text: 'text-violet-400',
@@ -35,6 +37,7 @@ export const EXTENDED_THEME: Record<keyof typeof THEME, ThemeExtended> = {
   SKY_LIGHT: {
     mode: 'light',
     name: 'Sky Light',
+    intl: 'theme.sky-light',
     tailwind: {
       bg: 'bg-sky-400',
       text: 'text-sky-400',
@@ -44,7 +47,8 @@ export const EXTENDED_THEME: Record<keyof typeof THEME, ThemeExtended> = {
   },
   SKY_DARK: {
     mode: 'dark',
-    name: 'Sky Light',
+    name: 'Sky Dark',
+    intl: 'theme.sky-dark',
     tailwind: {
       bg: 'bg-sky-400',
       text: 'text-sky-400',

@@ -6,5 +6,5 @@ export const useExtendedTheme = () => {
 
   const extendedTheme = getExtendedTheme(themeState.theme);
 
-  return { extendedTheme, ...extendedTheme };
+  return { extendedTheme, ...themeState };
 };

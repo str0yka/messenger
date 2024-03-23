@@ -1,15 +1,10 @@
 import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { Input, Button, Alert } from '~/components/common';
 import { useIntl } from '~/features/i18n';
-import { postRegistration } from '~/utils/api';
-import type {
-  PostRegistrationFailureResponse,
-  PostRegistrationSuccessResponse,
-  RegistrationParams,
-} from '~/utils/api';
+import type { PostRegistrationParams } from '~/utils/api';
+import { useRegistrationMutation } from '~/utils/api';
 import { PUBLIC_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
@@ -19,20 +14,15 @@ export const Registration = () => {
 
   const intl = useIntl();
 
-  const registerMutation = useMutation<
-    PostRegistrationSuccessResponse,
-    PostRegistrationFailureResponse,
-    RegistrationParams
-  >({
-    mutationFn: postRegistration,
+  const registerMutation = useRegistrationMutation({
     onSuccess: (data) => {
       setUser(data.user);
       navigate(PUBLIC_ROUTE.VERIFY);
     },
   });
 
-  const registerForm = useForm<RegistrationParams>({
-    defaultValues: { email: '', password: '' },
+  const registerForm = useForm<PostRegistrationParams>({
+    defaultValues: { email: '', password: '', name: '' },
   });
 
   return (
@@ -51,12 +41,27 @@ export const Registration = () => {
         className="flex w-full flex-col gap-4"
         onSubmit={registerForm.handleSubmit(async (values) => {
           try {
-            await registerMutation.mutateAsync(values);
+            await registerMutation.mutateAsync({ params: values });
           } catch {
             console.log('Error'); // $FIXME
           }
         })}
       >
+        <Input
+          placeholder={intl.t('input.label.name')}
+          type="text"
+          disabled={registerForm.formState.isSubmitting}
+          error={!!registerForm.formState.errors.name?.message}
+          helperText={registerForm.formState.errors.name?.message}
+          rounded
+          {...registerForm.register('name', {
+            required: intl.t('page.auth.registration.input.name.helperText.required'),
+            maxLength: {
+              value: 25,
+              message: intl.t('page.auth.registration.input.name.helperText.maxLength'),
+            },
+          })}
+        />
         <Input
           placeholder={intl.t('input.label.email')}
           type="email"

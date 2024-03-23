@@ -1,12 +1,11 @@
 import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { Input, Button, Alert } from '~/components/common';
 import { useIntl } from '~/features/i18n';
-import { postLogin } from '~/utils/api';
-import type { PostLoginSuccessResponse, PostLoginFailureResponse, LoginParams } from '~/utils/api';
-import { PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
+import { useLoginMutation } from '~/utils/api';
+import type { PostLoginParams } from '~/utils/api';
+import { ACCESS_TOKEN_LOCAL_STORAGE_KEY, PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
 export const Login = () => {
@@ -15,24 +14,19 @@ export const Login = () => {
 
   const intl = useIntl();
 
-  const loginMutation = useMutation<
-    PostLoginSuccessResponse,
-    PostLoginFailureResponse,
-    LoginParams
-  >({
-    mutationFn: postLogin,
+  const loginMutation = useLoginMutation({
     onSuccess: (data) => {
       setUser(data.user);
       if (data.user.isVerified) {
+        localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, data.accessToken);
         navigate(PRIVATE_ROUTE.HOME);
       } else {
         navigate(PUBLIC_ROUTE.VERIFY);
       }
     },
-    onError: () => {},
   });
 
-  const loginForm = useForm<LoginParams>({
+  const loginForm = useForm<PostLoginParams>({
     defaultValues: { email: '', password: '' },
   });
 
@@ -52,7 +46,7 @@ export const Login = () => {
         className="flex w-full flex-col gap-3"
         onSubmit={loginForm.handleSubmit(async (values) => {
           try {
-            await loginMutation.mutateAsync(values);
+            await loginMutation.mutateAsync({ params: values });
           } catch {
             console.log('Error'); // $FIXME
           }

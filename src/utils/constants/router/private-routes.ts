@@ -1,4 +1,4 @@
 export const PRIVATE_ROUTE = {
   HOME: '/',
-  USER: (id: number | ':id') => `/${id}`,
+  USER: (id: number | string) => `/${id}`,
 };

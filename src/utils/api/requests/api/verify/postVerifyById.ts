@@ -1,10 +1,8 @@
 import { $api } from '~/utils/api';
 
-export interface VerifyByIdParams {
+export interface PostVerifyByIdParams {
   userId: number;
-  body: {
-    verificationCode: string;
-  };
+  verificationCode: string;
 }
 
 export interface PostVerifyByIdSuccessResponse {
@@ -15,5 +13,12 @@ export interface PostVerifyByIdSuccessResponse {
 
 export type PostVerifyByIdFailureResponse = ApiErrorResponse;
 
-export const postVerifyById = async ({ userId, body }: VerifyByIdParams) =>
-  $api.post<PostVerifyByIdSuccessResponse>(`/verify/${userId}`, body).then((res) => res.data);
+export type PostVerifyByIdRequestConfig = RequestConfig<PostVerifyByIdParams>;
+
+export const postVerifyById = async ({
+  params: { userId, ...params },
+  config,
+}: PostVerifyByIdRequestConfig) =>
+  $api
+    .post<PostVerifyByIdSuccessResponse>(`/verify/${userId}`, params, config)
+    .then((res) => res.data);

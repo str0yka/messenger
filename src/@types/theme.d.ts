@@ -6,6 +6,7 @@ interface ThemeExtended {
   theme: Theme;
   mode: ThemeMode;
   name: string;
+  intl: string;
   tailwind: {
     text: `text-${string}-400`;
     bg: `bg-${string}-400`;
