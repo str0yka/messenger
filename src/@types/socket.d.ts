@@ -15,6 +15,7 @@ interface ServerToClientEvents {
   'SERVER:JUMP_TO_MESSAGE_RESPONSE': (params: { messages: Message[]; target?: Message }) => void;
   'SERVER:MESSAGES_PUT': (params: { messages: Message[] }) => void;
   'SERVER:MESSAGES_PATCH': (params: { messages: Message[] }) => void;
+  'SERVER:ERROR': (params: { event: keyof ClientToServerEvents; reason?: string }) => void;
 }
 
 interface ClientToServerEvents {
@@ -45,7 +46,7 @@ interface ClientToServerEvents {
   'CLIENT:JUMP_TO_DATE': (params: { timestamp: number; take?: number }) => void;
   'CLIENT:JUMP_TO_MESSAGE': (params: { messageId: number; take?: number }) => void;
   'CLIENT:UPDATE_DIALOG_STATUS': (params: { status: Dialog['status'] }) => void;
-  'CLIENT:PIN_MESSAGE': (params: { messageId: number }) => void;
+  'CLIENT:PIN_MESSAGE': (params: { messageId: number | null }) => void;
 }
 namespace IO {
   type Socket = import('socket.io-client').Socket<ServerToClientEvents, ClientToServerEvents>;

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { IconButton, Avatar, Dialog } from '~/components/common';
 import {
   IconAtSign,
+  IconBookmark,
   IconCross,
   IconEnvelopeClosed,
   IconInfoCircled,
@@ -21,6 +22,28 @@ export const MiddleColumnHeader = () => {
 
   if (!dialog) return null; // $FIXME
 
+  if (dialog.userId === dialog.partnerId) {
+    return (
+      <div className="flex cursor-pointer items-center gap-4 border-b border-b-neutral-700 bg-neutral-800 px-4 py-2">
+        <div>
+          <Link to={PRIVATE_ROUTE.HOME}>
+            <IconButton>
+              <IconCross />
+            </IconButton>
+          </Link>
+        </div>
+        <div className="relative">
+          <Avatar.Root>
+            <IconBookmark />
+          </Avatar.Root>
+        </div>
+        <div className="flex flex-col items-start">
+          <h2 className="truncate font-semibold text-neutral-50">{intl.t('savedMessages')}</h2>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Dialog.Root>
       <Dialog.Trigger>
@@ -33,18 +56,22 @@ export const MiddleColumnHeader = () => {
             </Link>
           </div>
           <div className="relative">
-            <Avatar fallback={getUserName(dialog.partner)[0]} />
+            <Avatar.Root>
+              <Avatar.Fallback>{getUserName(dialog.partner)[0]}</Avatar.Fallback>
+            </Avatar.Root>
             {dialog.partner.status === USER_STATUS.ONLINE && (
               <div className="absolute bottom-[1.5px] right-[1.5px] h-2.5 w-2.5 rounded-full border-2 border-primary-900/25 bg-white" />
             )}
           </div>
-          <div>
+          <div className="flex flex-col items-start">
             <h2 className="truncate font-semibold text-neutral-50">
               {getUserName(dialog.partner)}
             </h2>
-            {dialog.status === 'TYPING' && (
-              <p className="leading-3 text-neutral-400">печатает...</p>
-            )}
+            <p className="leading-3 text-neutral-400">
+              {dialog.status === 'TYPING'
+                ? intl.t('page.home.middleColumn.header.typing')
+                : intl.t(`user.status.${dialog.partner.status}`)}
+            </p>
           </div>
         </div>
       </Dialog.Trigger>
@@ -63,10 +90,9 @@ export const MiddleColumnHeader = () => {
           </div>
           <div className="flex flex-col items-center gap-4 py-4">
             <div className="relative">
-              <Avatar
-                fallback={getUserName(dialog.partner)[0]}
-                className="h-28 w-28 text-4xl"
-              />
+              <Avatar.Root className="h-28 w-28 text-4xl">
+                <Avatar.Fallback>{getUserName(dialog.partner)[0]}</Avatar.Fallback>
+              </Avatar.Root>
               {dialog.partner.status === USER_STATUS.ONLINE && (
                 <div className="absolute bottom-2 right-2 h-4 w-4 rounded-full border-2 border-primary-900/25 bg-white" />
               )}

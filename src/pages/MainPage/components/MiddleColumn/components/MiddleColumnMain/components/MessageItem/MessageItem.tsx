@@ -9,13 +9,14 @@ import { OutcomingMessage } from '../OutcomingMessage/OutcomingMessage';
 
 interface MessageItemProps extends React.ComponentPropsWithoutRef<'div'> {
   message: Message;
+  isPinned?: boolean;
   onClickReplyMessage: (replyMessage: Message['replyMessage']) => void;
 }
 
 export const MessageItem = forwardRef<
   React.ElementRef<typeof OutcomingMessage | typeof IncomingMessage>,
   MessageItemProps
->(({ message, onClickReplyMessage, ...props }, ref) => {
+>(({ message, isPinned, onClickReplyMessage, ...props }, ref) => {
   const user = useUserStore((state) => state.user);
   const socket = useSocket();
 
@@ -43,6 +44,7 @@ export const MessageItem = forwardRef<
       <OutcomingMessage
         ref={ref}
         message={{ ...message, read: isRead }}
+        isPinned={isPinned}
         onClickReplyMessage={onClickReplyMessage}
         {...props}
       />
@@ -53,6 +55,7 @@ export const MessageItem = forwardRef<
       <IncomingMessage
         ref={ref}
         message={{ ...message, read: isRead }}
+        isPinned={isPinned}
         onClickReplyMessage={onClickReplyMessage}
         {...props}
       />
@@ -69,6 +72,7 @@ export const MessageItem = forwardRef<
       <IncomingMessage
         ref={ref}
         message={{ ...message, read: isRead }}
+        isPinned={isPinned}
         onClickReplyMessage={onClickReplyMessage}
         {...props}
       />

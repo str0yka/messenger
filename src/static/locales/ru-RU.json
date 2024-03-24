@@ -7,6 +7,8 @@
   "user.status.OFFLINE": "не в сети",
   "user.status.ONLINE": "в сети",
 
+  "savedMessages": "Избранное",
+
   "button.logIn": "Войти",
   "button.register": "Зарегистрироваться",
   "button.verify": "Подтвердить",
@@ -72,7 +74,9 @@
   "page.home.middleColumn.main.contextMenu.item.deleteMessage": "Удалить сообщение",
   "page.home.middleColumn.main.contextMenu.item.reply": "Ответить",
   "page.home.middleColumn.main.contextMenu.item.pin": "Закрепить",
+  "page.home.middleColumn.main.contextMenu.item.unpin": "Открепить",
   "page.home.middleColumn.main.pinnedMessage": "Закреплённое сообщение",
+  "page.home.middleColumn.header.typing": "печатает...",
   "page.home.middleColumn.header.userInfo": "Информация",
   "page.home.middleColumn.header.userInfo.email": "Почта",
   "page.home.middleColumn.header.userInfo.username": "Имя пользователя",

@@ -7,6 +7,8 @@
   "user.status.OFFLINE": "offline",
   "user.status.ONLINE": "online",
 
+  "savedMessages": "Saved Messages",
+
   "button.logIn": "Log in",
   "button.register": "Register",
   "button.verify": "Verify",
@@ -72,7 +74,9 @@
   "page.home.middleColumn.main.contextMenu.item.deleteMessage": "Delete message",
   "page.home.middleColumn.main.contextMenu.item.reply": "Reply",
   "page.home.middleColumn.main.contextMenu.item.pin": "Pin",
+  "page.home.middleColumn.main.contextMenu.item.unpin": "Unpin",
   "page.home.middleColumn.main.pinnedMessage": "Pinned message",
+  "page.home.middleColumn.header.typing": "typing...",
   "page.home.middleColumn.header.userInfo": "User info",
   "page.home.middleColumn.header.userInfo.email": "Email",
   "page.home.middleColumn.header.userInfo.username": "Username",

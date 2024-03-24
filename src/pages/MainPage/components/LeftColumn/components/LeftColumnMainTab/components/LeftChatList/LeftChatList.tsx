@@ -8,6 +8,7 @@ import { useUserStore } from '~/utils/store';
 
 import { useDialog, useSocket } from '../../../../../../contexts';
 import { ChatItem } from '../ChatItem/ChatItem';
+import { SavedMessagesChatItem } from '../SavedMessagesChatItem/SavedMessagesChatItem';
 
 export const LeftChatList = () => {
   const user = useUserStore((state) => state.user);
@@ -44,15 +45,23 @@ export const LeftChatList = () => {
             transition={{ duration: 0.1 * index }}
           >
             <Link to={PRIVATE_ROUTE.USER(getUserLink(dialog.partner))}>
-              <ChatItem
-                title={getUserName(dialog.partner)}
-                avatarFallback={getUserName(dialog.partner)[0]}
-                lastMessage={dialog.lastMessage}
-                lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
-                unreadedMessagesCount={dialog.unreadedMessagesCount}
-                active={activeDialog?.id === dialog.id}
-                status={dialog.partner.status}
-              />
+              {dialog.userId === dialog.partnerId && (
+                <SavedMessagesChatItem
+                  lastMessage={dialog.lastMessage}
+                  active={activeDialog?.id === dialog.id}
+                />
+              )}
+              {dialog.userId !== dialog.partnerId && (
+                <ChatItem
+                  title={getUserName(dialog.partner)}
+                  avatarFallback={getUserName(dialog.partner)[0]}
+                  lastMessage={dialog.lastMessage}
+                  lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
+                  unreadedMessagesCount={dialog.unreadedMessagesCount}
+                  active={activeDialog?.id === dialog.id}
+                  status={dialog.partner.status}
+                />
+              )}
             </Link>
           </motion.li>
         ))}

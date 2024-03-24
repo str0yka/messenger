@@ -36,10 +36,9 @@ export const ChatItem: React.FC<ChatItemProps> = ({
       })}
     >
       <div className="relative">
-        <Avatar
-          className="h-14 w-14"
-          fallback={avatarFallback}
-        />
+        <Avatar.Root className="h-14 w-14">
+          <Avatar.Fallback>{avatarFallback}</Avatar.Fallback>
+        </Avatar.Root>
         {status === USER_STATUS.ONLINE && (
           <div className="absolute bottom-[3px] right-[3px] h-3 w-3 rounded-full border-2 border-primary-900/25 bg-white" />
         )}

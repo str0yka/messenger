@@ -25,3 +25,5 @@ export * from './IconAtSign';
 export * from './IconTranslate';
 export * from './IconReply';
 export * from './IconPushPin';
+export * from './IconBookmark';
+export * from './IconPushPinSlashed';

@@ -62,10 +62,15 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       socketRef.current.emit('CLIENT:DIALOGS_GET');
     };
 
+    const onError: ServerToClientEvents['SERVER:ERROR'] = (data) => {
+      console.log('[SocketProvider:SERVER:ERROR]', data);
+    };
+
     socketRef.current.on('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
     socketRef.current.on('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
     socketRef.current.on('SERVER:DIALOG_NEED_TO_UPDATE', onDialogNeedToUpdate);
     socketRef.current.on('SERVER:DIALOGS_NEED_TO_UPDATE', onDialogsNeedToUpdate);
+    socketRef.current.on('SERVER:ERROR', onError);
 
     return () => {
       setDialog(null);
@@ -74,6 +79,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       socketRef.current.off('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
       socketRef.current.off('SERVER:DIALOG_NEED_TO_UPDATE', onDialogNeedToUpdate);
       socketRef.current.off('SERVER:DIALOGS_NEED_TO_UPDATE', onDialogsNeedToUpdate);
+      socketRef.current.off('SERVER:ERROR', onError);
     };
   }, [partnerId]);
 

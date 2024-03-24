@@ -9,6 +9,7 @@ import { getUserLink, getUserName } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { ChatItem } from '../ChatItem/ChatItem';
+import { SavedMessagesChatItem } from '../SavedMessagesChatItem/SavedMessagesChatItem';
 
 interface LeftSearchListProps {
   query: string;
@@ -69,14 +70,19 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
               to={PRIVATE_ROUTE.USER(getUserLink(dialog.partner))}
               onClick={onClose}
             >
-              <ChatItem
-                title={getUserName(dialog.partner)}
-                avatarFallback={getUserName(dialog.partner)[0]}
-                lastMessage={dialog.lastMessage}
-                lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
-                // eslint-disable-next-line no-underscore-dangle
-                unreadedMessagesCount={dialog._count.messages}
-              />
+              {dialog.userId === dialog.partnerId && (
+                <SavedMessagesChatItem lastMessage={dialog.lastMessage} />
+              )}
+              {dialog.userId !== dialog.partnerId && (
+                <ChatItem
+                  title={getUserName(dialog.partner)}
+                  avatarFallback={getUserName(dialog.partner)[0]}
+                  lastMessage={dialog.lastMessage}
+                  lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
+                  // eslint-disable-next-line no-underscore-dangle
+                  unreadedMessagesCount={dialog._count.messages}
+                />
+              )}
             </Link>
           ))}
         </>

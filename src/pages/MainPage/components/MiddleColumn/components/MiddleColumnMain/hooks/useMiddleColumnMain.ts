@@ -26,13 +26,8 @@ export const useMiddleColumnMain = () => {
   const scrollToMessageNodeRef = useRef<HTMLDivElement | null>(null);
   const chatNodeRef = useRef<HTMLDivElement | null>(null);
   const scrollDownNodeRef = useRef<HTMLDivElement | null>(null);
-  const lastMessageInChatRef = useRef(lastMessageInChat);
-  const isMessagesContainLastMessageInChat = useRef(
-    !!messages.find((message) => message.id === lastMessageInChat?.id),
-  );
 
-  lastMessageInChatRef.current = lastMessageInChat;
-  isMessagesContainLastMessageInChat.current = !!messages.find(
+  const isMessagesContainLastMessageInChat = !!messages.find(
     (message) => message.id === lastMessageInChat?.id,
   );
 
@@ -59,7 +54,7 @@ export const useMiddleColumnMain = () => {
 
   const observeLowerBorder = (entry?: IntersectionObserverEntry) => {
     const lastMessage = messages.at(0);
-    if (entry?.isIntersecting && lastMessage && !isMessagesContainLastMessageInChat.current) {
+    if (entry?.isIntersecting && lastMessage && !isMessagesContainLastMessageInChat) {
       socket.emit('CLIENT:MESSAGES_GET', {
         method: 'PATCH',
         filter: {
@@ -96,7 +91,7 @@ export const useMiddleColumnMain = () => {
   };
 
   const onClickScrollDownButton = () => {
-    if (!lastMessageInChat || !isMessagesContainLastMessageInChat.current) {
+    if (!lastMessageInChat || !isMessagesContainLastMessageInChat) {
       socket.emit('CLIENT:MESSAGES_GET', {
         filter: {
           take: MAX_NUMBER_OF_MESSAGES,
@@ -174,7 +169,7 @@ export const useMiddleColumnMain = () => {
     const onMessageAdd: ServerToClientEvents['SERVER:MESSAGE_ADD'] = (data) => {
       console.log('[MiddleColumnMain:SERVER:MESSAGE_ADD]: ', data);
 
-      if (isMessagesContainLastMessageInChat.current || !lastMessageInChatRef.current) {
+      if (isMessagesContainLastMessageInChat || !lastMessageInChat) {
         setMessages((prevMessages) =>
           [data.message, ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES),
         );
@@ -221,6 +216,12 @@ export const useMiddleColumnMain = () => {
 
     const onDialogGetResponse: ServerToClientEvents['SERVER:DIALOG_GET_RESPONSE'] = (data) => {
       console.log('[MiddleColumnMain:SERVER:DIALOG_GET_RESPONSE]: ', data);
+      console.log(
+        '@',
+        pinnedMessage?.id,
+        data.dialog.pinnedMessage?.id,
+        pinnedMessage?.id !== data.dialog.pinnedMessage?.id,
+      );
       if (pinnedMessage?.id !== data.dialog.pinnedMessage?.id) {
         setPinnedMessage(data.dialog.pinnedMessage);
       }
@@ -237,8 +238,6 @@ export const useMiddleColumnMain = () => {
     socket.on('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
 
     return () => {
-      setMessages([]);
-
       socket.off('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
       socket.off('SERVER:MESSAGE_DELETE', onMessageDelete);
       socket.off('SERVER:MESSAGE_ADD', onMessageAdd);
@@ -249,7 +248,14 @@ export const useMiddleColumnMain = () => {
       socket.off('SERVER:MESSAGE_READ_RESPONSE', onMessageReadResponse);
       socket.off('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
     };
-  }, [partnerId]);
+  }, [lastMessageInChat, pinnedMessage]);
+
+  useEffect(
+    () => () => {
+      setMessages([]);
+    },
+    [partnerId],
+  );
 
   useEffect(() => {
     const toggleScrollButton = () => {
@@ -271,6 +277,10 @@ export const useMiddleColumnMain = () => {
 
   const onClickPinMessage = (message: Message) => () => {
     socket.emit('CLIENT:PIN_MESSAGE', { messageId: message.id });
+  };
+
+  const onClickUnpinMessage = () => {
+    socket.emit('CLIENT:PIN_MESSAGE', { messageId: null });
   };
 
   const onClickPinnedMessage = () => {
@@ -298,6 +308,7 @@ export const useMiddleColumnMain = () => {
       onClickScrollDownButton,
       onClickReplyMessage,
       onClickPinMessage,
+      onClickUnpinMessage,
       onDeleteMessageDialogOpenChange,
       onDeleteMessage,
       onClickPinnedMessage,

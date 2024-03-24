@@ -1,16 +1,17 @@
 import cn from 'classnames';
 import { forwardRef } from 'react';
 
-import { IconCheck, IconDoubleCheck } from '~/components/common/icons';
+import { IconCheck, IconDoubleCheck, IconPushPin } from '~/components/common/icons';
 import { formatTime } from '~/utils/helpers';
 
 interface OutcomingMessageProps extends React.ComponentPropsWithoutRef<'div'> {
   message: Message;
+  isPinned?: boolean;
   onClickReplyMessage: (replyMessage: Message['replyMessage']) => void;
 }
 
 export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps>(
-  ({ message, onClickReplyMessage, ...props }, ref) => {
+  ({ message, isPinned, onClickReplyMessage, ...props }, ref) => {
     const messageDate = new Date(message.createdAt);
     const { hours, minutes } = formatTime(messageDate);
 
@@ -39,13 +40,13 @@ export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps
         )}
         <div>
           {message.message}
-          <div className="relative top-1 float-right ml-2 flex gap-1 break-normal pb-0.5">
-            <span className="text-xs font-medium text-white/50">
+          <div className="relative top-1 float-right ml-2 flex items-center gap-1 break-normal pb-0.5 text-white/50">
+            {isPinned && <IconPushPin className="h-3.5 w-3.5" />}
+            <span className="text-xs font-medium">
               {hours}:{minutes}
             </span>
-
-            {message.read && <IconDoubleCheck className="w-4 text-white" />}
-            {!message.read && <IconCheck className="w-4 text-white" />}
+            {message.read && <IconDoubleCheck className="w-4" />}
+            {!message.read && <IconCheck className="w-4" />}
           </div>
         </div>
       </div>

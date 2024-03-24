@@ -2,8 +2,15 @@ import cn from 'classnames';
 import { Fragment } from 'react';
 
 import { Observer } from '~/components';
-import { ContextMenu } from '~/components/common';
-import { IconPapers, IconPushPin, IconReply, IconTrash } from '~/components/common/icons';
+import { ContextMenu, IconButton } from '~/components/common';
+import {
+  IconCross,
+  IconPapers,
+  IconPushPin,
+  IconPushPinSlashed,
+  IconReply,
+  IconTrash,
+} from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 
 import { DateButton, DeleteMessageDialog, MessageItem, ScrollDownButton } from './components';
@@ -25,11 +32,16 @@ export const MiddleColumnMain = () => {
           onClick={functions.onClickPinnedMessage}
         >
           <div className="w-0.5 bg-primary-400" />
-          <div className="flex flex-col truncate text-sm">
+          <div className="flex grow flex-col truncate text-sm">
             <span className="leading-5 text-primary-400">
               {intl.t('page.home.middleColumn.main.pinnedMessage')}
             </span>
             <span className="truncate">{state.pinnedMessage.message}</span>
+          </div>
+          <div>
+            <IconButton onClick={functions.onClickUnpinMessage}>
+              <IconCross />
+            </IconButton>
           </div>
         </div>
       )}
@@ -55,6 +67,7 @@ export const MiddleColumnMain = () => {
                 className="flex flex-col-reverse"
               >
                 {dateGroup.messages.map((message) => {
+                  const isPinnedMessage = state.pinnedMessage?.id === message.id;
                   const isFirstUnreadMessage = state.firstUnreadMessage?.id === message.id;
                   const needScrollToMessage = state.scrollToMessage?.id === message.id;
 
@@ -76,6 +89,7 @@ export const MiddleColumnMain = () => {
                               }
                             }}
                             message={message}
+                            isPinned={isPinnedMessage}
                             onClickReplyMessage={functions.onClickReplyMessage}
                           />
                         </ContextMenu.Trigger>
@@ -92,12 +106,22 @@ export const MiddleColumnMain = () => {
                               <IconPapers />
                             </ContextMenu.Shortcut>
                           </ContextMenu.Item>
-                          <ContextMenu.Item onClick={functions.onClickPinMessage(message)}>
-                            {intl.t('page.home.middleColumn.main.contextMenu.item.pin')}
-                            <ContextMenu.Shortcut>
-                              <IconPushPin />
-                            </ContextMenu.Shortcut>
-                          </ContextMenu.Item>
+                          {!isPinnedMessage && (
+                            <ContextMenu.Item onClick={functions.onClickPinMessage(message)}>
+                              {intl.t('page.home.middleColumn.main.contextMenu.item.pin')}
+                              <ContextMenu.Shortcut>
+                                <IconPushPin />
+                              </ContextMenu.Shortcut>
+                            </ContextMenu.Item>
+                          )}
+                          {isPinnedMessage && (
+                            <ContextMenu.Item onClick={functions.onClickUnpinMessage}>
+                              {intl.t('page.home.middleColumn.main.contextMenu.item.unpin')}
+                              <ContextMenu.Shortcut>
+                                <IconPushPinSlashed />
+                              </ContextMenu.Shortcut>
+                            </ContextMenu.Item>
+                          )}
                           {message.userId === state.user?.id && (
                             <ContextMenu.Item
                               onClick={onClickDelete}
