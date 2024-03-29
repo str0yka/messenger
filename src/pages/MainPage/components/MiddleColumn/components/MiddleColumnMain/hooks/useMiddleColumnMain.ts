@@ -216,12 +216,7 @@ export const useMiddleColumnMain = () => {
 
     const onDialogGetResponse: ServerToClientEvents['SERVER:DIALOG_GET_RESPONSE'] = (data) => {
       console.log('[MiddleColumnMain:SERVER:DIALOG_GET_RESPONSE]: ', data);
-      console.log(
-        '@',
-        pinnedMessage?.id,
-        data.dialog.pinnedMessage?.id,
-        pinnedMessage?.id !== data.dialog.pinnedMessage?.id,
-      );
+
       if (pinnedMessage?.id !== data.dialog.pinnedMessage?.id) {
         setPinnedMessage(data.dialog.pinnedMessage);
       }

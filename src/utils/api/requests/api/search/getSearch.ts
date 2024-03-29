@@ -9,12 +9,7 @@ export interface GetSearchParams<SearchType extends ApiSearchType> {
 
 export type GetSearchSuccessResponse<SearchType extends ApiSearchType> = SearchType extends 'user'
   ? User[]
-  : (Dialog & {
-      user: User;
-      partner: User;
-      lastMessage: Message | null;
-      _count: { messages: number };
-    })[];
+  : Dialog[];
 
 export type GetSearchFailureResponse = ApiErrorResponse;
 

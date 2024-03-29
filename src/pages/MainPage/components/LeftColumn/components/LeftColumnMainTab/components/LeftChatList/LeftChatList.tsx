@@ -17,7 +17,7 @@ export const LeftChatList = () => {
 
   const [dialogs, setDialogs] = useState<
     Parameters<ServerToClientEvents['SERVER:DIALOGS_PUT']>['0']['dialogs']
-  >([]);
+  >({ pinned: [], unpinned: [] });
 
   useEffect(() => {
     socket.emit('CLIENT:DIALOGS_GET');
@@ -37,7 +37,35 @@ export const LeftChatList = () => {
   return (
     <AnimatePresence mode="wait">
       <ul className="flex grow flex-col overflow-auto p-2">
-        {dialogs.map((dialog, index) => (
+        {dialogs.pinned.map((dialog, index) => (
+          <motion.li
+            key={index}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.1 * index }}
+          >
+            <Link to={PRIVATE_ROUTE.USER(getUserLink(dialog.partner))}>
+              {dialog.userId === dialog.partnerId && (
+                <SavedMessagesChatItem
+                  lastMessage={dialog.lastMessage}
+                  active={activeDialog?.id === dialog.id}
+                />
+              )}
+              {dialog.userId !== dialog.partnerId && (
+                <ChatItem
+                  title={getUserName(dialog.partner)}
+                  avatarFallback={getUserName(dialog.partner)[0]}
+                  lastMessage={dialog.lastMessage}
+                  lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
+                  unreadedMessagesCount={dialog.unreadedMessagesCount}
+                  active={activeDialog?.id === dialog.id}
+                  status={dialog.partner.status}
+                />
+              )}
+            </Link>
+          </motion.li>
+        ))}
+        {dialogs.unpinned.map((dialog, index) => (
           <motion.li
             key={index}
             initial={{ opacity: 0 }}

@@ -79,8 +79,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
                   avatarFallback={getUserName(dialog.partner)[0]}
                   lastMessage={dialog.lastMessage}
                   lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
-                  // eslint-disable-next-line no-underscore-dangle
-                  unreadedMessagesCount={dialog._count.messages}
+                  unreadedMessagesCount={dialog.unreadedMessagesCount}
                 />
               )}
             </Link>
@@ -91,7 +90,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
         <>
           <li className="flex justify-between">
             <span className="p-2 text-sm font-medium text-neutral-400">
-              {intl.t('page.home.leftColumn.searchList.chats')}
+              {intl.t('page.home.leftColumn.searchList.global')}
             </span>
             <button
               type="button"
