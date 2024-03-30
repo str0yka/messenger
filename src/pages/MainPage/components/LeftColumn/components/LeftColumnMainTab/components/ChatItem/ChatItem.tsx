@@ -1,7 +1,7 @@
 import cn from 'classnames';
 
 import { Avatar } from '~/components/common';
-import { IconDoubleCheck, IconCheck } from '~/components/common/icons';
+import { IconDoubleCheck, IconCheck, IconPushPin } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { USER_STATUS } from '~/utils/constants';
 import { createDate, formatTime, isToday } from '~/utils/helpers';
@@ -14,6 +14,7 @@ interface ChatItemProps {
   unreadedMessagesCount?: number;
   active?: boolean;
   status?: User['status'];
+  isPinned?: boolean;
 }
 
 export const ChatItem: React.FC<ChatItemProps> = ({
@@ -24,6 +25,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   unreadedMessagesCount,
   active,
   status,
+  isPinned,
 }) => {
   const intl = useIntl();
 
@@ -31,8 +33,9 @@ export const ChatItem: React.FC<ChatItemProps> = ({
     <div
       className={cn('flex cursor-pointer select-none gap-2 rounded-lg p-2', {
         'bg-primary-400': active,
-        'hover:bg-neutral-700/50': !active,
-        'active:bg-neutral-600/50': !active,
+        'bg-neutral-800': !active,
+        'hover:bg-neutral-700': !active,
+        'active:bg-neutral-600': !active,
       })}
     >
       <div className="relative">
@@ -99,6 +102,17 @@ export const ChatItem: React.FC<ChatItemProps> = ({
           {!!unreadedMessagesCount && (
             <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-400 text-xs font-medium text-white">
               {unreadedMessagesCount}
+            </div>
+          )}
+          {!unreadedMessagesCount && isPinned && (
+            <div
+              className={cn(
+                'flex h-6 w-6 shrink-0 items-center justify-center text-xs',
+                active && 'text-white',
+                !active && 'text-neutral-400',
+              )}
+            >
+              <IconPushPin className="h-5 w-5" />
             </div>
           )}
         </div>

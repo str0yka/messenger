@@ -2,6 +2,8 @@ type Dialog = {
   id: number;
   title: string;
   status: 'NONE' | 'TYPING';
+  isPinned: boolean;
+  pinnedOrder: number | null;
   pinnedMessageId: number | null;
   userId: number;
   partnerId: number;

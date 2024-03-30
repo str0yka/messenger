@@ -45,9 +45,13 @@ interface ClientToServerEvents {
   }) => void;
   'CLIENT:JUMP_TO_DATE': (params: { timestamp: number; take?: number }) => void;
   'CLIENT:JUMP_TO_MESSAGE': (params: { messageId: number; take?: number }) => void;
-  'CLIENT:UPDATE_DIALOG_STATUS': (params: { status: Dialog['status'] }) => void;
-  'CLIENT:PIN_MESSAGE': (params: { messageId: number | null }) => void;
-  'CLIENT:PIN_DIALOG': (params: { dialogId: number; order: number }) => void;
+  'CLIENT:DIALOG_UPDATE_STATUS': (params: { status: Dialog['status'] }) => void;
+  'CLIENT:MESSAGE_PIN': (params: { messageId: number | null }) => void;
+  'CLIENT:DIALOG_PIN': (params: { dialogId: number }) => void;
+  'CLIENT:DIALOG_UNPIN': (params: { dialogId: number }) => void;
+  'CLIENT:DIALOG_CHANGE_PINNED_ORDER': (params: {
+    dialogs: { dialogId: number; order: number }[];
+  }) => void;
 }
 
 namespace IO {

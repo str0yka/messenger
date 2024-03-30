@@ -46,6 +46,8 @@
   "page.verify.input.code.helperText.codeLength": "The code consists of {number} characters",
   "page.verify.header.goBack": "Back",
 
+  "page.home.leftColumn.chatList.chatItem.contextMenu.pin": "Pin",
+  "page.home.leftColumn.chatList.chatItem.contextMenu.unpin": "Unpin",
   "page.home.leftColumn.input.placeholder": "Search",
   "page.home.leftColumn.searchList.showMore": "Show more",
   "page.home.leftColumn.searchList.chats": "Chats and contacts",

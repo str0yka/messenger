@@ -47,7 +47,7 @@ export const MiddleColumnFooter = () => {
   }, [messageText]);
 
   useEffect(() => {
-    socket.emit('CLIENT:UPDATE_DIALOG_STATUS', {
+    socket.emit('CLIENT:DIALOG_UPDATE_STATUS', {
       status: isTyping ? 'TYPING' : 'NONE',
     });
   }, [isTyping]);

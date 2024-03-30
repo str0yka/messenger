@@ -1,18 +1,15 @@
 import cn from 'classnames';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import { useExtendedTheme } from '~/utils/hooks';
 
 import { SocketProvider, DialogProvider } from './contexts';
 
 export const MainPage = () => {
-  const { id } = useParams();
-
   const { extendedTheme } = useExtendedTheme();
 
   return (
-    <DialogProvider key={id}>
-      {/* $FIXME (key) */}
+    <DialogProvider>
       <SocketProvider>
         <main
           className={cn('flex h-screen overflow-hidden', {

@@ -271,11 +271,11 @@ export const useMiddleColumnMain = () => {
   }, []);
 
   const onClickPinMessage = (message: Message) => () => {
-    socket.emit('CLIENT:PIN_MESSAGE', { messageId: message.id });
+    socket.emit('CLIENT:MESSAGE_PIN', { messageId: message.id });
   };
 
   const onClickUnpinMessage = () => {
-    socket.emit('CLIENT:PIN_MESSAGE', { messageId: null });
+    socket.emit('CLIENT:MESSAGE_PIN', { messageId: null });
   };
 
   const onClickPinnedMessage = () => {
