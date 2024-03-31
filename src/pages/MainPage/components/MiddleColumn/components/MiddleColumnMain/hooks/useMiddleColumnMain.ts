@@ -43,7 +43,7 @@ export const useMiddleColumnMain = () => {
     }
   };
 
-  const onClickReplyMessage = (replyMessage: Message['replyMessage']) => {
+  const onClickReplyMessage = (replyMessage: Message['message']['replyMessage']) => {
     if (replyMessage) {
       socket.emit('CLIENT:JUMP_TO_MESSAGE', {
         messageId: replyMessage.id,

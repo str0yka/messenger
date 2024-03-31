@@ -48,6 +48,7 @@
 
   "page.home.leftColumn.chatList.chatItem.contextMenu.pin": "Pin",
   "page.home.leftColumn.chatList.chatItem.contextMenu.unpin": "Unpin",
+  "page.home.leftColumn.chatList.chatItem.contextMenu.delete": "Delete chat",
   "page.home.leftColumn.input.placeholder": "Search",
   "page.home.leftColumn.searchList.showMore": "Show more",
   "page.home.leftColumn.searchList.chats": "Chats and contacts",

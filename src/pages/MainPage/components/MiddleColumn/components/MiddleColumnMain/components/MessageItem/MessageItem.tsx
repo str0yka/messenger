@@ -10,7 +10,7 @@ import { OutcomingMessage } from '../OutcomingMessage/OutcomingMessage';
 interface MessageItemProps extends React.ComponentPropsWithoutRef<'div'> {
   message: Message;
   isPinned?: boolean;
-  onClickReplyMessage: (replyMessage: Message['replyMessage']) => void;
+  onClickReplyMessage: (replyMessage: Message['message']['replyMessage']) => void;
 }
 
 export const MessageItem = forwardRef<

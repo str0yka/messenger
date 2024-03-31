@@ -65,7 +65,7 @@ export const SavedMessagesChatItem: React.FC<SavedMessagesChatItemProps> = ({
               'text-white/90': active,
             })}
           >
-            {lastMessage?.message}
+            {lastMessage?.message.text}
           </p>
           {isPinned && (
             <div

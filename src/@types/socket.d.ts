@@ -28,7 +28,9 @@ interface ClientToServerEvents {
   'CLIENT:MESSAGE_READ': (params: { readMessage: Message }) => void;
   'CLIENT:MESSAGE_DELETE': (params: { messageId: number; deleteForEveryone?: boolean }) => void;
   'CLIENT:MESSAGE_ADD': (params: {
-    message: Pick<Message, 'message'> & Partial<{ createdAt: number; replyMessageId: number }>;
+    message:
+      | { type: 'MESSAGE'; text: string; createdAt?: number; replyMessageId?: number }
+      | { type: 'FORWARDED'; id: number };
   }) => void;
   'CLIENT:MESSAGES_GET': (params: {
     filter?: {
@@ -47,11 +49,7 @@ interface ClientToServerEvents {
   'CLIENT:JUMP_TO_MESSAGE': (params: { messageId: number; take?: number }) => void;
   'CLIENT:DIALOG_UPDATE_STATUS': (params: { status: Dialog['status'] }) => void;
   'CLIENT:MESSAGE_PIN': (params: { messageId: number | null }) => void;
-  'CLIENT:DIALOG_PIN': (params: { dialogId: number }) => void;
-  'CLIENT:DIALOG_UNPIN': (params: { dialogId: number }) => void;
-  'CLIENT:DIALOG_CHANGE_PINNED_ORDER': (params: {
-    dialogs: { dialogId: number; order: number }[];
-  }) => void;
+  'CLIENT:DIALOG_DELETE': (params: { dialogId: number; deleteForEveryone?: boolean }) => void;
 }
 
 namespace IO {

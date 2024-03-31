@@ -5,3 +5,6 @@ export * from './login/postLogin';
 export * from './logout/postLogout';
 export * from './search/getSearch';
 export * from './update/postProfileUpdate';
+export * from './dialog/pin/postDialogPin';
+export * from './dialog/unpin/postDialogUnpin';
+export * from './dialog/reorder/postDialogReorder';

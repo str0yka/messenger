@@ -97,7 +97,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
               'text-white/90': active,
             })}
           >
-            {lastMessage?.message}
+            {lastMessage?.message.text}
           </p>
           {!!unreadedMessagesCount && (
             <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-400 text-xs font-medium text-white">

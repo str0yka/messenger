@@ -36,7 +36,7 @@ export const MiddleColumnMain = () => {
             <span className="leading-5 text-primary-400">
               {intl.t('page.home.middleColumn.main.pinnedMessage')}
             </span>
-            <span className="truncate">{state.pinnedMessage.message}</span>
+            <span className="truncate">{state.pinnedMessage.message.text}</span>
           </div>
           <div>
             <IconButton onClick={functions.onClickUnpinMessage}>
@@ -72,7 +72,8 @@ export const MiddleColumnMain = () => {
                   const needScrollToMessage = state.scrollToMessage?.id === message.id;
 
                   const onClickReply = () => functions.setReplyMessage(message);
-                  const onClickCopy = () => navigator.clipboard.writeText(message.message).catch();
+                  const onClickCopy = () =>
+                    navigator.clipboard.writeText(message.message.text).catch();
                   const onClickDelete = () => functions.setDeleteMessage(message);
 
                   return (

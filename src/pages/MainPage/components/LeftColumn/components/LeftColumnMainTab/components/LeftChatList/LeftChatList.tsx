@@ -3,8 +3,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { ContextMenu } from '~/components/common';
-import { IconPushPin, IconPushPinSlashed } from '~/components/common/icons';
+import { IconPushPin, IconPushPinSlashed, IconTrash } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
+import {
+  useDialogPinMutation,
+  useDialogReorderMutation,
+  useDialogUnpinMutation,
+} from '~/utils/api';
 import { PRIVATE_ROUTE } from '~/utils/constants';
 import { getUserLink, getUserName } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
@@ -23,6 +28,16 @@ export const LeftChatList = () => {
   const [dialogs, setDialogs] = useState<
     Parameters<ServerToClientEvents['SERVER:DIALOGS_PUT']>['0']['dialogs']
   >({ pinned: [], unpinned: [] });
+
+  const dialogReorderMutation = useDialogReorderMutation({
+    onSuccess: (response) => setDialogs(response.dialogs),
+  });
+  const dialogPinMutation = useDialogPinMutation({
+    onSuccess: (response) => setDialogs(response.dialogs),
+  });
+  const dialogUnpinMutation = useDialogUnpinMutation({
+    onSuccess: (response) => setDialogs(response.dialogs),
+  });
 
   useEffect(() => {
     socket.emit('CLIENT:DIALOGS_GET');
@@ -46,11 +61,13 @@ export const LeftChatList = () => {
           axis="y"
           onReorder={(pinnedDialogs) => {
             setDialogs((prevDialogs) => ({ ...prevDialogs, pinned: pinnedDialogs }));
-            socket.emit('CLIENT:DIALOG_CHANGE_PINNED_ORDER', {
-              dialogs: pinnedDialogs.map((dialog, index) => ({
-                dialogId: dialog.id,
-                order: index + 1,
-              })),
+            dialogReorderMutation.mutateAsync({
+              params: {
+                dialogs: pinnedDialogs.map((dialog, index) => ({
+                  dialogId: dialog.id,
+                  order: index + 1,
+                })),
+              },
             });
           }}
           values={dialogs.pinned}
@@ -90,11 +107,22 @@ export const LeftChatList = () => {
                 </ContextMenu.Trigger>
                 <ContextMenu.Content className="w-56">
                   <ContextMenu.Item
-                    onClick={() => socket.emit('CLIENT:DIALOG_UNPIN', { dialogId: dialog.id })}
+                    onClick={() =>
+                      dialogUnpinMutation.mutateAsync({ params: { dialogId: dialog.id } })
+                    }
                   >
                     {intl.t('page.home.leftColumn.chatList.chatItem.contextMenu.unpin')}
                     <ContextMenu.Shortcut>
                       <IconPushPinSlashed />
+                    </ContextMenu.Shortcut>
+                  </ContextMenu.Item>
+                  <ContextMenu.Item
+                    className="text-red-400"
+                    onClick={() => socket.emit('CLIENT:DIALOG_DELETE', { dialogId: dialog.id })}
+                  >
+                    {intl.t('page.home.leftColumn.chatList.chatItem.contextMenu.delete')}
+                    <ContextMenu.Shortcut>
+                      <IconTrash />
                     </ContextMenu.Shortcut>
                   </ContextMenu.Item>
                 </ContextMenu.Content>
@@ -133,11 +161,20 @@ export const LeftChatList = () => {
             </ContextMenu.Trigger>
             <ContextMenu.Content className="w-56">
               <ContextMenu.Item
-                onClick={() => socket.emit('CLIENT:DIALOG_PIN', { dialogId: dialog.id })}
+                onClick={() => dialogPinMutation.mutateAsync({ params: { dialogId: dialog.id } })}
               >
                 {intl.t('page.home.leftColumn.chatList.chatItem.contextMenu.pin')}
                 <ContextMenu.Shortcut>
                   <IconPushPin />
+                </ContextMenu.Shortcut>
+              </ContextMenu.Item>
+              <ContextMenu.Item
+                className="text-red-400"
+                onClick={() => socket.emit('CLIENT:DIALOG_DELETE', { dialogId: dialog.id })}
+              >
+                {intl.t('page.home.leftColumn.chatList.chatItem.contextMenu.delete')}
+                <ContextMenu.Shortcut>
+                  <IconTrash />
                 </ContextMenu.Shortcut>
               </ContextMenu.Item>
             </ContextMenu.Content>

@@ -108,13 +108,17 @@ export const LeftColumnMainTab = () => {
           exit={{ y: -10, opacity: 0 }}
           transition={{ duration: 0.1 }}
         >
-          {mode === 'chatList' && <LeftChatList />}
-          {mode === 'searchList' && (
-            <LeftSearchList
-              query={debouncedQuery}
-              onClose={onCloseSearchList}
-            />
-          )}
+          {
+            {
+              chatList: <LeftChatList />,
+              searchList: (
+                <LeftSearchList
+                  query={debouncedQuery}
+                  onClose={onCloseSearchList}
+                />
+              ),
+            }[mode]
+          }
         </motion.div>
       </AnimatePresence>
     </>

@@ -7,7 +7,7 @@ import { formatTime } from '~/utils/helpers';
 interface IncomingMessageProps extends React.ComponentPropsWithoutRef<'div'> {
   message: Message;
   isPinned?: boolean;
-  onClickReplyMessage: (replyMessage: Message['replyMessage']) => void;
+  onClickReplyMessage: (replyMessage: Message['message']['replyMessage']) => void;
 }
 
 export const IncomingMessage = forwardRef<HTMLDivElement, IncomingMessageProps>(
@@ -21,7 +21,7 @@ export const IncomingMessage = forwardRef<HTMLDivElement, IncomingMessageProps>(
         className="w-fit max-w-[66%]  rounded-l-lg rounded-r-2xl bg-neutral-800 px-2 py-1 text-neutral-50"
         {...props}
       >
-        {message.replyMessage && (
+        {message.message.replyMessage && (
           <div
             className={cn(
               'mt-1 flex h-10 grow cursor-pointer flex-col justify-center overflow-hidden rounded border-l-[3px] border-primary-400 bg-primary-400/10 px-1 text-sm',
@@ -30,16 +30,18 @@ export const IncomingMessage = forwardRef<HTMLDivElement, IncomingMessageProps>(
             role="button"
             tabIndex={0}
             aria-hidden
-            onClick={() => onClickReplyMessage(message.replyMessage)}
+            onClick={() => onClickReplyMessage(message.message.replyMessage)}
           >
             <span className="truncate font-medium leading-4 text-primary-500">
-              {message.replyMessage.user.name}
+              {message.message.replyMessage.user.name}
             </span>
-            <p className="truncate leading-5 text-neutral-300/75">{message.replyMessage.message}</p>
+            <p className="truncate leading-5 text-neutral-300/75">
+              {message.message.replyMessage.message.text}
+            </p>
           </div>
         )}
         <div>
-          {message.message}
+          {message.message.text}
           <div className="relative top-1 float-right ml-2 flex items-center gap-1 break-normal pb-0.5 text-neutral-50/50">
             {isPinned && <IconPushPin className="h-3.5 w-3.5" />}
             <span className="text-xs font-medium">

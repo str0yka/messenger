@@ -57,10 +57,11 @@ export const MiddleColumnFooter = () => {
       className={cn('mx-auto flex w-full gap-2 px-2 pb-4 pt-1', 'md:w-8/12 md:px-0', 'xl:w-6/12')}
       onSubmit={sendMessageForm.handleSubmit((values) => {
         const message = {
-          message: values.messageText,
+          text: values.messageText,
           createdAt: new Date().valueOf(),
           replyMessageId: replyMessage?.id,
-        };
+          type: 'MESSAGE',
+        } as const;
         socket.emit('CLIENT:MESSAGE_ADD', { message });
         sendMessageForm.reset();
         setReplyMessage(null);
@@ -100,7 +101,7 @@ export const MiddleColumnFooter = () => {
                   })}
                 </p>
                 <p className="truncate text-sm leading-5 text-neutral-300/75">
-                  {replyMessage.message}
+                  {replyMessage.message.text}
                 </p>
               </div>
               <div className="shrink-0">
