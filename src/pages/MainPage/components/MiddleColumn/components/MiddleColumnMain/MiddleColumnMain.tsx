@@ -13,7 +13,13 @@ import {
 } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 
-import { DateButton, DeleteMessageDialog, MessageItem, ScrollDownButton } from './components';
+import {
+  DateButton,
+  DeleteMessageDialog,
+  ForwardMessageDialog,
+  MessageItem,
+  ScrollDownButton,
+} from './components';
 import { groupMessagesByDate } from './helpers';
 import { useMiddleColumnMain } from './hooks';
 
@@ -75,6 +81,7 @@ export const MiddleColumnMain = () => {
                   const onClickCopy = () =>
                     navigator.clipboard.writeText(message.message.text).catch();
                   const onClickDelete = () => functions.setDeleteMessage(message);
+                  const onClickForward = () => functions.setForwardMessage(message);
 
                   return (
                     <Fragment key={message.id}>
@@ -123,6 +130,12 @@ export const MiddleColumnMain = () => {
                               </ContextMenu.Shortcut>
                             </ContextMenu.Item>
                           )}
+                          <ContextMenu.Item onClick={onClickForward}>
+                            {intl.t('page.home.middleColumn.main.contextMenu.item.forward')}
+                            <ContextMenu.Shortcut>
+                              <IconReply className="-scale-x-100" />
+                            </ContextMenu.Shortcut>
+                          </ContextMenu.Item>
                           {message.userId === state.user?.id && (
                             <ContextMenu.Item
                               onClick={onClickDelete}
@@ -166,6 +179,11 @@ export const MiddleColumnMain = () => {
           onClick={functions.onClickScrollDownButton}
         />
       </div>
+      <ForwardMessageDialog
+        open={state.isForwardMessageDialogOpen}
+        onOpenChange={functions.onForwardMessageDialogOpenChange}
+        onForward={functions.onForwardMessage}
+      />
       <DeleteMessageDialog
         open={state.isDeleteMessageDialogOpen}
         onOpenChange={functions.onDeleteMessageDialogOpenChange}

@@ -9,7 +9,7 @@ import type {
 } from '../requests';
 
 type UseSearchQueryParams<SearchType extends ApiSearchType> = GetSearchRequestConfig<SearchType> & {
-  options: UseQueryOptions<GetSearchSuccessResponse<SearchType>, GetSearchFailureResponse>;
+  options?: UseQueryOptions<GetSearchSuccessResponse<SearchType>, GetSearchFailureResponse>;
 };
 
 export const useSearchQuery = <SearchType extends ApiSearchType>({

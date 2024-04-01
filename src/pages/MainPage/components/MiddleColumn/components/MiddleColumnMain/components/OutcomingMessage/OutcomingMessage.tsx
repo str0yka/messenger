@@ -2,7 +2,8 @@ import cn from 'classnames';
 import { forwardRef } from 'react';
 
 import { IconCheck, IconDoubleCheck, IconPushPin } from '~/components/common/icons';
-import { formatTime } from '~/utils/helpers';
+import { useIntl } from '~/features/i18n';
+import { formatTime, getUserName } from '~/utils/helpers';
 
 interface OutcomingMessageProps extends React.ComponentPropsWithoutRef<'div'> {
   message: Message;
@@ -12,6 +13,8 @@ interface OutcomingMessageProps extends React.ComponentPropsWithoutRef<'div'> {
 
 export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps>(
   ({ message, isPinned, onClickReplyMessage, ...props }, ref) => {
+    const intl = useIntl();
+
     const messageDate = new Date(message.createdAt);
     const { hours, minutes } = formatTime(messageDate);
 
@@ -21,7 +24,7 @@ export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps
         {...props}
         className="w-fit max-w-[66%] self-end rounded-l-2xl rounded-r-lg bg-primary-500 px-2 py-1 text-white"
       >
-        {message.message.replyMessage && (
+        {message.type === 'MESSAGE' && message.message.replyMessage && (
           <div
             className={cn(
               'mt-1 flex h-10 grow cursor-pointer flex-col justify-center overflow-hidden rounded border-l-[3px] border-white bg-white/[15%] px-1 text-sm',
@@ -33,12 +36,19 @@ export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps
             onClick={() => onClickReplyMessage(message.message.replyMessage)}
           >
             <span className="truncate font-medium leading-4 text-white">
-              {message.message.replyMessage.user.name}
+              {getUserName(message.message.replyMessage.user)}
             </span>
             <p className="truncate leading-5 text-white/75">
               {message.message.replyMessage.message.text}
             </p>
           </div>
+        )}
+        {message.type === 'FORWARDED' && (
+          <span className="text-sm font-medium leading-4">
+            {intl.t('page.home.middleColumn.main.message.forwardedFrom', {
+              name: getUserName(message.message.user),
+            })}
+          </span>
         )}
         <div>
           {message.message.text}

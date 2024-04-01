@@ -14,6 +14,8 @@ export const groupMessagesByDate = (messages: Message[]) => {
 
   return Array.from(groupedMessages.entries()).map(([timestamp, msgs]) => ({
     date: new Date(timestamp),
-    messages: msgs,
+    messages: msgs.sort(
+      (firstMsg, secondMsg) => firstMsg.createdAt.valueOf() - secondMsg.createdAt.valueOf(),
+    ),
   }));
 };

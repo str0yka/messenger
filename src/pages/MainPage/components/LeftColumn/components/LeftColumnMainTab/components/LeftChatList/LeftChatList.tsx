@@ -6,9 +6,9 @@ import { ContextMenu } from '~/components/common';
 import { IconPushPin, IconPushPinSlashed, IconTrash } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import {
-  useDialogPinMutation,
-  useDialogReorderMutation,
-  useDialogUnpinMutation,
+  useDialogsPinMutation,
+  useDialogsReorderMutation,
+  useDialogsUnpinMutation,
 } from '~/utils/api';
 import { PRIVATE_ROUTE } from '~/utils/constants';
 import { getUserLink, getUserName } from '~/utils/helpers';
@@ -29,13 +29,13 @@ export const LeftChatList = () => {
     Parameters<ServerToClientEvents['SERVER:DIALOGS_PUT']>['0']['dialogs']
   >({ pinned: [], unpinned: [] });
 
-  const dialogReorderMutation = useDialogReorderMutation({
+  const dialogReorderMutation = useDialogsReorderMutation({
     onSuccess: (response) => setDialogs(response.dialogs),
   });
-  const dialogPinMutation = useDialogPinMutation({
+  const dialogPinMutation = useDialogsPinMutation({
     onSuccess: (response) => setDialogs(response.dialogs),
   });
-  const dialogUnpinMutation = useDialogUnpinMutation({
+  const dialogUnpinMutation = useDialogsUnpinMutation({
     onSuccess: (response) => setDialogs(response.dialogs),
   });
 

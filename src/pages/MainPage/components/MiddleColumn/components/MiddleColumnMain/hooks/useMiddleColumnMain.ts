@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { getBottomDistance } from '~/utils/helpers';
+import { getBottomDistance, getUserLink } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../../../../contexts';
@@ -9,6 +9,7 @@ import { MAX_NUMBER_OF_MESSAGES } from '../../../constants';
 import { useReply } from '../../../contexts';
 
 export const useMiddleColumnMain = () => {
+  const navigate = useNavigate();
   const { id: partnerId } = useParams();
 
   const user = useUserStore((state) => state.user);
@@ -19,6 +20,7 @@ export const useMiddleColumnMain = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [pinnedMessage, setPinnedMessage] = useState<Message | null>(null);
   const [deleteMessage, setDeleteMessage] = useState<Message | null>(null);
+  const [forwardMessage, setForwardMessage] = useState<Message | null>(null);
   const [firstUnreadMessage, setFirstUnreadMessage] = useState<Message | null>(null);
   const [scrollToMessage, setScrollToMessage] = useState<Message | null>(null);
   const [lastMessageInChat, setLastMessageInChat] = useState<Message | null>(null);
@@ -32,6 +34,11 @@ export const useMiddleColumnMain = () => {
   );
 
   const onDeleteMessageDialogOpenChange = (open: boolean) => !open && setDeleteMessage(null);
+  const onForwardMessageDialogOpenChange = (open: boolean) => !open && setForwardMessage(null);
+
+  const onForwardMessage = (dialog: Dialog) => {
+    navigate(`/${getUserLink(dialog.partner)}`, { state: { forwardMessage } });
+  };
 
   const onDeleteMessage = (deleteForEveryone: boolean) => {
     if (deleteMessage) {
@@ -292,6 +299,7 @@ export const useMiddleColumnMain = () => {
       user,
       messages,
       isDeleteMessageDialogOpen: !!deleteMessage,
+      isForwardMessageDialogOpen: !!forwardMessage,
       scrollToMessage,
       firstUnreadMessage,
       pinnedMessage,
@@ -305,9 +313,12 @@ export const useMiddleColumnMain = () => {
       onClickPinMessage,
       onClickUnpinMessage,
       onDeleteMessageDialogOpenChange,
+      onForwardMessageDialogOpenChange,
+      setForwardMessage,
       onDeleteMessage,
       onClickPinnedMessage,
       setReplyMessage,
+      onForwardMessage,
     },
     refs: {
       chatNodeRef,

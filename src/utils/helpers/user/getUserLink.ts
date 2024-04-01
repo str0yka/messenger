@@ -1,2 +1,2 @@
-export const getUserLink = (partner: Pick<User, 'id' | 'username'>) =>
-  partner.username ? `@${partner.username}` : partner.id;
+export const getUserLink = (user: Pick<User, 'id' | 'username'>) =>
+  user.username ? `@${user.username}` : user.id;

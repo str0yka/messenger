@@ -4,3 +4,4 @@ export * from './IncomingMessage/IncomingMessage';
 export * from './MessageItem/MessageItem';
 export * from './OutcomingMessage/OutcomingMessage';
 export * from './ScrollDownButton/ScrollDownButton';
+export * from './ForwardMessageDialog/ForwardMessageDialog';
