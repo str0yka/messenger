@@ -1,12 +1,12 @@
 import { useForm } from 'react-hook-form';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 
 import { Input, Button, Link, Alert } from '~/components/common';
 import { IconChevronLeft } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { useVerifyByIdMutation } from '~/utils/api';
-import { ACCESS_TOKEN_LOCAL_STORAGE_KEY, PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
+import { LOCAL_STORAGE_KEY, PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
 export const VerifyPage = () => {
@@ -18,17 +18,13 @@ export const VerifyPage = () => {
 
   const verifyMutation = useVerifyByIdMutation({
     onSuccess: (data) => {
-      localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, data.accessToken);
+      localStorage.setItem(LOCAL_STORAGE_KEY.ACCESS_TOKEN, data.accessToken);
       setUser(data.user);
       navigate(PRIVATE_ROUTE.HOME);
     },
   });
 
   const verifyForm = useForm<{ verificationCode: string }>();
-
-  if (!user) {
-    return <Navigate to={PUBLIC_ROUTE.HOME} />;
-  }
 
   return (
     <main className="flex h-screen items-center justify-center bg-neutral-900">
@@ -50,19 +46,15 @@ export const VerifyPage = () => {
           </Alert.Root>
         )}
         <p className="text-center text-neutral-500">
-          {intl.t('page.verify.verifyText', { email: user.email })}
+          {intl.t('page.verify.verifyText', { email: user!.email })}
         </p>
         <form
           className="flex w-full flex-col gap-4"
-          onSubmit={verifyForm.handleSubmit(async ({ verificationCode }) => {
-            try {
-              await verifyMutation.mutateAsync({
-                params: { userId: user.id, verificationCode },
-              });
-            } catch {
-              console.log('Error'); // $FIXME
-            }
-          })}
+          onSubmit={verifyForm.handleSubmit(async ({ verificationCode }) =>
+            verifyMutation.mutateAsync({
+              params: { userId: user!.id, verificationCode },
+            }),
+          )}
         >
           <Input
             placeholder={intl.t('input.label.verifyCode')}

@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import { forwardRef } from 'react';
 
-interface IconButtonProps extends React.ComponentProps<'button'> {
+interface IconButtonProps extends React.ComponentPropsWithoutRef<'button'> {
   color?: 'primary' | 'warning' | 'error' | 'neutral' | 'success' | 'transparent';
   s?: 'base' | 'l' | 'xl';
 }

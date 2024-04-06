@@ -1,2 +1,3 @@
 export * from './Observer/Observer';
-export * from './CheckAuth/CheckAuth';
+export * from './SessionProvider/SessionProvider';
+export * from './PublicRoutesGuard/PublicRoutesGuard';

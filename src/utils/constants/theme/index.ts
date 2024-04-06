@@ -9,8 +9,6 @@ export const THEMES = Object.values(THEME);
 
 export const THEME_DEFAULT = THEME.VIOLET_DARK;
 
-export const THEME_LOCAL_STORAGE_KEY = 'theme';
-
 export const EXTENDED_THEME: Record<keyof typeof THEME, ThemeExtended> = {
   VIOLET_DARK: {
     mode: 'dark',

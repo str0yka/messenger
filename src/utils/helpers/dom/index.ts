@@ -1,1 +1,1 @@
-export * from './getBottomDistance';
+export * from './getScrollBottom';

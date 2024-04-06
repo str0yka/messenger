@@ -6,7 +6,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import axios from 'axios';
 
-import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from '~/utils/constants';
+import { LOCAL_STORAGE_KEY } from '~/utils/constants';
 
 export const $api = axios.create({
   withCredentials: true,
@@ -14,7 +14,7 @@ export const $api = axios.create({
 });
 
 $api.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${localStorage.getItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY)}`;
+  config.headers.Authorization = `Bearer ${localStorage.getItem(LOCAL_STORAGE_KEY.ACCESS_TOKEN)}`;
 
   return config;
 });
@@ -32,7 +32,7 @@ $api.interceptors.response.use(
           withCredentials: true,
         });
 
-        localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, response.data.accessToken);
+        localStorage.setItem(LOCAL_STORAGE_KEY.ACCESS_TOKEN, response.data.accessToken);
 
         return $api.request(originalRequest);
       } catch {

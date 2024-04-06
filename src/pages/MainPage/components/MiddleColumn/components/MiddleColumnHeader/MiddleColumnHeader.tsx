@@ -34,7 +34,7 @@ export const MiddleColumnHeader = () => {
         </div>
         <div className="relative">
           <Avatar.Root>
-            <IconBookmark />
+            <IconBookmark className="text-white" />
           </Avatar.Root>
         </div>
         <div className="flex flex-col items-start">

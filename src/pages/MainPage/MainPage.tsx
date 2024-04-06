@@ -9,8 +9,8 @@ export const MainPage = () => {
   const { extendedTheme } = useExtendedTheme();
 
   return (
-    <DialogProvider>
-      <SocketProvider>
+    <SocketProvider>
+      <DialogProvider>
         <main
           className={cn('flex h-screen overflow-hidden', {
             "bg-neutral-900 bg-[url('/images/chat-bg-pattern-dark.png')]":
@@ -21,7 +21,7 @@ export const MainPage = () => {
         >
           <Outlet />
         </main>
-      </SocketProvider>
-    </DialogProvider>
+      </DialogProvider>
+    </SocketProvider>
   );
 };

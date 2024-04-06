@@ -1,7 +1,8 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useState } from 'react';
 
 import { IconButton } from '~/components/common';
 import { IconChevronDown } from '~/components/common/icons';
+import { useSocketEvents } from '~/utils/hooks';
 
 import { useSocket } from '../../../../../../contexts';
 
@@ -12,30 +13,22 @@ export const ScrollDownButton = forwardRef<HTMLDivElement, ScrollDownButtonProps
 
   const [unreadedMessagesCount, setUnreadedMessagesCount] = useState<null | number>(null);
 
-  useEffect(() => {
-    const onDialogJoinResponse: ServerToClientEvents['SERVER:DIALOG_JOIN_RESPONSE'] = (data) => {
-      console.log('ScrollDownButton:[SERVER:DIALOG_JOIN_RESPONSE]: ', data);
-      setUnreadedMessagesCount(data.dialog.unreadedMessagesCount);
-    };
-    const onDialogGetResponse: ServerToClientEvents['SERVER:DIALOG_GET_RESPONSE'] = (data) => {
-      console.log('ScrollDownButton:[SERVER:DIALOG_GET_RESPONSE]: ', data);
-      setUnreadedMessagesCount(data.dialog.unreadedMessagesCount);
-    };
-    const onMessagesReadResponse: ServerToClientEvents['SERVER:MESSAGE_READ_RESPONSE'] = (data) => {
-      console.log('[ScrollDownButton:SERVER:MESSAGE_READ_RESPONSE]: ', data);
-      setUnreadedMessagesCount(data.unreadedMessagesCount);
-    };
-
-    socket.on('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
-    socket.on('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
-    socket.on('SERVER:MESSAGE_READ_RESPONSE', onMessagesReadResponse);
-
-    return () => {
-      socket.off('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
-      socket.off('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
-      socket.off('SERVER:MESSAGE_READ_RESPONSE', onMessagesReadResponse);
-    };
-  }, []);
+  useSocketEvents(
+    socket,
+    {
+      'SERVER:DIALOG_JOIN_RESPONSE': (data) => {
+        setUnreadedMessagesCount(data.dialog.unreadedMessagesCount);
+      },
+      'SERVER:DIALOG_GET_RESPONSE': (data) => {
+        setUnreadedMessagesCount(data.dialog.unreadedMessagesCount);
+      },
+      'SERVER:MESSAGE_READ_RESPONSE': (data) => {
+        setUnreadedMessagesCount(data.unreadedMessagesCount);
+      },
+    },
+    [],
+    'ScrollDownButton',
+  );
 
   return (
     <div

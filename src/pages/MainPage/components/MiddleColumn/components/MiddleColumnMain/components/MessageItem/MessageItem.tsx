@@ -1,6 +1,7 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useState } from 'react';
 
 import { Observer } from '~/components';
+import { useSocketEvents } from '~/utils/hooks';
 import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../../../../../contexts';
@@ -24,20 +25,18 @@ export const MessageItem = forwardRef<
 
   const isSentByUser = message.userId === user?.id;
 
-  useEffect(() => {
-    const onMessagesRead: ServerToClientEvents['SERVER:MESSAGE_READ'] = (data) => {
-      console.log('[MessageItem:SERVER:MESSAGE_READ]', data);
-      if (data.message.id === message.id) {
-        setIsRead(data.message.read);
-      }
-    };
-
-    socket.on('SERVER:MESSAGE_READ', onMessagesRead);
-
-    return () => {
-      socket.off('SERVER:MESSAGE_READ', onMessagesRead);
-    };
-  }, []);
+  useSocketEvents(
+    socket,
+    {
+      'SERVER:MESSAGE_READ': (data) => {
+        if (data.message.id === message.id) {
+          setIsRead(data.message.read);
+        }
+      },
+    },
+    [],
+    'MessageItem',
+  );
 
   if (isSentByUser)
     return (

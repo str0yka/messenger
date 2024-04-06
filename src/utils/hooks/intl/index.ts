@@ -1,1 +1,1 @@
-export * from './useAppIntl';
+export * from './useInitIntl';

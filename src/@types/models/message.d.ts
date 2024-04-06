@@ -3,7 +3,7 @@ type Message = {
   read: boolean;
   messageId: number;
   userId: number;
-  type: 'FORWARDED' | 'MESSAGE';
+  type: MessageType;
   updatedAt: Date;
   createdAt: Date;
   user: User;
@@ -20,7 +20,7 @@ type Message = {
       read: boolean;
       messageId: number;
       userId: number;
-      type: $Enums.MessageType;
+      type: MessageType;
       updatedAt: Date;
       createdAt: Date;
       user: User;
@@ -36,3 +36,5 @@ type Message = {
     } | null;
   };
 };
+
+type MessageType = 'FORWARDED' | 'MESSAGE';

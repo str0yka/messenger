@@ -10,3 +10,5 @@ type User = {
   updatedAt: string;
   createdAt: string;
 };
+
+type UserStatus = 'ONLINE' | 'OFFLINE';

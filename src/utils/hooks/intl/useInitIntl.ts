@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { LOCALE_LOCAL_STORAGE_KEY } from '~/utils/constants';
-import { getMessages, getLocale } from '~/utils/helpers';
+import { LOCAL_STORAGE_KEY } from '~/utils/constants';
+import { getLocale, getMessages } from '~/utils/helpers';
 
-export const useAppIntl = () => {
+export const useInitIntl = () => {
   const [locale, setLocale] = useState(getLocale());
   const [messages, setMessages] = useState<Record<string, string>>({});
   const [areMessagesLoading, setAreMessagesLoading] = useState(true);
@@ -11,22 +11,11 @@ export const useAppIntl = () => {
   useEffect(() => {
     (async () => {
       const localeMessages = await getMessages(locale);
-      localStorage.setItem(LOCALE_LOCAL_STORAGE_KEY, locale);
+      localStorage.setItem(LOCAL_STORAGE_KEY.LOCALE, locale);
       setMessages(localeMessages);
       setAreMessagesLoading(false);
     })();
   }, [locale]);
 
-  return {
-    state: {
-      locale,
-      messages,
-      areMessagesLoading,
-    },
-    func: {
-      setLocale,
-      setMessages,
-      setAreMessagesLoading,
-    },
-  };
+  return { locale, setLocale, messages, areMessagesLoading };
 };

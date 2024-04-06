@@ -5,7 +5,7 @@ import { Input, Button, Alert } from '~/components/common';
 import { useIntl } from '~/features/i18n';
 import { useLoginMutation } from '~/utils/api';
 import type { PostLoginParams } from '~/utils/api';
-import { ACCESS_TOKEN_LOCAL_STORAGE_KEY, PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
+import { LOCAL_STORAGE_KEY, PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
 export const Login = () => {
@@ -18,7 +18,7 @@ export const Login = () => {
     onSuccess: (data) => {
       setUser(data.user);
       if (data.user.isVerified) {
-        localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, data.accessToken);
+        localStorage.setItem(LOCAL_STORAGE_KEY.ACCESS_TOKEN, data.accessToken);
         navigate(PRIVATE_ROUTE.HOME);
       } else {
         navigate(PUBLIC_ROUTE.VERIFY);
@@ -44,13 +44,9 @@ export const Login = () => {
       <p className="text-center text-neutral-500">{intl.t('page.auth.logInText')}</p>
       <form
         className="flex w-full flex-col gap-3"
-        onSubmit={loginForm.handleSubmit(async (values) => {
-          try {
-            await loginMutation.mutateAsync({ params: values });
-          } catch {
-            console.log('Error'); // $FIXME
-          }
-        })}
+        onSubmit={loginForm.handleSubmit(async (values) =>
+          loginMutation.mutateAsync({ params: values }),
+        )}
       >
         <Input
           placeholder={intl.t('input.label.email')}

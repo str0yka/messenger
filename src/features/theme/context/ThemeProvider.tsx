@@ -1,5 +1,5 @@
-import type { ThemeState } from './ThemeContext';
 import { ThemeContext } from './ThemeContext';
+import type { ThemeState } from './ThemeContext';
 
 interface ThemeProviderProps extends ThemeState {
   children: React.ReactNode;

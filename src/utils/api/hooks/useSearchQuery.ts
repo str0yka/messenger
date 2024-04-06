@@ -3,6 +3,7 @@ import type { UseQueryOptions } from 'react-query';
 
 import { getSearch } from '../requests';
 import type {
+  ApiSearchType,
   GetSearchSuccessResponse,
   GetSearchFailureResponse,
   GetSearchRequestConfig,

@@ -29,7 +29,7 @@ export const SavedMessagesChatItem: React.FC<SavedMessagesChatItemProps> = ({
     >
       <div className="relative">
         <Avatar.Root className="h-14 w-14">
-          <IconBookmark className="h-7 w-7" />
+          <IconBookmark className="h-7 w-7 text-white" />
         </Avatar.Root>
       </div>
       <div className="flex min-w-[0] grow flex-col">

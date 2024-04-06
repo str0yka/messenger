@@ -7,8 +7,6 @@ export const LOCALES = Object.values(LOCALE);
 
 export const LOCALE_DEFAULT = LOCALE.EN;
 
-export const LOCALE_LOCAL_STORAGE_KEY = 'locale';
-
 export const LANGUAGE: Record<keyof typeof LOCALE, Language> = {
   RU: {
     locale: 'ru-RU',

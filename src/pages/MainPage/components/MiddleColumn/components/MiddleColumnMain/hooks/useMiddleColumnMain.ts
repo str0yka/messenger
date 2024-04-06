@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { getBottomDistance, getUserLink } from '~/utils/helpers';
+import { getScrollBottom, getUserLink } from '~/utils/helpers';
+import { useSocketEvents } from '~/utils/hooks';
 import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../../../../contexts';
@@ -38,6 +39,7 @@ export const useMiddleColumnMain = () => {
 
   const onForwardMessage = (dialog: Dialog) => {
     navigate(`/${getUserLink(dialog.partner)}`, { state: { forwardMessage } });
+    setForwardMessage(null);
   };
 
   const onDeleteMessage = (deleteForEveryone: boolean) => {
@@ -120,137 +122,98 @@ export const useMiddleColumnMain = () => {
     }
   }, [scrollToMessage]);
 
-  useEffect(() => {
-    const onDialogJoinResponse: ServerToClientEvents['SERVER:DIALOG_JOIN_RESPONSE'] = (data) => {
-      console.log('[MiddleColumnMain:SERVER:DIALOG_JOIN_RESPONSE]: ', data);
-      setMessages(data.messages);
-      setPinnedMessage(data.dialog.pinnedMessage);
-
-      if (data.dialog.lastMessage) {
-        setLastMessageInChat(data.dialog.lastMessage);
-      }
-
-      const firstUnreadMsg = [...data.messages]
-        .reverse()
-        .find((message) => !message.read && message.userId !== user?.id);
-
-      if (firstUnreadMsg) {
-        setFirstUnreadMessage(firstUnreadMsg);
-        setScrollToMessage(firstUnreadMsg);
-      } else {
-        setScrollToMessage(data.messages.at(0) ?? null);
-      }
-    };
-
-    const onMessagesPut: ServerToClientEvents['SERVER:MESSAGES_PUT'] = (data) => {
-      console.log('[MiddleColumnMain:SERVER:MESSAGES_PUT]: ', data);
-
-      const firstUnreadMsg = [...data.messages]
-        .reverse()
-        .find((message) => !message.read && message.userId !== user?.id);
-
-      if (firstUnreadMsg) {
-        setFirstUnreadMessage(firstUnreadMsg);
-        setScrollToMessage(firstUnreadMsg);
-      } else {
-        setScrollToMessage(data.messages.at(0) ?? null);
-      }
-
-      setMessages(data.messages);
-    };
-
-    const onMessagesPatch: ServerToClientEvents['SERVER:MESSAGES_PATCH'] = (data) => {
-      console.log('[MiddleColumnMain:SERVER:MESSAGES_PATCH]: ', data);
-      if (data.messages.length) {
-        setMessages((prevMessages) => {
-          if (!prevMessages.length) return data.messages;
-          if (data.messages.at(0)!.id < prevMessages.at(-1)!.id)
-            return [...prevMessages, ...data.messages].slice(-MAX_NUMBER_OF_MESSAGES);
-          if (data.messages.at(-1)!.id > prevMessages.at(0)!.id)
-            return [...data.messages.reverse(), ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES);
-          return prevMessages;
-        });
-      }
-    };
-
-    const onMessageAdd: ServerToClientEvents['SERVER:MESSAGE_ADD'] = (data) => {
-      console.log('[MiddleColumnMain:SERVER:MESSAGE_ADD]: ', data);
-
-      if (isMessagesContainLastMessageInChat || !lastMessageInChat) {
-        setMessages((prevMessages) =>
-          [data.message, ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES),
-        );
-
-        if (chatNodeRef.current && getBottomDistance(chatNodeRef.current) < 150) {
-          setScrollToMessage(data.message);
-        }
-      }
-
-      setLastMessageInChat(data.message);
-    };
-
-    const onMessageDelete: ServerToClientEvents['SERVER:MESSAGE_DELETE'] = (data) => {
-      console.log('[MiddleColumnMain:SERVER:MESSAGE_DELETE]: ', data);
-      setMessages((prevMessages) =>
-        prevMessages.filter((message) => message.id !== data.message.id),
-      );
-    };
-
-    const onJumpToDateResponse: ServerToClientEvents['SERVER:JUMP_TO_DATE_RESPONSE'] = (data) => {
-      console.log('[MiddleColumnMain:SERVER:JUMP_TO_DATE_RESPONSE]: ', data);
-      setMessages(data.messages);
-      if (data.firstFoundMessage) {
-        setScrollToMessage(data.firstFoundMessage);
-      }
-    };
-
-    const onJumpToMessageResponse: ServerToClientEvents['SERVER:JUMP_TO_MESSAGE_RESPONSE'] = (
-      data,
-    ) => {
-      console.log('[MiddleColumnMain:SERVER:JUMP_TO_MESSAGE_RESPONSE]: ', data);
-      setMessages(data.messages);
-      if (data.target) {
-        setScrollToMessage(data.target);
-      }
-    };
-
-    const onMessageReadResponse: ServerToClientEvents['SERVER:MESSAGE_READ_RESPONSE'] = (data) => {
-      console.log('[MiddleColumnMain:SERVER:MESSAGE_READ_RESPONSE]: ', data);
-      if (!data.unreadedMessagesCount) {
-        setFirstUnreadMessage(null);
-      }
-    };
-
-    const onDialogGetResponse: ServerToClientEvents['SERVER:DIALOG_GET_RESPONSE'] = (data) => {
-      console.log('[MiddleColumnMain:SERVER:DIALOG_GET_RESPONSE]: ', data);
-
-      if (pinnedMessage?.id !== data.dialog.pinnedMessage?.id) {
+  useSocketEvents(
+    socket,
+    {
+      'SERVER:DIALOG_JOIN_RESPONSE': (data) => {
+        setMessages(data.messages);
         setPinnedMessage(data.dialog.pinnedMessage);
-      }
-    };
 
-    socket.on('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
-    socket.on('SERVER:MESSAGE_DELETE', onMessageDelete);
-    socket.on('SERVER:MESSAGE_ADD', onMessageAdd);
-    socket.on('SERVER:MESSAGES_PATCH', onMessagesPatch);
-    socket.on('SERVER:MESSAGES_PUT', onMessagesPut);
-    socket.on('SERVER:JUMP_TO_DATE_RESPONSE', onJumpToDateResponse);
-    socket.on('SERVER:JUMP_TO_MESSAGE_RESPONSE', onJumpToMessageResponse);
-    socket.on('SERVER:MESSAGE_READ_RESPONSE', onMessageReadResponse);
-    socket.on('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
+        if (data.dialog.lastMessage) {
+          setLastMessageInChat(data.dialog.lastMessage);
+        }
 
-    return () => {
-      socket.off('SERVER:DIALOG_JOIN_RESPONSE', onDialogJoinResponse);
-      socket.off('SERVER:MESSAGE_DELETE', onMessageDelete);
-      socket.off('SERVER:MESSAGE_ADD', onMessageAdd);
-      socket.off('SERVER:MESSAGES_PATCH', onMessagesPatch);
-      socket.off('SERVER:MESSAGES_PUT', onMessagesPut);
-      socket.off('SERVER:JUMP_TO_DATE_RESPONSE', onJumpToDateResponse);
-      socket.off('SERVER:JUMP_TO_MESSAGE_RESPONSE', onJumpToMessageResponse);
-      socket.off('SERVER:MESSAGE_READ_RESPONSE', onMessageReadResponse);
-      socket.off('SERVER:DIALOG_GET_RESPONSE', onDialogGetResponse);
-    };
-  }, [lastMessageInChat, pinnedMessage]);
+        const firstUnreadMsg = [...data.messages]
+          .reverse()
+          .find((message) => !message.read && message.userId !== user?.id);
+
+        if (firstUnreadMsg) {
+          setFirstUnreadMessage(firstUnreadMsg);
+          setScrollToMessage(firstUnreadMsg);
+        } else {
+          setScrollToMessage(data.messages.at(0) ?? null);
+        }
+      },
+      'SERVER:MESSAGES_PUT': (data) => {
+        const firstUnreadMsg = [...data.messages]
+          .reverse()
+          .find((message) => !message.read && message.userId !== user?.id);
+
+        if (firstUnreadMsg) {
+          setFirstUnreadMessage(firstUnreadMsg);
+          setScrollToMessage(firstUnreadMsg);
+        } else {
+          setScrollToMessage(data.messages.at(0) ?? null);
+        }
+
+        setMessages(data.messages);
+      },
+      'SERVER:MESSAGES_PATCH': (data) => {
+        if (data.messages.length) {
+          setMessages((prevMessages) => {
+            if (!prevMessages.length) return data.messages;
+            if (data.messages.at(0)!.id < prevMessages.at(-1)!.id)
+              return [...prevMessages, ...data.messages].slice(-MAX_NUMBER_OF_MESSAGES);
+            if (data.messages.at(-1)!.id > prevMessages.at(0)!.id)
+              return [...data.messages.reverse(), ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES);
+            return prevMessages;
+          });
+        }
+      },
+      'SERVER:MESSAGE_ADD': (data) => {
+        if (isMessagesContainLastMessageInChat || !lastMessageInChat) {
+          setMessages((prevMessages) =>
+            [data.message, ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES),
+          );
+
+          if (chatNodeRef.current && getScrollBottom(chatNodeRef.current) < 150) {
+            setScrollToMessage(data.message);
+          }
+        }
+
+        setLastMessageInChat(data.message);
+      },
+      'SERVER:MESSAGE_DELETE': (data) => {
+        setMessages((prevMessages) =>
+          prevMessages.filter((message) => message.id !== data.message.id),
+        );
+      },
+      'SERVER:JUMP_TO_DATE_RESPONSE': (data) => {
+        setMessages(data.messages);
+        if (data.firstFoundMessage) {
+          setScrollToMessage(data.firstFoundMessage);
+        }
+      },
+      'SERVER:JUMP_TO_MESSAGE_RESPONSE': (data) => {
+        setMessages(data.messages);
+        if (data.target) {
+          setScrollToMessage(data.target);
+        }
+      },
+      'SERVER:MESSAGE_READ_RESPONSE': (data) => {
+        if (!data.unreadedMessagesCount) {
+          setFirstUnreadMessage(null);
+        }
+      },
+      'SERVER:DIALOG_GET_RESPONSE': (data) => {
+        if (pinnedMessage?.id !== data.dialog.pinnedMessage?.id) {
+          setPinnedMessage(data.dialog.pinnedMessage);
+        }
+      },
+    },
+    [lastMessageInChat, pinnedMessage],
+    'MiddleColumnMain',
+  );
 
   useEffect(
     () => () => {
@@ -263,7 +226,7 @@ export const useMiddleColumnMain = () => {
     const toggleScrollButton = () => {
       const hideClassName = 'hidden';
 
-      if (chatNodeRef.current && getBottomDistance(chatNodeRef.current) < 50) {
+      if (chatNodeRef.current && getScrollBottom(chatNodeRef.current) < 50) {
         scrollDownNodeRef.current?.classList.add(hideClassName);
       } else {
         scrollDownNodeRef.current?.classList.remove(hideClassName);

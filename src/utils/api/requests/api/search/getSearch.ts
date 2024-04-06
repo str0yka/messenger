@@ -1,5 +1,7 @@
 import { $api } from '~/utils/api';
 
+export type ApiSearchType = 'user' | 'dialog';
+
 export interface GetSearchParams<SearchType extends ApiSearchType> {
   query: string;
   type: SearchType;

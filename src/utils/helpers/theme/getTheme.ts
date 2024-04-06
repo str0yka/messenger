@@ -1,9 +1,9 @@
-import { THEME_DEFAULT, THEME_LOCAL_STORAGE_KEY } from '~/utils/constants';
+import { THEME_DEFAULT, LOCAL_STORAGE_KEY } from '~/utils/constants';
 
 import { isTheme } from './isTheme';
 
 export const getTheme = () => {
-  const theme = localStorage.getItem(THEME_LOCAL_STORAGE_KEY);
+  const theme = localStorage.getItem(LOCAL_STORAGE_KEY.THEME);
 
   return isTheme(theme) ? theme : THEME_DEFAULT;
 };

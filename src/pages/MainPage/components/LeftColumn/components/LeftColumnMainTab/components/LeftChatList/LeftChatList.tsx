@@ -12,6 +12,7 @@ import {
 } from '~/utils/api';
 import { PRIVATE_ROUTE } from '~/utils/constants';
 import { getUserLink, getUserName } from '~/utils/helpers';
+import { useSocketEvents } from '~/utils/hooks';
 import { useUserStore } from '~/utils/store';
 
 import { useDialog, useSocket } from '../../../../../../contexts';
@@ -39,19 +40,22 @@ export const LeftChatList = () => {
     onSuccess: (response) => setDialogs(response.dialogs),
   });
 
+  useSocketEvents(
+    socket,
+    {
+      'SERVER:DIALOGS_NEED_TO_UPDATE': () => {
+        socket.emit('CLIENT:DIALOGS_GET');
+      },
+      'SERVER:DIALOGS_PUT': (data) => {
+        setDialogs(data.dialogs);
+      },
+    },
+    [],
+    'LeftChatList',
+  );
+
   useEffect(() => {
     socket.emit('CLIENT:DIALOGS_GET');
-
-    const onDialogsPut: ServerToClientEvents['SERVER:DIALOGS_PUT'] = (data) => {
-      console.log('[LeftChatList:SERVER:DIALOGS_PUT]: ', data);
-      setDialogs(data.dialogs);
-    };
-
-    socket.on('SERVER:DIALOGS_PUT', onDialogsPut);
-
-    return () => {
-      socket.off('SERVER:DIALOGS_PUT', onDialogsPut);
-    };
   }, []);
 
   return (

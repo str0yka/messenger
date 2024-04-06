@@ -37,40 +37,36 @@ export const ForwardMessageDialog: React.FC<ForwardMessageDialogProps> = ({
             {dialogsQuery.data?.dialogs.pinned
               .concat(dialogsQuery.data.dialogs.unpinned)
               .map((dialog) => (
-                <Dialog.Close
+                <div
                   key={dialog.id}
-                  asChild
+                  className={cn(
+                    'flex select-none items-center gap-4 rounded-lg bg-neutral-800 p-2',
+                    'hover:bg-neutral-700',
+                  )}
+                  role="button"
+                  tabIndex={0}
+                  aria-hidden
+                  onClick={() => onForward(dialog)}
                 >
-                  <div
-                    className={cn(
-                      'flex select-none items-center gap-4 rounded-lg bg-neutral-800 p-2',
-                      'hover:bg-neutral-700',
+                  <Avatar.Root>
+                    {dialog.userId === dialog.partnerId && <IconBookmark className="text-white" />}
+                    {dialog.userId !== dialog.partnerId && (
+                      <Avatar.Fallback>{getUserName(dialog.partner)[0]}</Avatar.Fallback>
                     )}
-                    role="button"
-                    tabIndex={0}
-                    aria-hidden
-                    onClick={() => onForward(dialog)}
-                  >
-                    <Avatar.Root>
-                      {dialog.userId === dialog.partnerId && <IconBookmark />}
-                      {dialog.userId !== dialog.partnerId && (
-                        <Avatar.Fallback>{getUserName(dialog.partner)[0]}</Avatar.Fallback>
-                      )}
-                    </Avatar.Root>
-                    <div className="flex flex-col">
-                      {dialog.userId === dialog.partnerId && intl.t('savedMessages')}
-                      {dialog.userId !== dialog.partnerId && getUserName(dialog.partner)}
-                      <span className="text-sm leading-4 text-neutral-500">
-                        {dialog.userId === dialog.partnerId &&
-                          intl.t(
-                            'page.home.middleColumn.forwardMessageDialog.savedMessages.description',
-                          )}
-                        {dialog.userId !== dialog.partnerId &&
-                          intl.t(`user.status.${dialog.partner.status}`)}
-                      </span>
-                    </div>
+                  </Avatar.Root>
+                  <div className="flex flex-col">
+                    {dialog.userId === dialog.partnerId && intl.t('savedMessages')}
+                    {dialog.userId !== dialog.partnerId && getUserName(dialog.partner)}
+                    <span className="text-sm leading-4 text-neutral-500">
+                      {dialog.userId === dialog.partnerId &&
+                        intl.t(
+                          'page.home.middleColumn.forwardMessageDialog.savedMessages.description',
+                        )}
+                      {dialog.userId !== dialog.partnerId &&
+                        intl.t(`user.status.${dialog.partner.status}`)}
+                    </span>
                   </div>
-                </Dialog.Close>
+                </div>
               ))}
           </div>
         </Dialog.Content>

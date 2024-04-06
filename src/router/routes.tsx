@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import type { RouteObject } from 'react-router-dom';
 
+import { PublicRoutesGuard } from '~/components';
 import { AuthPage, MainPage, VerifyPage } from '~/pages';
 import { LeftColumn, MiddleColumn } from '~/pages/MainPage/components';
 import { PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
@@ -43,7 +44,11 @@ export const publicRoutes: RouteObject[] = [
       },
       {
         path: PUBLIC_ROUTE.VERIFY,
-        element: <VerifyPage />,
+        element: (
+          <PublicRoutesGuard>
+            <VerifyPage />
+          </PublicRoutesGuard>
+        ),
       },
       {
         path: '*',

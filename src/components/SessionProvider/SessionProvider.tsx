@@ -1,19 +1,19 @@
 import { LoadingPage } from '~/pages';
 import { useRefreshQuery } from '~/utils/api';
-import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from '~/utils/constants';
+import { LOCAL_STORAGE_KEY } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
-interface CheckAuthProps {
+interface SessionProviderProps {
   children: React.ReactNode;
 }
 
-export const CheckAuth: React.FC<CheckAuthProps> = ({ children }) => {
+export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
   const setUser = useUserStore((state) => state.setUser);
 
   const refreshQuery = useRefreshQuery({
     options: {
       onSuccess: (data) => {
-        localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, data.accessToken);
+        localStorage.setItem(LOCAL_STORAGE_KEY.ACCESS_TOKEN, data.accessToken);
         setUser(data.user);
       },
       retry: false,

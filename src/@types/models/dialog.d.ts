@@ -1,7 +1,7 @@
 type Dialog = {
   id: number;
   title: string;
-  status: 'NONE' | 'TYPING';
+  status: DialogStatus;
   isPinned: boolean;
   pinnedOrder: number | null;
   pinnedMessageId: number | null;
@@ -16,3 +16,5 @@ type Dialog = {
   unreadedMessagesCount: number;
   pinnedMessage: Message | null;
 };
+
+type DialogStatus = 'NONE' | 'TYPING';

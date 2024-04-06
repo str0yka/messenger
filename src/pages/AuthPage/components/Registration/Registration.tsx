@@ -39,13 +39,9 @@ export const Registration = () => {
       <p className="text-center text-neutral-500">{intl.t('page.auth.registerText')}</p>
       <form
         className="flex w-full flex-col gap-4"
-        onSubmit={registerForm.handleSubmit(async (values) => {
-          try {
-            await registerMutation.mutateAsync({ params: values });
-          } catch {
-            console.log('Error'); // $FIXME
-          }
-        })}
+        onSubmit={registerForm.handleSubmit((values) =>
+          registerMutation.mutateAsync({ params: values }),
+        )}
       >
         <Input
           placeholder={intl.t('input.label.name')}
