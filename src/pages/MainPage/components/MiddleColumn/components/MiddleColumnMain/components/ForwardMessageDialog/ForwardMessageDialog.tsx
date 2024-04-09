@@ -51,7 +51,10 @@ export const ForwardMessageDialog: React.FC<ForwardMessageDialogProps> = ({
                   <Avatar.Root>
                     {dialog.userId === dialog.partnerId && <IconBookmark className="text-white" />}
                     {dialog.userId !== dialog.partnerId && (
-                      <Avatar.Fallback>{getUserName(dialog.partner)[0]}</Avatar.Fallback>
+                      <>
+                        <Avatar.Image avatar={dialog.partner?.avatar} />
+                        <Avatar.Fallback>{getUserName(dialog.partner)[0]}</Avatar.Fallback>
+                      </>
                     )}
                   </Avatar.Root>
                   <div className="flex flex-col">

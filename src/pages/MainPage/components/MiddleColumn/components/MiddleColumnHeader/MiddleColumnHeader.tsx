@@ -57,6 +57,7 @@ export const MiddleColumnHeader = () => {
           </div>
           <div className="relative">
             <Avatar.Root>
+              <Avatar.Image avatar={dialog.partner?.avatar} />
               <Avatar.Fallback>{getUserName(dialog.partner)[0]}</Avatar.Fallback>
             </Avatar.Root>
             {dialog.partner.status === USER_STATUS.ONLINE && (
@@ -91,6 +92,7 @@ export const MiddleColumnHeader = () => {
           <div className="flex flex-col items-center gap-4 py-4">
             <div className="relative">
               <Avatar.Root className="h-28 w-28 text-4xl">
+                <Avatar.Image avatar={dialog.partner?.avatar} />
                 <Avatar.Fallback>{getUserName(dialog.partner)[0]}</Avatar.Fallback>
               </Avatar.Root>
               {dialog.partner.status === USER_STATUS.ONLINE && (

@@ -7,6 +7,7 @@ import { USER_STATUS } from '~/utils/constants';
 import { createDate, formatTime, isToday } from '~/utils/helpers';
 
 interface ChatItemProps {
+  avatar?: string | null;
   avatarFallback: string;
   title: string;
   lastMessage?: Message | null;
@@ -19,6 +20,7 @@ interface ChatItemProps {
 
 export const ChatItem: React.FC<ChatItemProps> = ({
   title,
+  avatar,
   avatarFallback,
   lastMessage,
   lastMessageSentByUser,
@@ -40,6 +42,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
     >
       <div className="relative">
         <Avatar.Root className="h-14 w-14">
+          <Avatar.Image avatar={avatar} />
           <Avatar.Fallback>{avatarFallback}</Avatar.Fallback>
         </Avatar.Root>
         {status === USER_STATUS.ONLINE && (

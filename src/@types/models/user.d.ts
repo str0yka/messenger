@@ -9,6 +9,7 @@ type User = {
   isVerified: boolean;
   updatedAt: string;
   createdAt: string;
+  avatar: string | null;
 };
 
 type UserStatus = 'ONLINE' | 'OFFLINE';

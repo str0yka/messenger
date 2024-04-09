@@ -58,6 +58,7 @@
   "page.home.leftColumn.searchList.tryNewSearch": "Try a new search",
   "page.home.leftColumn.settings": "Settings",
   "page.home.leftColumn.settings.profile": "Edit profile",
+  "page.home.leftColumn.settings.profile.updateAvatar": "Update avatar",
   "page.home.leftColumn.settings.profile.name.required": "Required field",
   "page.home.leftColumn.settings.profile.name.maxLength": "The maximum number of characters allowed is {number}",
   "page.home.leftColumn.settings.profile.bio.maxLength": "The maximum number of characters allowed is {number}",

@@ -80,6 +80,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
                   lastMessage={dialog.lastMessage}
                   lastMessageSentByUser={dialog.lastMessage?.userId === user?.id}
                   unreadedMessagesCount={dialog.unreadedMessagesCount}
+                  avatar={dialog.partner.avatar}
                 />
               )}
             </Link>
@@ -107,6 +108,7 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
             >
               <ChatItem
                 title={getUserName(searchUser)}
+                avatar={searchUser.avatar}
                 avatarFallback={getUserName(searchUser)[0]}
               />
             </Link>

@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import type { RouteObject } from 'react-router-dom';
 
-import { PublicRoutesGuard } from '~/components';
+import { MainPageGuard, VerifyPageGuard } from '~/components';
 import { AuthPage, MainPage, VerifyPage } from '~/pages';
 import { LeftColumn, MiddleColumn } from '~/pages/MainPage/components';
 import { PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
@@ -19,10 +19,10 @@ export const privateRoutes: RouteObject[] = [
       {
         path: PRIVATE_ROUTE.USER(':id'),
         element: (
-          <>
+          <MainPageGuard>
             <LeftColumn hideWhenShrink />
             <MiddleColumn />
-          </>
+          </MainPageGuard>
         ),
       },
       {
@@ -45,9 +45,9 @@ export const publicRoutes: RouteObject[] = [
       {
         path: PUBLIC_ROUTE.VERIFY,
         element: (
-          <PublicRoutesGuard>
+          <VerifyPageGuard>
             <VerifyPage />
-          </PublicRoutesGuard>
+          </VerifyPageGuard>
         ),
       },
       {

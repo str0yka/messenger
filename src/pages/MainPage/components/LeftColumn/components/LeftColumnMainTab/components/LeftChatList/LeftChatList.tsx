@@ -105,6 +105,7 @@ export const LeftChatList = () => {
                         active={activeDialog?.id === dialog.id}
                         status={dialog.partner.status}
                         isPinned={dialog.isPinned}
+                        avatar={dialog.partner.avatar}
                       />
                     )}
                   </Link>
@@ -158,6 +159,7 @@ export const LeftChatList = () => {
                       unreadedMessagesCount={dialog.unreadedMessagesCount}
                       active={activeDialog?.id === dialog.id}
                       status={dialog.partner.status}
+                      avatar={dialog.partner.avatar}
                     />
                   )}
                 </Link>

@@ -1,6 +1,8 @@
 import { $api } from '~/utils/api';
 
-export type PostProfileUpdateParams = Partial<Pick<User, 'bio' | 'lastname' | 'name' | 'username'>>;
+export type PostProfileUpdateParams =
+  | Partial<Pick<User, 'bio' | 'lastname' | 'name' | 'username'>>
+  | FormData;
 
 export interface PostProfileUpdateSuccessResponse {
   user: User;

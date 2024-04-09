@@ -1,3 +1,4 @@
 export * from './Observer/Observer';
 export * from './SessionProvider/SessionProvider';
-export * from './PublicRoutesGuard/PublicRoutesGuard';
+export * from './VerifyPageGuard/VerifyPageGuard';
+export * from './MainPageGuard/MainPageGuard';

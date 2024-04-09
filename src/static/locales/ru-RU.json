@@ -58,6 +58,7 @@
   "page.home.leftColumn.searchList.tryNewSearch": "Попробуйте другой запрос",
   "page.home.leftColumn.settings": "Настройки",
   "page.home.leftColumn.settings.profile": "Изменить профиль",
+  "page.home.leftColumn.settings.profile.updateAvatar": "Обновить аватар",
   "page.home.leftColumn.settings.profile.name.required": "Поле является обязательным",
   "page.home.leftColumn.settings.profile.name.maxLength": "Максимальное допустимое количество символов {number}",
   "page.home.leftColumn.settings.profile.bio.maxLength": "Максимальное допустимое количество символов {number}",

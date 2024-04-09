@@ -27,3 +27,4 @@ export * from './IconReply';
 export * from './IconPushPin';
 export * from './IconBookmark';
 export * from './IconPushPinSlashed';
+export * from './IconCameraWithPlus';

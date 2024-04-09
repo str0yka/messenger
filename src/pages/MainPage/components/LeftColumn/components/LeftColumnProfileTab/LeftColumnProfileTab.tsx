@@ -1,11 +1,12 @@
+import cn from 'classnames';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 
-import { IconButton, Input } from '~/components/common';
-import { IconCheck, IconChevronLeft } from '~/components/common/icons';
+import { Avatar, IconButton, Input } from '~/components/common';
+import { IconCameraWithPlus, IconCheck, IconChevronLeft } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { useProfileUpdateMutation } from '~/utils/api';
-import { getDirty } from '~/utils/helpers';
+import { getDirty, getUserName } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { TAB } from '../../constants';
@@ -60,6 +61,31 @@ export const LeftColumnProfileTab = () => {
             });
           })}
         >
+          <div className="flex items-center justify-center">
+            <Avatar.Root className="relative h-28 w-28 text-4xl">
+              <label
+                aria-label={intl.t('page.home.leftColumn.settings.profile.updateAvatar')}
+                className="group absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50"
+              >
+                <IconCameraWithPlus
+                  className={cn('h-12 w-12 transition-all', 'group-hover:h-14 group-hover:w-14')}
+                />
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={(event) => {
+                    if (event.target.files?.length) {
+                      const formData = new FormData();
+                      formData.append('image', event.target.files[0]);
+                      profileUpdateMutation.mutateAsync({ params: formData });
+                    }
+                  }}
+                />
+              </label>
+              <Avatar.Image avatar={user?.avatar} />
+              <Avatar.Fallback>{getUserName(user!)[0]}</Avatar.Fallback>
+            </Avatar.Root>
+          </div>
           <div className="flex flex-col gap-1">
             <p className="text-sm text-neutral-400">
               {intl.t('page.home.leftColumn.settings.name')}
