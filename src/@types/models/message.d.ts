@@ -10,6 +10,7 @@ type Message = {
   message: {
     id: number;
     text: string;
+    image: string | null;
     userId: number;
     replyMessageId: number | null;
     updatedAt: Date;
@@ -27,6 +28,7 @@ type Message = {
       message: {
         id: number;
         text: string;
+        image: string | null;
         userId: number;
         replyMessageId: number | null;
         updatedAt: Date;

@@ -29,7 +29,13 @@ interface ClientToServerEvents {
   'CLIENT:MESSAGE_DELETE': (params: { messageId: number; deleteForEveryone?: boolean }) => void;
   'CLIENT:MESSAGE_ADD': (params: {
     message:
-      | { type: 'MESSAGE'; text: string; createdAt?: number; replyMessageId?: number }
+      | {
+          type: 'MESSAGE';
+          text: string;
+          createdAt?: number;
+          replyMessageId?: number;
+          image?: string | null;
+        }
       | { type: 'FORWARDED'; id: number };
   }) => void;
   'CLIENT:MESSAGES_GET': (params: {

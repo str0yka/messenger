@@ -9,3 +9,4 @@ export * from './dialog/pin/postDialogsPin';
 export * from './dialog/unpin/postDialogsUnpin';
 export * from './dialog/reorder/postDialogsReorder';
 export * from './dialog/getDialogs';
+export * from './upload/postUpload';

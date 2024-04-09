@@ -22,13 +22,14 @@ export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps
       <div
         ref={ref}
         {...props}
-        className="w-fit max-w-[66%] self-end rounded-l-2xl rounded-r-lg bg-primary-500 px-2 py-1 text-white"
+        className="w-fit max-w-[66%] self-end overflow-hidden rounded-l-2xl rounded-r-lg bg-primary-500 px-2 py-1 text-white"
       >
         {message.type === 'MESSAGE' && message.message.replyMessage && (
           <div
             className={cn(
               'mt-1 flex h-10 grow cursor-pointer flex-col justify-center overflow-hidden rounded border-l-[3px] border-white bg-white/[15%] px-1 text-sm',
               'hover:bg-white/[25%]',
+              !!message.message.image && 'mb-3',
             )}
             role="button"
             tabIndex={0}
@@ -49,6 +50,15 @@ export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps
               name: getUserName(message.message.user),
             })}
           </span>
+        )}
+        {!!message.message.image && (
+          <div className={cn('-mx-2 -mt-1')}>
+            <img
+              aria-hidden
+              src={`${import.meta.env.VITE_IMAGES_URL}/${message.message.image}`}
+              alt={`${getUserName(message.message.user)}'s photo`}
+            />
+          </div>
         )}
         <div>
           {message.message.text}

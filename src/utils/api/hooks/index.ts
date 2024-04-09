@@ -9,3 +9,4 @@ export * from './useDialogsPinMutation';
 export * from './useDialogsReorderMutation';
 export * from './useDialogsUnpinMutation';
 export * from './useDialogsQuery';
+export * from './useUploadMutation';
