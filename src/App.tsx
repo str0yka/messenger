@@ -6,6 +6,7 @@ import { IntlProvider } from '~/features/i18n';
 import { ThemeProvider } from '~/features/theme';
 import { LoadingPage } from '~/pages';
 import { privateRoutes, publicRoutes } from '~/router';
+import { ViewImageProvider } from '~/utils/contexts';
 import { useInitTheme, useInitIntl } from '~/utils/hooks';
 import { useUserStore } from '~/utils/store';
 
@@ -34,7 +35,9 @@ export const App = () => {
             setLocale={setLocale}
             messages={messages}
           >
-            <RouterProvider router={user?.isVerified ? privateRouter : publicRouter} />
+            <ViewImageProvider>
+              <RouterProvider router={user?.isVerified ? privateRouter : publicRouter} />
+            </ViewImageProvider>
           </IntlProvider>
         </ThemeProvider>
       </SessionProvider>

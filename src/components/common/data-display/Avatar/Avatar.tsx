@@ -2,6 +2,8 @@ import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import cn from 'classnames';
 import { forwardRef } from 'react';
 
+import { IMAGE_URL } from '~/utils/constants';
+
 interface AvatarImageProps extends Omit<React.ComponentProps<typeof AvatarPrimitive.Image>, 'src'> {
   avatar?: string | null;
 }
@@ -12,7 +14,7 @@ const AvatarImage = forwardRef<React.ElementRef<typeof AvatarPrimitive.Image>, A
       {...props}
       ref={ref}
       className={cn('h-full w-full object-cover', className)}
-      {...(avatar && { src: `${import.meta.env.VITE_IMAGES_URL}/${avatar}` })}
+      {...(avatar && { src: IMAGE_URL(avatar) })}
     />
   ),
 );

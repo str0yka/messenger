@@ -2,7 +2,7 @@ import { createContext } from 'react';
 
 export interface IntlState {
   locale: Locale;
-  setLocale: (locale: Locale | ((locale: Locale) => Locale)) => void;
+  setLocale: React.Dispatch<React.SetStateAction<Locale>>;
   messages: Record<string, string>;
 }
 

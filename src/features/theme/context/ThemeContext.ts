@@ -2,7 +2,7 @@ import { createContext } from 'react';
 
 export interface ThemeState {
   theme: Theme;
-  setTheme: (theme: Theme | ((theme: Theme) => Theme)) => void;
+  setTheme: React.Dispatch<React.SetStateAction<Theme>>;
 }
 
 export const ThemeContext = createContext<ThemeState>({

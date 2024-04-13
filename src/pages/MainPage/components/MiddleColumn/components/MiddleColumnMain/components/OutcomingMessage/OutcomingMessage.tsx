@@ -1,8 +1,10 @@
 import cn from 'classnames';
 import { forwardRef } from 'react';
 
+import { ViewImage } from '~/components';
 import { IconCheck, IconDoubleCheck, IconPushPin } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
+import { IMAGE_URL } from '~/utils/constants';
 import { formatTime, getUserName } from '~/utils/helpers';
 
 interface OutcomingMessageProps extends React.ComponentPropsWithoutRef<'div'> {
@@ -52,10 +54,13 @@ export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps
           </span>
         )}
         {!!message.message.image && (
-          <div className={cn('-mx-2 -mt-1')}>
-            <img
+          <div className={cn('-mx-2 -mt-1 bg-white')}>
+            <ViewImage
+              loading="lazy"
+              width={500}
+              height={500}
               aria-hidden
-              src={`${import.meta.env.VITE_IMAGES_URL}/${message.message.image}`}
+              src={IMAGE_URL(message.message.image)}
               alt={`${getUserName(message.message.user)}'s photo`}
             />
           </div>

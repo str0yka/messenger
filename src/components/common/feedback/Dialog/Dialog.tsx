@@ -19,7 +19,7 @@ const DialogContent = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <DialogPrimitive.Content
     {...props}
-    className={cn('', className)}
+    className={className}
     ref={ref}
     asChild
   >

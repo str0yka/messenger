@@ -14,6 +14,7 @@ import {
 } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { useUploadMutation } from '~/utils/api';
+import { IMAGE_URL } from '~/utils/constants';
 import { getUserName } from '~/utils/helpers';
 
 import { useSocket } from '../../../../contexts';
@@ -247,41 +248,43 @@ export const MiddleColumnFooter = () => {
         open={!!uploadedImage}
         onOpenChange={(open) => !open && setUploadedImage(null)}
       >
-        <Dialog.Overlay />
-        <Dialog.Content className="flex w-80 flex-col gap-2 rounded-xl bg-neutral-800 p-4">
-          <div className="flex items-center gap-4 text-lg font-semibold">
-            <Dialog.Close asChild>
-              <IconButton>
-                <IconCross />
-              </IconButton>
-            </Dialog.Close>
-            {intl.t('page.home.middleColumn.footer.sendPhotosDialog.title', { number: 1 })}
-          </div>
-          <img
-            className="rounded-lg"
-            src={`${import.meta.env.VITE_IMAGES_URL}/${uploadedImage}`}
-            alt="uploaded"
-          />
-          <form
-            className="flex flex-col gap-2"
-            onSubmit={sendMessageForm.handleSubmit(onSubmitSendMessageForm(uploadedImage))}
-          >
-            <Input
-              labelProps={{ className: 'grow' }}
-              variant="outlined"
-              placeholder={intl.t(
-                'page.home.middleColumn.footer.sendPhotosDialog.input.placeholder.caption',
-              )}
-              {...sendMessageForm.register('messageText')}
+        <Dialog.Portal>
+          <Dialog.Overlay />
+          <Dialog.Content className="flex w-80 flex-col gap-2 rounded-xl bg-neutral-800 p-4">
+            <div className="flex items-center gap-4 text-lg font-semibold">
+              <Dialog.Close asChild>
+                <IconButton>
+                  <IconCross />
+                </IconButton>
+              </Dialog.Close>
+              {intl.t('page.home.middleColumn.footer.sendPhotosDialog.title', { number: 1 })}
+            </div>
+            <img
+              className="rounded-lg"
+              src={IMAGE_URL(uploadedImage)}
+              alt="uploaded"
             />
-            <Button
-              color="primary"
-              type="submit"
+            <form
+              className="flex flex-col gap-2"
+              onSubmit={sendMessageForm.handleSubmit(onSubmitSendMessageForm(uploadedImage))}
             >
-              {intl.t('page.home.middleColumn.footer.sendPhotosDialog.button.send')}
-            </Button>
-          </form>
-        </Dialog.Content>
+              <Input
+                labelProps={{ className: 'grow' }}
+                variant="outlined"
+                placeholder={intl.t(
+                  'page.home.middleColumn.footer.sendPhotosDialog.input.placeholder.caption',
+                )}
+                {...sendMessageForm.register('messageText')}
+              />
+              <Button
+                color="primary"
+                type="submit"
+              >
+                {intl.t('page.home.middleColumn.footer.sendPhotosDialog.button.send')}
+              </Button>
+            </form>
+          </Dialog.Content>
+        </Dialog.Portal>
       </Dialog.Root>
     </>
   );
