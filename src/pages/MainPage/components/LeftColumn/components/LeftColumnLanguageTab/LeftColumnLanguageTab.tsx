@@ -6,12 +6,12 @@ import { useIntl } from '~/features/i18n';
 import { LANGUAGES } from '~/utils/constants';
 
 import { TAB } from '../../constants';
-import { useSetTab } from '../../contexts';
+import { useTabSetter } from '../../contexts';
 
 export const LeftColumnLanguageTab = () => {
   const intl = useIntl();
 
-  const setTab = useSetTab();
+  const setTab = useTabSetter();
 
   return (
     <>

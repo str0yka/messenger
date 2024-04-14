@@ -7,7 +7,7 @@ import { useUserStore } from '~/utils/store';
 
 import { useSocket } from '../../../../../contexts';
 import { MAX_NUMBER_OF_MESSAGES } from '../../../constants';
-import { useReply } from '../../../contexts';
+import { useReplySetter } from '../../../contexts';
 
 export const useMiddleColumnMain = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export const useMiddleColumnMain = () => {
   const user = useUserStore((state) => state.user);
   const socket = useSocket();
 
-  const { setReplyMessage } = useReply();
+  const setReplyMessage = useReplySetter();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [pinnedMessage, setPinnedMessage] = useState<Message | null>(null);
@@ -52,13 +52,11 @@ export const useMiddleColumnMain = () => {
     }
   };
 
-  const onClickReplyMessage = (replyMessage: Message['message']['replyMessage']) => {
-    if (replyMessage) {
-      socket.emit('CLIENT:JUMP_TO_MESSAGE', {
-        messageId: replyMessage.id,
-        take: MAX_NUMBER_OF_MESSAGES,
-      });
-    }
+  const onClickReplyMessage = (replyMessageId: number) => {
+    socket.emit('CLIENT:JUMP_TO_MESSAGE', {
+      messageId: replyMessageId,
+      take: MAX_NUMBER_OF_MESSAGES,
+    });
   };
 
   const observeLowerBorder = (entry?: IntersectionObserverEntry) => {
@@ -266,6 +264,7 @@ export const useMiddleColumnMain = () => {
       scrollToMessage,
       firstUnreadMessage,
       pinnedMessage,
+      isMessagesContainLastMessageInChat,
     },
     functions: {
       setDeleteMessage,

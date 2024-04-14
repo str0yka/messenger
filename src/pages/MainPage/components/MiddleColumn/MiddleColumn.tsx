@@ -2,7 +2,7 @@ import cn from 'classnames';
 import { useParams } from 'react-router-dom';
 
 import { MiddleColumnMain, MiddleColumnHeader, MiddleColumnFooter } from './components';
-import { OutgoingMessagesProvider, ReplyProvider } from './contexts';
+import { ReplyProvider } from './contexts';
 
 export const MiddleColumn = () => {
   const { id } = useParams();
@@ -10,15 +10,13 @@ export const MiddleColumn = () => {
   return (
     <ReplyProvider key={id}>
       {/* $FIXME */}
-      <OutgoingMessagesProvider>
-        <div className={cn('flex grow flex-col overflow-hidden', 'lg:static')}>
-          <MiddleColumnHeader />
-          <div className="flex w-full grow flex-col overflow-hidden">
-            <MiddleColumnMain />
-            <MiddleColumnFooter />
-          </div>
+      <div className={cn('flex grow flex-col overflow-hidden', 'lg:static')}>
+        <MiddleColumnHeader />
+        <div className="flex w-full grow flex-col overflow-hidden">
+          <MiddleColumnMain />
+          <MiddleColumnFooter />
         </div>
-      </OutgoingMessagesProvider>
+      </div>
     </ReplyProvider>
   );
 };

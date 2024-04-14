@@ -18,14 +18,14 @@ import { useExtendedTheme } from '~/utils/hooks';
 import { useUserStore } from '~/utils/store';
 
 import { TAB } from '../../constants';
-import { useSetTab } from '../../contexts';
+import { useTabSetter } from '../../contexts';
 
 export const LeftColumnSettingsTab = () => {
   const { user, resetUser } = useUserStore();
   const intl = useIntl();
   const { extendedTheme } = useExtendedTheme();
 
-  const setTab = useSetTab();
+  const setTab = useTabSetter();
 
   const logoutMutation = useLogoutMutation({ onSuccess: resetUser });
 

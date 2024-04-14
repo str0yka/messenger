@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-popover": "1.0.7",
     "@radix-ui/themes": "^2.0.0",
     "axios": "^1.6.2",
@@ -23,6 +24,7 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.20.0",
     "socket.io-client": "^4.7.2",
+    "zod": "^3.22.4",
     "zustand": "^4.4.7"
   },
   "devDependencies": {

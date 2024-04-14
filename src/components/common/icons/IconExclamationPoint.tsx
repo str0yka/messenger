@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 
-export const IconExclamationPoint = forwardRef<SVGSVGElement, IconProps>(
+export const IconExclamationPoint = forwardRef<SVGSVGElement, React.ComponentProps<'svg'>>(
   ({ color = 'currentColor', ...props }, forwardedRef) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"

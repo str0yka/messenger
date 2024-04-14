@@ -6,7 +6,7 @@ import { useSocketEvents } from '~/utils/hooks';
 import { useSocket } from '../socket';
 
 import type { DialogState } from './DialogContext';
-import { DialogContext, SetDialogContext } from './DialogContext';
+import { DialogContext, DialogSetterContext } from './DialogContext';
 
 interface DialogProviderProps {
   children: React.ReactNode;
@@ -55,7 +55,7 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
 
   return (
     <DialogContext.Provider value={dialog}>
-      <SetDialogContext.Provider value={setDialog}>{children}</SetDialogContext.Provider>
+      <DialogSetterContext.Provider value={setDialog}>{children}</DialogSetterContext.Provider>
     </DialogContext.Provider>
   );
 };

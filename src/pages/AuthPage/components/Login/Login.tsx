@@ -1,12 +1,15 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { Input, Button, Alert } from '~/components/common';
 import { useIntl } from '~/features/i18n';
 import { useLoginMutation } from '~/utils/api';
-import type { PostLoginParams } from '~/utils/api';
 import { LOCAL_STORAGE_KEY, PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
+
+import { loginFormScheme } from './constants';
+import type { LoginFormScheme } from './constants';
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -26,8 +29,9 @@ export const Login = () => {
     },
   });
 
-  const loginForm = useForm<PostLoginParams>({
+  const loginForm = useForm<LoginFormScheme>({
     defaultValues: { email: '', password: '' },
+    resolver: zodResolver(loginFormScheme(intl)),
   });
 
   return (
@@ -55,15 +59,7 @@ export const Login = () => {
           error={!!loginForm.formState.errors.email?.message}
           helperText={loginForm.formState.errors.email?.message}
           rounded
-          {...loginForm.register('email', {
-            required: intl.t('page.auth.login.input.email.helperText.required'),
-            validate: (value) => {
-              if (value === value.replace('@', '').replace('.', '')) {
-                return intl.t('page.auth.login.input.email.helperText.invalidFormat');
-              }
-              return true;
-            },
-          })}
+          {...loginForm.register('email')}
         />
         <Input
           placeholder={intl.t('input.label.password')}
@@ -72,9 +68,7 @@ export const Login = () => {
           error={!!loginForm.formState.errors.password?.message}
           helperText={loginForm.formState.errors.password?.message}
           rounded
-          {...loginForm.register('password', {
-            required: intl.t('page.auth.login.input.password.helperText.required'),
-          })}
+          {...loginForm.register('password')}
         />
         <Button
           type="submit"

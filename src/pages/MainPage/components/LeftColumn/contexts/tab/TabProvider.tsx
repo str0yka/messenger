@@ -1,14 +1,14 @@
-import type { TabState, SetTabState } from './TabContext';
-import { SetTabContext, TabContext } from './TabContext';
+import type { TabState, TabSetterState } from './TabContext';
+import { TabContext, TabSetterContext } from './TabContext';
 
 interface TabProviderProps {
   tab: TabState;
-  setTab: SetTabState;
+  setTab: TabSetterState;
   children?: React.ReactNode;
 }
 
 export const TabProvider: React.FC<TabProviderProps> = ({ tab, setTab, children }) => (
   <TabContext.Provider value={tab}>
-    <SetTabContext.Provider value={setTab}>{children}</SetTabContext.Provider>
+    <TabSetterContext.Provider value={setTab}>{children}</TabSetterContext.Provider>
   </TabContext.Provider>
 );

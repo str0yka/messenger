@@ -1,4 +1,4 @@
-type Message = {
+interface Message {
   id: number;
   read: boolean;
   messageId: number;
@@ -37,6 +37,6 @@ type Message = {
       };
     } | null;
   };
-};
+}
 
 type MessageType = 'FORWARDED' | 'MESSAGE';

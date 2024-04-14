@@ -2,13 +2,11 @@ export const groupMessagesByDate = (messages: Message[]) => {
   const groupedMessages = new Map<number, Message[]>();
 
   for (let i = 0; i < messages.length; i += 1) {
-    const messagesDateTimestamp = new Date(messages[i].createdAt).setHours(0o0, 0o0, 0o0, 0o0);
-    const messagesInMessagesDateTimestamp = groupedMessages.get(messagesDateTimestamp);
+    const timestamp = new Date(messages[i].createdAt).setHours(0o0, 0o0, 0o0, 0o0);
+    const messagesInTimestamp = groupedMessages.get(timestamp);
     groupedMessages.set(
-      messagesDateTimestamp,
-      messagesInMessagesDateTimestamp
-        ? [...messagesInMessagesDateTimestamp, messages[i]]
-        : [messages[i]],
+      timestamp,
+      messagesInTimestamp ? [...messagesInTimestamp, messages[i]] : [messages[i]],
     );
   }
 

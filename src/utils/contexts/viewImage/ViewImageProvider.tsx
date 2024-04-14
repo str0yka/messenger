@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { Dialog } from '~/components/common';
 
-import { ViewImageContext } from './ViewImageContext';
+import { ViewImageContext, ViewImageSetterContext } from './ViewImageContext';
 import type { ViewImageState } from './ViewImageContext';
 
 interface ViewImageProviderProps {
@@ -10,28 +10,28 @@ interface ViewImageProviderProps {
 }
 
 export const ViewImageProvider: React.FC<ViewImageProviderProps> = ({ children }) => {
-  const [viewImage, setViewImage] = useState<ViewImageState['viewImage']>(null);
-
-  const value = useMemo(() => ({ viewImage, setViewImage }), [viewImage]);
+  const [viewImage, setViewImage] = useState<ViewImageState>(null);
 
   return (
-    <ViewImageContext.Provider value={value}>
-      <Dialog.Root
-        open={!!viewImage}
-        onOpenChange={(open) => !open && setViewImage(null)}
-      >
-        <Dialog.Portal>
-          <Dialog.Overlay />
-          <Dialog.Content>
-            <img
-              src={viewImage!}
-              className="outline-none"
-              alt=""
-            />
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
-      {children}
+    <ViewImageContext.Provider value={viewImage}>
+      <ViewImageSetterContext.Provider value={setViewImage}>
+        <Dialog.Root
+          open={!!viewImage}
+          onOpenChange={(open) => !open && setViewImage(null)}
+        >
+          <Dialog.Portal>
+            <Dialog.Overlay />
+            <Dialog.Content>
+              <img
+                src={viewImage!}
+                className="outline-none"
+                alt=""
+              />
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
+        {children}
+      </ViewImageSetterContext.Provider>
     </ViewImageContext.Provider>
   );
 };

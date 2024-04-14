@@ -6,7 +6,7 @@ export type DialogState =
       partner: User;
     })
   | null;
-export type SetDialogState = React.Dispatch<React.SetStateAction<DialogState>>;
+export type DialogSetterState = React.Dispatch<React.SetStateAction<DialogState>>;
 
 export const DialogContext = createContext<DialogState>(null);
-export const SetDialogContext = createContext<SetDialogState>(() => {});
+export const DialogSetterContext = createContext<DialogSetterState>(() => {});

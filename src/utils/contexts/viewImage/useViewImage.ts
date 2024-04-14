@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 
-import { ViewImageContext } from './ViewImageContext';
+import { ViewImageContext, ViewImageSetterContext } from './ViewImageContext';
 
 export const useViewImage = () => useContext(ViewImageContext);
+export const useViewImageSetter = () => useContext(ViewImageSetterContext);

@@ -10,7 +10,7 @@ import { getDirty, getUserName } from '~/utils/helpers';
 import { useUserStore } from '~/utils/store';
 
 import { TAB } from '../../constants';
-import { useSetTab } from '../../contexts';
+import { useTabSetter } from '../../contexts';
 
 type UpdateProfileValues = Pick<User, 'bio' | 'name' | 'lastname' | 'username'>;
 
@@ -18,7 +18,7 @@ export const LeftColumnProfileTab = () => {
   const intl = useIntl();
   const { user, setUser } = useUserStore((state) => ({ user: state.user, setUser: state.setUser }));
 
-  const setTab = useSetTab();
+  const setTab = useTabSetter();
 
   const updateProfileForm = useForm<UpdateProfileValues>({
     defaultValues: {

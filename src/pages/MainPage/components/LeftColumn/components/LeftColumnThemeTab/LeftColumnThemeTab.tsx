@@ -7,13 +7,13 @@ import { EXTENDED_THEMES } from '~/utils/constants';
 import { useExtendedTheme } from '~/utils/hooks';
 
 import { TAB } from '../../constants';
-import { useSetTab } from '../../contexts';
+import { useTabSetter } from '../../contexts';
 
 export const LeftColumnThemeTab = () => {
   const intl = useIntl();
   const { extendedTheme, setTheme } = useExtendedTheme();
 
-  const setTab = useSetTab();
+  const setTab = useTabSetter();
 
   return (
     <>

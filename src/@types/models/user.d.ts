@@ -1,4 +1,4 @@
-type User = {
+interface User {
   bio: string | null;
   lastname: string | null;
   name: string;
@@ -10,6 +10,6 @@ type User = {
   updatedAt: string;
   createdAt: string;
   avatar: string | null;
-};
+}
 
 type UserStatus = 'ONLINE' | 'OFFLINE';

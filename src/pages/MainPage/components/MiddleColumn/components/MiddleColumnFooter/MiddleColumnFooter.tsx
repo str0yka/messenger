@@ -19,7 +19,7 @@ import { getUserName } from '~/utils/helpers';
 
 import { useSocket } from '../../../../contexts';
 import { MAX_NUMBER_OF_MESSAGES } from '../../constants';
-import { useReply } from '../../contexts';
+import { useReply, useReplySetter } from '../../contexts';
 
 interface SendMessageForm {
   messageText: string;
@@ -32,7 +32,8 @@ export const MiddleColumnFooter = () => {
 
   const socket = useSocket();
 
-  const { replyMessage, setReplyMessage } = useReply();
+  const replyMessage = useReply();
+  const setReplyMessage = useReplySetter();
 
   const [forwardMessage, setForwardMessage] = useState<Message | null>();
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);

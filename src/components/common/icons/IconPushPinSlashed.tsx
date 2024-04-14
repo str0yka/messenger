@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 
-export const IconPushPinSlashed = forwardRef<SVGSVGElement, IconProps>(
+export const IconPushPinSlashed = forwardRef<SVGSVGElement, React.ComponentProps<'svg'>>(
   ({ color = 'currentColor', ...props }, forwardedRef) => (
     <svg
       width="20px"

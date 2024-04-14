@@ -3,10 +3,10 @@ import { useContext } from 'react';
 import { IntlContext } from '../context';
 
 export const useIntl = () => {
-  const intl = useContext(IntlContext);
+  const { locale, setLocale, messages } = useContext(IntlContext);
 
   const t = (path: LocaleMessageId, values?: Record<string, string | number>) => {
-    let message = intl.messages[path];
+    let message = messages[path];
     if (!message) return path;
     if (!values) return message;
 
@@ -17,5 +17,5 @@ export const useIntl = () => {
     return message;
   };
 
-  return { locale: intl.locale, setLocale: intl.setLocale, t };
+  return { locale, setLocale, t };
 };

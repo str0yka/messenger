@@ -11,7 +11,7 @@ import { OutcomingMessage } from '../OutcomingMessage/OutcomingMessage';
 interface MessageItemProps extends React.ComponentPropsWithoutRef<'div'> {
   message: Message;
   isPinned?: boolean;
-  onClickReplyMessage: (replyMessage: Message['message']['replyMessage']) => void;
+  onClickReplyMessage: (replyMessageId: number) => void;
 }
 
 export const MessageItem = forwardRef<
@@ -42,8 +42,11 @@ export const MessageItem = forwardRef<
     return (
       <OutcomingMessage
         ref={ref}
-        message={{ ...message, read: isRead }}
+        createdAt={message.createdAt}
+        read={isRead}
+        type={message.type}
         isPinned={isPinned}
+        message={message.message}
         onClickReplyMessage={onClickReplyMessage}
         {...props}
       />
@@ -53,8 +56,11 @@ export const MessageItem = forwardRef<
     return (
       <IncomingMessage
         ref={ref}
-        message={{ ...message, read: isRead }}
+        createdAt={message.createdAt}
+        read={isRead}
+        type={message.type}
         isPinned={isPinned}
+        message={message.message}
         onClickReplyMessage={onClickReplyMessage}
         {...props}
       />
@@ -70,8 +76,11 @@ export const MessageItem = forwardRef<
     >
       <IncomingMessage
         ref={ref}
-        message={{ ...message, read: isRead }}
+        createdAt={message.createdAt}
+        read={isRead}
+        type={message.type}
         isPinned={isPinned}
+        message={message.message}
         onClickReplyMessage={onClickReplyMessage}
         {...props}
       />

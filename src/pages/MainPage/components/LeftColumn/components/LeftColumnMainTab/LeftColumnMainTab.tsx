@@ -10,7 +10,7 @@ import { useDebounce } from '~/utils/hooks';
 import { useUserStore } from '~/utils/store';
 
 import { TAB } from '../../constants';
-import { useSetTab } from '../../contexts';
+import { useTabSetter } from '../../contexts';
 
 import { LeftChatList, LeftSearchList } from './components';
 
@@ -18,7 +18,7 @@ export const LeftColumnMainTab = () => {
   const intl = useIntl();
   const resetUser = useUserStore((state) => state.resetUser);
 
-  const setTab = useSetTab();
+  const setTab = useTabSetter();
 
   const [mode, setMode] = useState<'chatList' | 'searchList'>('chatList');
 

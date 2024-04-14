@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
-import { ReplyContext } from './ReplyContext';
+import { ReplyContext, ReplySetterContext } from './ReplyContext';
 import type { ReplyState } from './ReplyContext';
 
 interface ReplyProviderProps {
@@ -8,9 +8,11 @@ interface ReplyProviderProps {
 }
 
 export const ReplyProvider: React.FC<ReplyProviderProps> = ({ children }) => {
-  const [replyMessage, setReplyMessage] = useState<ReplyState['replyMessage']>(null);
+  const [replyMessage, setReplyMessage] = useState<ReplyState>(null);
 
-  const replyState = useMemo(() => ({ replyMessage, setReplyMessage }), [replyMessage]);
-
-  return <ReplyContext.Provider value={replyState}>{children}</ReplyContext.Provider>;
+  return (
+    <ReplyContext.Provider value={replyMessage}>
+      <ReplySetterContext.Provider value={setReplyMessage}>{children}</ReplySetterContext.Provider>
+    </ReplyContext.Provider>
+  );
 };

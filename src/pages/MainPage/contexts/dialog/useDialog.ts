@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { DialogContext, SetDialogContext } from './DialogContext';
+import { DialogContext, DialogSetterContext } from './DialogContext';
 
 export const useDialog = () => useContext(DialogContext);
-export const useSetDialog = () => useContext(SetDialogContext);
+export const useDialogSetter = () => useContext(DialogSetterContext);

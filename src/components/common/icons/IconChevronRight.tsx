@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 
-export const IconChevronRight = forwardRef<SVGSVGElement, IconProps>(
+export const IconChevronRight = forwardRef<SVGSVGElement, React.ComponentProps<'svg'>>(
   ({ color = 'currentColor', ...props }, forwardedRef) => (
     <svg
       width="20"

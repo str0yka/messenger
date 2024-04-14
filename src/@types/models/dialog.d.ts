@@ -1,4 +1,4 @@
-type Dialog = {
+interface Dialog {
   id: number;
   title: string;
   status: DialogStatus;
@@ -15,6 +15,6 @@ type Dialog = {
   lastMessage: Message | null;
   unreadedMessagesCount: number;
   pinnedMessage: Message | null;
-};
+}
 
 type DialogStatus = 'NONE' | 'TYPING';

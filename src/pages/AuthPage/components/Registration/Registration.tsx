@@ -1,12 +1,15 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { Input, Button, Alert } from '~/components/common';
 import { useIntl } from '~/features/i18n';
-import type { PostRegistrationParams } from '~/utils/api';
 import { useRegistrationMutation } from '~/utils/api';
 import { PUBLIC_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
+
+import { registerFormScheme } from './constants';
+import type { RegisterFormScheme } from './constants';
 
 export const Registration = () => {
   const navigate = useNavigate();
@@ -21,8 +24,9 @@ export const Registration = () => {
     },
   });
 
-  const registerForm = useForm<PostRegistrationParams>({
+  const registerForm = useForm<RegisterFormScheme>({
     defaultValues: { email: '', password: '', name: '' },
+    resolver: zodResolver(registerFormScheme(intl)),
   });
 
   return (
@@ -50,13 +54,7 @@ export const Registration = () => {
           error={!!registerForm.formState.errors.name?.message}
           helperText={registerForm.formState.errors.name?.message}
           rounded
-          {...registerForm.register('name', {
-            required: intl.t('page.auth.registration.input.name.helperText.required'),
-            maxLength: {
-              value: 25,
-              message: intl.t('page.auth.registration.input.name.helperText.maxLength'),
-            },
-          })}
+          {...registerForm.register('name')}
         />
         <Input
           placeholder={intl.t('input.label.email')}
@@ -65,15 +63,7 @@ export const Registration = () => {
           error={!!registerForm.formState.errors.email?.message}
           helperText={registerForm.formState.errors.email?.message}
           rounded
-          {...registerForm.register('email', {
-            required: intl.t('page.auth.registration.input.email.helperText.required'),
-            validate: (value) => {
-              if (value === value.replace('@', '').replace('.', ''))
-                return intl.t('page.auth.registration.input.email.helperText.invalidFormat');
-
-              return true;
-            },
-          })}
+          {...registerForm.register('email')}
         />
         <Input
           placeholder={intl.t('input.label.password')}
@@ -82,34 +72,7 @@ export const Registration = () => {
           error={!!registerForm.formState.errors.password?.message}
           helperText={registerForm.formState.errors.password?.message}
           rounded
-          {...registerForm.register('password', {
-            required: intl.t('page.auth.registration.input.password.helperText.required'),
-            minLength: {
-              value: 8,
-              message: intl.t('page.auth.registration.input.password.helperText.minCharacters', {
-                number: 8,
-              }),
-            },
-            validate: (value) => {
-              if (value === value.toLowerCase()) {
-                return intl.t('page.auth.registration.input.password.helperText.upperCase');
-              }
-              if (value === value.toUpperCase()) {
-                return intl.t('page.auth.registration.input.password.helperText.lowerCase');
-              }
-              if (value === value.replace(/[0-9]/g, '')) {
-                return intl.t('page.auth.registration.input.password.helperText.minDigit', {
-                  number: 1,
-                });
-              }
-              if (!Number.isNaN(Number(value))) {
-                return intl.t('page.auth.registration.input.password.helperText.minLetters', {
-                  number: 1,
-                });
-              }
-              return true;
-            },
-          })}
+          {...registerForm.register('password')}
         />
         <Button
           type="submit"

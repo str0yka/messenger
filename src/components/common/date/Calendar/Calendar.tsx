@@ -4,9 +4,11 @@ import { DayPicker } from 'react-day-picker';
 
 import { IconChevronLeft, IconChevronRight } from '~/components/common/icons';
 
-type CalendarProps = React.ComponentProps<typeof DayPicker>;
-
-export const Calendar = ({ classNames, showOutsideDays = true, ...props }: CalendarProps) => (
+export const Calendar = ({
+  classNames,
+  showOutsideDays = true,
+  ...props
+}: React.ComponentProps<typeof DayPicker>) => (
   <DayPicker
     showOutsideDays={showOutsideDays}
     classNames={{
