@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import { Link } from 'react-router-dom';
 
+import { Intl } from '~/components';
 import { IconButton, Avatar, Dialog } from '~/components/common';
 import {
   IconAtSign,
@@ -38,7 +39,9 @@ export const MiddleColumnHeader = () => {
           </Avatar.Root>
         </div>
         <div className="flex flex-col items-start">
-          <h2 className="truncate font-semibold text-neutral-50">{intl.t('savedMessages')}</h2>
+          <h2 className="truncate font-semibold text-neutral-50">
+            <Intl path="savedMessages" />
+          </h2>
         </div>
       </div>
     );
@@ -86,7 +89,7 @@ export const MiddleColumnHeader = () => {
               </IconButton>
             </Dialog.Close>
             <span className="grow text-lg font-medium">
-              {intl.t('page.home.middleColumn.header.userInfo')}
+              <Intl path="page.home.middleColumn.header.userInfo" />
             </span>
           </div>
           <div className="flex flex-col items-center gap-4 py-4">
@@ -104,7 +107,7 @@ export const MiddleColumnHeader = () => {
                 {getUserName(dialog.partner)}
               </p>
               <p className="text-sm font-medium text-neutral-600">
-                {intl.t(`user.status.${dialog.partner.status}`)}
+                <Intl path={`user.status.${dialog.partner.status}`} />
               </p>
             </div>
           </div>
@@ -120,7 +123,7 @@ export const MiddleColumnHeader = () => {
               <div className="flex flex-col items-start overflow-hidden">
                 <span className="w-full truncate text-start">{dialog.partner.email}</span>
                 <span className="text-sm text-neutral-400">
-                  {intl.t('page.home.middleColumn.header.userInfo.email')}
+                  <Intl path="page.home.middleColumn.header.userInfo.email" />
                 </span>
               </div>
             </button>
@@ -136,7 +139,7 @@ export const MiddleColumnHeader = () => {
                 <div className="flex flex-col items-start overflow-hidden">
                   <span className="w-full truncate text-start">{dialog.partner.username}</span>
                   <span className="text-sm text-neutral-400">
-                    {intl.t('page.home.middleColumn.header.userInfo.username')}
+                    <Intl path="page.home.middleColumn.header.userInfo.username" />
                   </span>
                 </div>
               </button>
@@ -153,7 +156,7 @@ export const MiddleColumnHeader = () => {
                 <div className="flex flex-col items-start overflow-hidden">
                   <span className="w-full truncate text-start">{dialog.partner.bio}</span>
                   <span className="text-sm text-neutral-400">
-                    {intl.t('page.home.middleColumn.header.userInfo.bio')}
+                    <Intl path="page.home.middleColumn.header.userInfo.bio" />
                   </span>
                 </div>
               </button>

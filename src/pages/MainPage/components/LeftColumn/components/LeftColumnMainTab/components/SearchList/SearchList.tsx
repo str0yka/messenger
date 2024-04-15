@@ -2,6 +2,7 @@ import cn from 'classnames';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+import { Intl } from '~/components';
 import { useIntl } from '~/features/i18n';
 import { useSearchQuery } from '~/utils/api';
 import { PRIVATE_ROUTE } from '~/utils/constants';
@@ -16,7 +17,7 @@ interface LeftSearchListProps {
   onClose: () => void;
 }
 
-export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }) => {
+export const SearchList: React.FC<LeftSearchListProps> = ({ query, onClose }) => {
   const user = useUserStore((state) => state.user);
   const intl = useIntl();
 
@@ -38,12 +39,14 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
   if (!searchDialogsQuery.data?.length && !searchUsersQuery.data?.length) {
     return (
       <div className="flex grow flex-col items-center justify-center text-center">
-        <h2 className="text-neutral-500">{intl.t('page.home.leftColumn.searchList.notFound')}</h2>
+        <h2 className="text-neutral-500">
+          <Intl path="page.home.leftColumn.searchList.notFound" />
+        </h2>
         <p className="mt-2 text-sm font-medium text-neutral-400">
-          {intl.t('page.home.leftColumn.searchList.noResults')}
+          <Intl path="page.home.leftColumn.searchList.noResults" />
         </p>
         <p className="text-sm font-medium text-neutral-400">
-          {intl.t('page.home.leftColumn.searchList.tryNewSearch')}
+          <Intl path="page.home.leftColumn.searchList.tryNewSearch" />
         </p>
       </div>
     );
@@ -55,13 +58,14 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
         <>
           <li className="flex justify-between">
             <span className="p-2 text-sm font-medium text-neutral-400">
-              {intl.t('page.home.leftColumn.searchList.chats')}
+              <Intl path="page.home.leftColumn.searchList.chats" />
             </span>
             <button
               type="button"
               className={cn('text-sm text-primary-400', 'hover:underline')}
+              aria-label={intl.t('page.home.leftColumn.searchList.showMore')}
             >
-              {intl.t('page.home.leftColumn.searchList.showMore')}
+              <Intl path="page.home.leftColumn.searchList.showMore" />
             </button>
           </li>
           {searchDialogsQuery.data.map((dialog) => (
@@ -91,13 +95,14 @@ export const LeftSearchList: React.FC<LeftSearchListProps> = ({ query, onClose }
         <>
           <li className="flex justify-between">
             <span className="p-2 text-sm font-medium text-neutral-400">
-              {intl.t('page.home.leftColumn.searchList.global')}
+              <Intl path="page.home.leftColumn.searchList.global" />
             </span>
             <button
               type="button"
+              aria-label={intl.t('page.home.leftColumn.searchList.showMore')}
               className={cn('text-sm text-primary-400', 'hover:underline')}
             >
-              {intl.t('page.home.leftColumn.searchList.showMore')}
+              <Intl path="page.home.leftColumn.searchList.showMore" />
             </button>
           </li>
           {searchUsersQuery.data.map((searchUser) => (

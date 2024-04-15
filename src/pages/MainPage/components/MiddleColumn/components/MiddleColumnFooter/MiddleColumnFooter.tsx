@@ -1,9 +1,11 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import cn from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 
+import { Intl } from '~/components';
 import { Dialog, DropdownMenu, IconButton, Input, Button } from '~/components/common';
 import {
   IconCross,
@@ -21,9 +23,8 @@ import { useSocket } from '../../../../contexts';
 import { MAX_NUMBER_OF_MESSAGES } from '../../constants';
 import { useReply, useReplySetter } from '../../contexts';
 
-interface SendMessageForm {
-  messageText: string;
-}
+import { sendMessageFormScheme } from './constants';
+import type { SendMessageFormScheme } from './constants';
 
 export const MiddleColumnFooter = () => {
   const location = useLocation();
@@ -47,13 +48,14 @@ export const MiddleColumnFooter = () => {
     },
   });
 
-  const sendMessageForm = useForm<SendMessageForm>({
+  const sendMessageForm = useForm<SendMessageFormScheme>({
     defaultValues: {
-      messageText: '',
+      text: '',
     },
+    resolver: zodResolver(sendMessageFormScheme),
   });
 
-  const messageText = sendMessageForm.watch('messageText');
+  const messageText = sendMessageForm.watch('text');
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -82,10 +84,10 @@ export const MiddleColumnFooter = () => {
     });
   }, [isTyping]);
 
-  const onSubmitSendMessageForm = (image?: string | null) => (values: SendMessageForm) => {
-    if (values.messageText) {
+  const onSubmitSendMessageForm = (image?: string | null) => (values: SendMessageFormScheme) => {
+    if (values.text) {
       const message = {
-        text: values.messageText,
+        text: values.text,
         createdAt: new Date().valueOf(),
         replyMessageId: replyMessage?.id,
         image,
@@ -133,7 +135,7 @@ export const MiddleColumnFooter = () => {
                   )}
                 >
                   <p className="block truncate text-sm leading-4 text-primary-500">
-                    {intl.t('page.home.middleColumn.footer.forwardMessage')}
+                    <Intl path="page.home.middleColumn.footer.forwardMessage" />
                   </p>
                   <p className="truncate text-sm leading-5 text-neutral-300/75">
                     {getUserName(forwardMessage.message.user)}: {forwardMessage.message.text}
@@ -177,9 +179,12 @@ export const MiddleColumnFooter = () => {
                   }
                 >
                   <p className="block truncate text-sm leading-4 text-primary-500">
-                    {intl.t('page.home.middleColumn.footer.replyTo', {
-                      name: replyMessage.user.name,
-                    })}
+                    <Intl
+                      path="page.home.middleColumn.footer.replyTo"
+                      values={{
+                        name: replyMessage.user.name,
+                      }}
+                    />
                   </p>
                   <p className="truncate text-sm leading-5 text-neutral-300/75">
                     {replyMessage.message.text}
@@ -206,7 +211,7 @@ export const MiddleColumnFooter = () => {
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content className="w-40">
                   <DropdownMenu.Item onClick={() => fileInputNodeRef.current?.click()}>
-                    {intl.t('page.home.middleColumn.footer.files.images')}
+                    <Intl path="page.home.middleColumn.footer.files.images" />
                     <DropdownMenu.Shortcut>
                       <IconPicture />
                     </DropdownMenu.Shortcut>
@@ -218,7 +223,7 @@ export const MiddleColumnFooter = () => {
               style: { outline: 'none' },
               className: cn((replyMessage || forwardMessage) && 'rounded-none rounded-b-2xl'),
             }}
-            {...sendMessageForm.register('messageText')}
+            {...sendMessageForm.register('text')}
           />
         </div>
         <div className="shrink-0 self-end">
@@ -258,7 +263,10 @@ export const MiddleColumnFooter = () => {
                   <IconCross />
                 </IconButton>
               </Dialog.Close>
-              {intl.t('page.home.middleColumn.footer.sendPhotosDialog.title', { number: 1 })}
+              <Intl
+                path="page.home.middleColumn.footer.sendPhotosDialog.title"
+                values={{ number: 1 }}
+              />
             </div>
             <img
               className="rounded-lg"
@@ -275,13 +283,13 @@ export const MiddleColumnFooter = () => {
                 placeholder={intl.t(
                   'page.home.middleColumn.footer.sendPhotosDialog.input.placeholder.caption',
                 )}
-                {...sendMessageForm.register('messageText')}
+                {...sendMessageForm.register('text')}
               />
               <Button
                 color="primary"
                 type="submit"
               >
-                {intl.t('page.home.middleColumn.footer.sendPhotosDialog.button.send')}
+                <Intl path="page.home.middleColumn.footer.sendPhotosDialog.button.send" />
               </Button>
             </form>
           </Dialog.Content>

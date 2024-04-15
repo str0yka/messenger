@@ -1,14 +1,13 @@
 import cn from 'classnames';
 import { forwardRef } from 'react';
 
-import { ViewImage } from '~/components';
+import { Intl, ViewImage } from '~/components';
 import {
   IconCheck,
   IconDoubleCheck,
   IconEnvelopeClosed,
   IconPushPin,
 } from '~/components/common/icons';
-import { useIntl } from '~/features/i18n';
 import { IMAGE_URL } from '~/utils/constants';
 import { formatTime, getUserName } from '~/utils/helpers';
 
@@ -35,8 +34,6 @@ interface OutcomingMessageProps extends React.ComponentPropsWithoutRef<'div'> {
 
 export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps>(
   ({ type, read, message, createdAt, isPinned, onClickReplyMessage, outgoing, ...props }, ref) => {
-    const intl = useIntl();
-
     const messageDate = new Date(createdAt);
     const { hours, minutes } = formatTime(messageDate);
 
@@ -66,9 +63,12 @@ export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps
         )}
         {type === 'FORWARDED' && (
           <span className="text-sm font-medium leading-4">
-            {intl.t('page.home.middleColumn.main.message.forwardedFrom', {
-              name: getUserName(message.user),
-            })}
+            <Intl
+              path="page.home.middleColumn.main.message.forwardedFrom"
+              values={{
+                name: getUserName(message.user),
+              }}
+            />
           </span>
         )}
         {!!message.image && (

@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import { Fragment } from 'react';
 
-import { Observer } from '~/components';
+import { Intl, Observer } from '~/components';
 import { ContextMenu, IconButton } from '~/components/common';
 import {
   IconCross,
@@ -11,7 +11,6 @@ import {
   IconReply,
   IconTrash,
 } from '~/components/common/icons';
-import { useIntl } from '~/features/i18n';
 
 import {
   DateButton,
@@ -24,7 +23,6 @@ import { groupMessagesByDate } from './helpers';
 import { useMiddleColumnMain } from './hooks';
 
 export const MiddleColumnMain = () => {
-  const intl = useIntl();
   const { state, refs, functions } = useMiddleColumnMain();
 
   return (
@@ -40,7 +38,7 @@ export const MiddleColumnMain = () => {
           <div className="w-0.5 bg-primary-400" />
           <div className="flex grow flex-col truncate text-sm">
             <span className="leading-5 text-primary-400">
-              {intl.t('page.home.middleColumn.main.pinnedMessage')}
+              <Intl path="page.home.middleColumn.main.pinnedMessage" />
             </span>
             <span className="truncate">{state.pinnedMessage.message.text}</span>
           </div>
@@ -103,20 +101,20 @@ export const MiddleColumnMain = () => {
                         </ContextMenu.Trigger>
                         <ContextMenu.Content className="w-56">
                           <ContextMenu.Item onClick={onClickReply}>
-                            {intl.t('page.home.middleColumn.main.contextMenu.item.reply')}
+                            <Intl path="page.home.middleColumn.main.contextMenu.item.reply" />
                             <ContextMenu.Shortcut>
                               <IconReply />
                             </ContextMenu.Shortcut>
                           </ContextMenu.Item>
                           <ContextMenu.Item onClick={onClickCopy}>
-                            {intl.t('page.home.middleColumn.main.contextMenu.item.copy')}
+                            <Intl path="page.home.middleColumn.main.contextMenu.item.copy" />
                             <ContextMenu.Shortcut>
                               <IconPapers />
                             </ContextMenu.Shortcut>
                           </ContextMenu.Item>
                           {!isPinnedMessage && (
                             <ContextMenu.Item onClick={functions.onClickPinMessage(message)}>
-                              {intl.t('page.home.middleColumn.main.contextMenu.item.pin')}
+                              <Intl path="page.home.middleColumn.main.contextMenu.item.pin" />
                               <ContextMenu.Shortcut>
                                 <IconPushPin />
                               </ContextMenu.Shortcut>
@@ -124,14 +122,14 @@ export const MiddleColumnMain = () => {
                           )}
                           {isPinnedMessage && (
                             <ContextMenu.Item onClick={functions.onClickUnpinMessage}>
-                              {intl.t('page.home.middleColumn.main.contextMenu.item.unpin')}
+                              <Intl path="page.home.middleColumn.main.contextMenu.item.unpin" />
                               <ContextMenu.Shortcut>
                                 <IconPushPinSlashed />
                               </ContextMenu.Shortcut>
                             </ContextMenu.Item>
                           )}
                           <ContextMenu.Item onClick={onClickForward}>
-                            {intl.t('page.home.middleColumn.main.contextMenu.item.forward')}
+                            <Intl path="page.home.middleColumn.main.contextMenu.item.forward" />
                             <ContextMenu.Shortcut>
                               <IconReply className="-scale-x-100" />
                             </ContextMenu.Shortcut>
@@ -141,7 +139,7 @@ export const MiddleColumnMain = () => {
                               onClick={onClickDelete}
                               className="text-red-400"
                             >
-                              {intl.t('page.home.middleColumn.main.contextMenu.item.deleteMessage')}
+                              <Intl path="page.home.middleColumn.main.contextMenu.item.deleteMessage" />
                               <ContextMenu.Shortcut>
                                 <IconTrash />
                               </ContextMenu.Shortcut>
@@ -151,7 +149,7 @@ export const MiddleColumnMain = () => {
                       </ContextMenu.Root>
                       {isFirstUnreadMessage && (
                         <div className="rounded bg-primary-700/25 text-center text-sm font-medium text-white">
-                          {intl.t('page.home.middleColumn.unreadedMessages')}
+                          <Intl path="page.home.middleColumn.unreadedMessages" />
                         </div>
                       )}
                     </Fragment>

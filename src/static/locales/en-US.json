@@ -61,6 +61,7 @@
   "page.home.leftColumn.settings.profile.updateAvatar": "Update avatar",
   "page.home.leftColumn.settings.profile.name.required": "Required field",
   "page.home.leftColumn.settings.profile.name.maxLength": "The maximum number of characters allowed is {number}",
+  "page.home.leftColumn.settings.profile.lastname.maxLength": "The maximum number of characters allowed is {number}",
   "page.home.leftColumn.settings.profile.bio.maxLength": "The maximum number of characters allowed is {number}",
   "page.home.leftColumn.settings.profile.username.minLength": "The minimum number of characters allowed is {number}",
   "page.home.leftColumn.settings.profile.username.maxLength": "The maximum number of characters allowed is {number}",

@@ -1,6 +1,5 @@
 import cn from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
 
 import {
   LeftColumnLanguageTab,
@@ -9,69 +8,43 @@ import {
   LeftColumnSettingsTab,
   LeftColumnThemeTab,
 } from './components';
-import { TAB, TAB_ORDER } from './constants';
+import { TAB, variants } from './constants';
 import { TabProvider } from './contexts';
-import type { TabState } from './contexts';
+import { useLeftColumn } from './hooks';
 
 interface LeftColumnProps {
   hideWhenShrink?: boolean;
 }
 
-const variants = {
-  enter: (direction: 'back' | 'forward') => ({
-    x: direction === 'forward' ? '100%' : '-50%',
-    zIndex: direction === 'forward' ? 10 : 5,
-    opacity: direction === 'forward' ? 1 : 0.5,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-  },
-  exit: (direction: 'back' | 'forward') => ({
-    x: direction === 'forward' ? '-50%' : '100%',
-    zIndex: direction === 'forward' ? 5 : 10,
-    opacity: direction === 'forward' ? 0.5 : 1,
-  }),
-};
-
 export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }) => {
-  const [tab, setTab] = useState<TabState>('main');
-  const [direction, setDirection] = useState<'forward' | 'back'>('forward');
-
-  const changeTab = (value: React.SetStateAction<TabState>) => {
-    const newTab = typeof value === 'function' ? value(tab) : value;
-    setDirection(TAB_ORDER[newTab] - TAB_ORDER[tab] >= 0 ? 'forward' : 'back');
-    setTab(newTab);
-  };
+  const { state, functions } = useLeftColumn();
 
   return (
     <TabProvider
-      tab={tab}
-      setTab={changeTab}
+      tab={state.tab}
+      setTab={functions.setTab}
     >
       <aside
         className={cn(
           'relative flex w-screen flex-col overflow-hidden border-r border-r-neutral-700',
           'lg:min-w-[400px] lg:max-w-[400px]',
           '2xl:min-w-[450px] 2xl:max-w-[450px]',
-          {
-            'max-lg:hidden': hideWhenShrink,
-          },
+          hideWhenShrink && 'max-lg:hidden',
         )}
       >
         <AnimatePresence
           mode="popLayout"
           initial={false}
-          custom={direction}
+          custom={state.direction}
         >
           <motion.div
-            key={tab}
+            key={state.tab}
             className="flex grow flex-col bg-neutral-900"
           >
             <motion.div
               className="flex grow flex-col bg-neutral-800"
               variants={variants}
-              custom={direction}
+              custom={state.direction}
               initial="enter"
               animate="center"
               exit="exit"
@@ -84,7 +57,7 @@ export const LeftColumn: React.FC<LeftColumnProps> = ({ hideWhenShrink = false }
                   [TAB.LANGUAGE]: <LeftColumnLanguageTab />,
                   [TAB.THEME]: <LeftColumnThemeTab />,
                   [TAB.PROFILE]: <LeftColumnProfileTab />,
-                }[tab]
+                }[state.tab]
               }
             </motion.div>
           </motion.div>

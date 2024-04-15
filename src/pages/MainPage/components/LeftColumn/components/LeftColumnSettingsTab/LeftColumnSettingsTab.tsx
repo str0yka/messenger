@@ -1,5 +1,6 @@
 import cn from 'classnames';
 
+import { Intl } from '~/components';
 import { DropdownMenu, IconButton } from '~/components/common';
 import {
   IconAtSign,
@@ -38,7 +39,7 @@ export const LeftColumnSettingsTab = () => {
           <IconChevronLeft className="h-6 w-6" />
         </IconButton>
         <span className="grow text-xl font-semibold">
-          {intl.t('page.home.leftColumn.settings')}
+          <Intl path="page.home.leftColumn.settings" />
         </span>
         <IconButton onClick={() => setTab(TAB.PROFILE)}>
           <IconPencil className="h-6 w-6" />
@@ -51,7 +52,7 @@ export const LeftColumnSettingsTab = () => {
           </DropdownMenu.Trigger>
           <DropdownMenu.Content align="end">
             <DropdownMenu.Item onClick={() => logoutMutation.mutateAsync({})}>
-              {intl.t('page.home.logOut')}
+              <Intl path="page.home.logOut" />
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
@@ -69,7 +70,7 @@ export const LeftColumnSettingsTab = () => {
             <div className="flex flex-col items-start overflow-hidden">
               <span className="w-full truncate text-start">{user?.email}</span>
               <span className="text-sm text-neutral-400">
-                {intl.t('page.home.leftColumn.settings.email')}
+                <Intl path="page.home.leftColumn.settings.email" />
               </span>
             </div>
           </button>
@@ -85,7 +86,7 @@ export const LeftColumnSettingsTab = () => {
               <div className="flex flex-col items-start overflow-hidden">
                 <span className="w-full truncate text-start">{user.username}</span>
                 <span className="text-sm text-neutral-400">
-                  {intl.t('page.home.leftColumn.settings.username')}
+                  <Intl path="page.home.leftColumn.settings.username" />
                 </span>
               </div>
             </button>
@@ -102,7 +103,7 @@ export const LeftColumnSettingsTab = () => {
               <div className="flex flex-col items-start overflow-hidden">
                 <span className="w-full truncate text-start">{user.bio}</span>
                 <span className="text-sm text-neutral-400">
-                  {intl.t('page.home.leftColumn.settings.bio')}
+                  <Intl path="page.home.leftColumn.settings.bio" />
                 </span>
               </div>
             </button>
@@ -119,7 +120,7 @@ export const LeftColumnSettingsTab = () => {
           >
             <IconTranslate className="h-6 w-6 text-neutral-400" />
             <div className="flex grow items-center justify-between">
-              {intl.t('page.home.leftColumn.settings.language')}
+              <Intl path="page.home.leftColumn.settings.language" />
               <span className="text-neutral-400">{language.name}</span>
             </div>
           </button>
@@ -130,11 +131,14 @@ export const LeftColumnSettingsTab = () => {
               'hover:bg-neutral-600/50',
             )}
             onClick={() => setTab(TAB.THEME)}
+            aria-label={intl.t('page.home.leftColumn.settings.theme')}
           >
             <IconBrush className="h-6 w-6 text-neutral-400" />
             <div className="flex grow items-center justify-between">
-              {intl.t('page.home.leftColumn.settings.theme')}
-              <span className="text-neutral-400">{intl.t(extendedTheme.intl)}</span>
+              <Intl path="page.home.leftColumn.settings.theme" />
+              <span className="text-neutral-400">
+                <Intl path={extendedTheme.intl} />
+              </span>
             </div>
           </button>
         </div>

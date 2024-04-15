@@ -1,5 +1,6 @@
 import cn from 'classnames';
 
+import { Intl } from '~/components';
 import { Avatar } from '~/components/common';
 import { IconBookmark, IconPushPin } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
@@ -40,7 +41,7 @@ export const SavedMessagesChatItem: React.FC<SavedMessagesChatItemProps> = ({
               'text-white': active,
             })}
           >
-            {intl.t('savedMessages')}
+            <Intl path="savedMessages" />
           </h2>
           {lastMessage && (
             <p

@@ -1,21 +1,26 @@
+import cn from 'classnames';
+
+import { Intl } from '~/components';
 import { IconButton, DropdownMenu, Tabs } from '~/components/common';
 import { IconGear } from '~/components/common/icons';
-import { useIntl } from '~/features/i18n';
-import { useTheme } from '~/features/theme';
 import { EXTENDED_THEMES, LANGUAGES } from '~/utils/constants';
 
 import { Login, Registration } from './components';
+import { useAuthPage } from './hooks';
 
 export const AuthPage = () => {
-  const intl = useIntl();
-  const { theme, setTheme } = useTheme();
+  const { state, functions } = useAuthPage();
 
   return (
     <main className="flex h-screen items-center justify-center bg-neutral-900">
       <Tabs.Root defaultValue="login">
         <Tabs.List className="flex border-b border-neutral-700">
-          <Tabs.Trigger value="login">{intl.t('page.auth.tabs.trigger.logIn')}</Tabs.Trigger>
-          <Tabs.Trigger value="register">{intl.t('page.auth.tabs.trigger.register')}</Tabs.Trigger>
+          <Tabs.Trigger value="login">
+            <Intl path="page.auth.tabs.trigger.logIn" />
+          </Tabs.Trigger>
+          <Tabs.Trigger value="register">
+            <Intl path="page.auth.tabs.trigger.register" />
+          </Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value="login">
           <div className="flex flex-col items-center gap-4 rounded-b bg-neutral-800 p-5">
@@ -39,14 +44,16 @@ export const AuthPage = () => {
             align="end"
             className="w-56"
           >
-            <DropdownMenu.Label>{intl.t('page.auth.settings')}</DropdownMenu.Label>
+            <DropdownMenu.Label>
+              <Intl path="page.auth.settings" />
+            </DropdownMenu.Label>
             <DropdownMenu.Separator />
             <DropdownMenu.Sub>
               <DropdownMenu.SubTrigger>Language</DropdownMenu.SubTrigger>
               <DropdownMenu.SubContent>
                 <DropdownMenu.RadioGroup
-                  value={intl.locale}
-                  onValueChange={(value) => intl.setLocale(value as Locale)}
+                  value={state.locale}
+                  onValueChange={functions.handleChangeLocale}
                 >
                   {LANGUAGES.map((language) => (
                     <DropdownMenu.RadioItem
@@ -60,11 +67,13 @@ export const AuthPage = () => {
               </DropdownMenu.SubContent>
             </DropdownMenu.Sub>
             <DropdownMenu.Sub>
-              <DropdownMenu.SubTrigger>{intl.t('page.auth.theme')}</DropdownMenu.SubTrigger>
+              <DropdownMenu.SubTrigger>
+                <Intl path="page.auth.theme" />
+              </DropdownMenu.SubTrigger>
               <DropdownMenu.SubContent>
                 <DropdownMenu.RadioGroup
-                  value={theme}
-                  onValueChange={(value) => setTheme(value as Theme)}
+                  value={state.theme}
+                  onValueChange={functions.handleChangeTheme}
                 >
                   {EXTENDED_THEMES.map((extendedTheme) => (
                     <DropdownMenu.RadioItem
@@ -72,11 +81,12 @@ export const AuthPage = () => {
                       className="flex gap-1"
                       value={extendedTheme.theme}
                     >
-                      <div className={`h-4 w-4 rounded-full ${extendedTheme.tailwind.bg}`} />
+                      <div className={cn('h-4 w-4 rounded-full', extendedTheme.tailwind.bg)} />
                       <div
-                        className={`h-4 w-4 rounded-full ${
-                          extendedTheme.mode === 'light' ? 'bg-white' : 'bg-black'
-                        }`}
+                        className={cn('h-4 w-4 rounded-full', {
+                          'bg-white': extendedTheme.mode === 'light',
+                          'bg-black': extendedTheme.mode === 'dark',
+                        })}
                       />
                     </DropdownMenu.RadioItem>
                   ))}

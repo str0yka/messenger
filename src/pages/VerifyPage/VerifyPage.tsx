@@ -1,13 +1,18 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useShallow } from 'zustand/react/shallow';
 
+import { Intl } from '~/components';
 import { Input, Button, Link, Alert } from '~/components/common';
 import { IconChevronLeft } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
 import { useVerifyByIdMutation } from '~/utils/api';
 import { LOCAL_STORAGE_KEY, PRIVATE_ROUTE, PUBLIC_ROUTE } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
+
+import { verifyFormScheme } from './constants';
+import type { VerifyFormScheme } from './constants';
 
 export const VerifyPage = () => {
   const navigate = useNavigate();
@@ -24,7 +29,7 @@ export const VerifyPage = () => {
     },
   });
 
-  const verifyForm = useForm<{ verificationCode: string }>();
+  const verifyForm = useForm<VerifyFormScheme>({ resolver: zodResolver(verifyFormScheme(intl)) });
 
   return (
     <main className="flex h-screen items-center justify-center bg-neutral-900">
@@ -34,19 +39,25 @@ export const VerifyPage = () => {
           className="flex items-center gap-2 self-start"
         >
           <IconChevronLeft className="text-primary-400" />
-          {intl.t('page.verify.header.goBack')}
+          <Intl path="page.verify.header.goBack" />
         </Link>
         <h1 className="text-2xl font-bold text-neutral-50">Messenger</h1>
         {verifyMutation.error?.message && (
           <Alert.Root>
             <Alert.Label>
-              {intl.t('page.verify.errorText', { status: verifyMutation.error.status })}
+              <Intl
+                path="page.verify.errorText"
+                values={{ status: verifyMutation.error.status }}
+              />
             </Alert.Label>
             {verifyMutation.error.message}
           </Alert.Root>
         )}
         <p className="text-center text-neutral-500">
-          {intl.t('page.verify.verifyText', { email: user!.email })}
+          <Intl
+            path="page.verify.verifyText"
+            values={{ email: user!.email }}
+          />
         </p>
         <form
           className="flex w-full flex-col gap-4"
@@ -63,23 +74,13 @@ export const VerifyPage = () => {
             error={!!verifyForm.formState.errors.verificationCode?.message}
             helperText={verifyForm.formState.errors.verificationCode?.message}
             rounded
-            {...verifyForm.register('verificationCode', {
-              required: intl.t('page.verify.input.code.helperText.required'),
-              minLength: {
-                value: 4,
-                message: intl.t('page.verify.input.code.helperText.codeLength', { number: 4 }),
-              },
-              maxLength: {
-                value: 4,
-                message: intl.t('page.verify.input.code.helperText.codeLength', { number: 4 }),
-              },
-            })}
+            {...verifyForm.register('verificationCode')}
           />
           <Button
             disabled={verifyForm.formState.isSubmitting}
             type="submit"
           >
-            {intl.t('button.verify')}
+            <Intl path="button.verify" />
           </Button>
         </form>
       </div>

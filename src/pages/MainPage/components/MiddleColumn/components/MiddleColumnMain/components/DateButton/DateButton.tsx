@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { Intl } from '~/components';
 import { Button, Calendar, Dialog } from '~/components/common';
 import { useIntl } from '~/features/i18n';
 import { createDate } from '~/utils/helpers';
@@ -62,10 +63,12 @@ export const DateButton: React.FC<DateButtonProps> = ({ date }) => {
                 }
               }}
             >
-              {intl.t('page.home.middleColumn.dateDialog.jumpToDate')}
+              <Intl path="page.home.middleColumn.dateDialog.jumpToDate" />
             </Button>
             <Dialog.Close asChild>
-              <Button>{intl.t('page.home.middleColumn.dateDialog.cancel')}</Button>
+              <Button>
+                <Intl path="page.home.middleColumn.dateDialog.cancel" />
+              </Button>
             </Dialog.Close>
           </div>
         </Dialog.Content>

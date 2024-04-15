@@ -1,8 +1,8 @@
 import cn from 'classnames';
 
+import { Intl } from '~/components';
 import { IconButton, RadioGroup } from '~/components/common';
 import { IconChevronLeft } from '~/components/common/icons';
-import { useIntl } from '~/features/i18n';
 import { EXTENDED_THEMES } from '~/utils/constants';
 import { useExtendedTheme } from '~/utils/hooks';
 
@@ -10,7 +10,6 @@ import { TAB } from '../../constants';
 import { useTabSetter } from '../../contexts';
 
 export const LeftColumnThemeTab = () => {
-  const intl = useIntl();
   const { extendedTheme, setTheme } = useExtendedTheme();
 
   const setTab = useTabSetter();
@@ -22,7 +21,7 @@ export const LeftColumnThemeTab = () => {
           <IconChevronLeft className="h-6 w-6" />
         </IconButton>
         <span className="grow text-xl font-semibold">
-          {intl.t('page.home.leftColumn.settings.theme')}
+          <Intl path="page.home.leftColumn.settings.theme" />
         </span>
       </div>
       <div className="flex grow flex-col gap-3 bg-neutral-900 font-medium">
@@ -42,7 +41,7 @@ export const LeftColumnThemeTab = () => {
               )}
             >
               <div className="flex flex-col items-start">
-                {intl.t(extTheme.intl)}
+                <Intl path={extTheme.intl} />
                 <div className="flex gap-0.5">
                   <div className={`h-4 w-4 rounded-full ${extTheme.tailwind.bg}`} />
                   <div

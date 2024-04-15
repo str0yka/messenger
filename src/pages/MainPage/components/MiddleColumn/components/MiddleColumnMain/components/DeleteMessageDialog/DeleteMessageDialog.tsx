@@ -1,8 +1,12 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import cn from 'classnames';
 import { Controller, useForm } from 'react-hook-form';
 
+import { Intl } from '~/components';
 import { Button, Checkbox, Dialog } from '~/components/common';
-import { useIntl } from '~/features/i18n';
+
+import { deleteMessageFormScheme } from './constants';
+import type { DeleteMessageFormScheme } from './constants';
 
 interface DeleteMessageDialogProps extends React.ComponentProps<typeof Dialog.Root> {
   onDelete: (deleteForEveryone: boolean) => void;
@@ -12,8 +16,10 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
   onDelete,
   ...dialogRootProps
 }) => {
-  const intl = useIntl();
-  const deleteMessageForm = useForm({ defaultValues: { deleteForEveryone: false } });
+  const deleteMessageForm = useForm<DeleteMessageFormScheme>({
+    defaultValues: { deleteForEveryone: false },
+    resolver: zodResolver(deleteMessageFormScheme),
+  });
 
   return (
     <Dialog.Root {...dialogRootProps}>
@@ -22,13 +28,12 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
         <Dialog.Content className="w-72 rounded-xl bg-neutral-800 p-4">
           <form
             className="flex flex-col gap-2"
-            onSubmit={deleteMessageForm.handleSubmit(({ deleteForEveryone }) => {
-              console.log(deleteForEveryone);
-              onDelete(deleteForEveryone);
-            })}
+            onSubmit={deleteMessageForm.handleSubmit(({ deleteForEveryone }) =>
+              onDelete(deleteForEveryone),
+            )}
           >
             <Dialog.Title>
-              {intl.t('page.home.middleColumn.deleteMessageDialog.title')}
+              <Intl path="page.home.middleColumn.deleteMessageDialog.title" />
             </Dialog.Title>
             <label
               className={cn(
@@ -47,15 +52,17 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
                 )}
               />
               <span className="font-medium">
-                {intl.t('page.home.middleColumn.deleteMessageDialog.deleteForEveryone')}
+                <Intl path="page.home.middleColumn.deleteMessageDialog.deleteForEveryone" />
               </span>
             </label>
             <div className="flex items-center justify-between gap-2">
               <Button type="submit">
-                {intl.t('page.home.middleColumn.deleteMessageDialog.delete')}
+                <Intl path="page.home.middleColumn.deleteMessageDialog.delete" />
               </Button>
               <Dialog.Close asChild>
-                <Button>{intl.t('page.home.middleColumn.deleteMessageDialog.cancel')}</Button>
+                <Button>
+                  <Intl path="page.home.middleColumn.deleteMessageDialog.cancel" />
+                </Button>
               </Dialog.Close>
             </div>
           </form>

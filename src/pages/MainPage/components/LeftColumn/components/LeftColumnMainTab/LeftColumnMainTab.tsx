@@ -1,46 +1,21 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
+import { Intl } from '~/components';
 import { DropdownMenu, IconButton, Input } from '~/components/common';
 import { IconChevronLeft, IconHamburgerMenu, IconMagnifyingGlass } from '~/components/common/icons';
-import { useIntl } from '~/features/i18n';
-import { useLogoutMutation } from '~/utils/api';
-import { useDebounce } from '~/utils/hooks';
-import { useUserStore } from '~/utils/store';
 
-import { TAB } from '../../constants';
-import { useTabSetter } from '../../contexts';
-
-import { LeftChatList, LeftSearchList } from './components';
+import { ChatList, SearchList } from './components';
+import { MODE } from './constants';
+import { useLeftColumnMainTab } from './hooks';
 
 export const LeftColumnMainTab = () => {
-  const intl = useIntl();
-  const resetUser = useUserStore((state) => state.resetUser);
-
-  const setTab = useTabSetter();
-
-  const [mode, setMode] = useState<'chatList' | 'searchList'>('chatList');
-
-  const logoutMutation = useLogoutMutation({ onSuccess: resetUser });
-
-  const searchForm = useForm({
-    defaultValues: {
-      query: '',
-    },
-  });
-
-  const debouncedQuery = useDebounce(searchForm.watch('query'));
-
-  const onCloseSearchList = () => {
-    setMode('chatList');
-    searchForm.reset({ query: '' });
-  };
+  const { state, form, functions } = useLeftColumnMainTab();
 
   return (
     <>
       <div className="flex justify-between gap-2 border-b border-b-neutral-700 p-4">
-        {mode === 'chatList' && (
+        {state.mode === MODE.CHAT_LIST && (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <motion.div
@@ -57,25 +32,27 @@ export const LeftColumnMainTab = () => {
               className="w-56"
               align="start"
             >
-              <DropdownMenu.Label>{intl.t('page.home.settings')}</DropdownMenu.Label>
+              <DropdownMenu.Label>
+                <Intl path="page.home.settings" />
+              </DropdownMenu.Label>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item onClick={() => setTab(TAB.SETTINGS)}>
-                {intl.t('page.home.leftColumn.settings')}
+              <DropdownMenu.Item onClick={functions.onClickSettings}>
+                <Intl path="page.home.leftColumn.settings" />
               </DropdownMenu.Item>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item onClick={() => logoutMutation.mutateAsync({})}>
-                {intl.t('page.home.logOut')}
+              <DropdownMenu.Item onClick={functions.onClickLogout}>
+                <Intl path="page.home.logOut" />
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         )}
-        {mode === 'searchList' && (
+        {state.mode === MODE.SEARCH_LIST && (
           <motion.div
             initial={{ rotate: -180 }}
             animate={{ rotate: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <IconButton onClick={onCloseSearchList}>
+            <IconButton onClick={functions.onCloseSearchList}>
               <IconChevronLeft className="h-6 w-6" />
             </IconButton>
           </motion.div>
@@ -83,13 +60,13 @@ export const LeftColumnMainTab = () => {
         <div className="grow">
           <Controller
             name="query"
-            control={searchForm.control}
+            control={form.control}
             render={({ field }) => (
               <Input
-                placeholder={intl.t('page.home.leftColumn.input.placeholder')}
-                startAdornment={<IconMagnifyingGlass />}
                 rounded
-                onClick={() => setMode('searchList')}
+                placeholder={functions.translate('page.home.leftColumn.input.placeholder')}
+                startAdornment={<IconMagnifyingGlass />}
+                onClick={functions.onOpenSearchList}
                 {...field}
               />
             )}
@@ -101,7 +78,7 @@ export const LeftColumnMainTab = () => {
         mode="wait"
       >
         <motion.div
-          key={mode}
+          key={state.mode}
           className="flex grow flex-col overflow-auto"
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -110,14 +87,14 @@ export const LeftColumnMainTab = () => {
         >
           {
             {
-              chatList: <LeftChatList />,
-              searchList: (
-                <LeftSearchList
-                  query={debouncedQuery}
-                  onClose={onCloseSearchList}
+              [MODE.CHAT_LIST]: <ChatList />,
+              [MODE.SEARCH_LIST]: (
+                <SearchList
+                  query={state.debouncedQuery}
+                  onClose={functions.onCloseSearchList}
                 />
               ),
-            }[mode]
+            }[state.mode]
           }
         </motion.div>
       </AnimatePresence>

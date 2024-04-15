@@ -1,7 +1,9 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import cn from 'classnames';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 
+import { Intl } from '~/components';
 import { Avatar, IconButton, Input } from '~/components/common';
 import { IconCameraWithPlus, IconCheck, IconChevronLeft } from '~/components/common/icons';
 import { useIntl } from '~/features/i18n';
@@ -12,7 +14,8 @@ import { useUserStore } from '~/utils/store';
 import { TAB } from '../../constants';
 import { useTabSetter } from '../../contexts';
 
-type UpdateProfileValues = Pick<User, 'bio' | 'name' | 'lastname' | 'username'>;
+import { updateProfileFormScheme } from './constants';
+import type { UpdateProfileFormScheme } from './constants';
 
 export const LeftColumnProfileTab = () => {
   const intl = useIntl();
@@ -20,13 +23,14 @@ export const LeftColumnProfileTab = () => {
 
   const setTab = useTabSetter();
 
-  const updateProfileForm = useForm<UpdateProfileValues>({
+  const updateProfileForm = useForm<UpdateProfileFormScheme>({
     defaultValues: {
       bio: user?.bio ?? '',
       lastname: user?.lastname ?? '',
       name: user?.name ?? '',
       username: user?.username ?? '',
     },
+    resolver: zodResolver(updateProfileFormScheme(intl)),
   });
 
   const profileUpdateMutation = useProfileUpdateMutation({
@@ -48,7 +52,7 @@ export const LeftColumnProfileTab = () => {
           <IconChevronLeft className="h-6 w-6" />
         </IconButton>
         <span className="grow text-xl font-semibold">
-          {intl.t('page.home.leftColumn.settings.profile')}
+          <Intl path="page.home.leftColumn.settings.profile" />
         </span>
       </div>
       <div className="relative flex grow flex-col gap-3 bg-neutral-900 font-medium">
@@ -88,21 +92,12 @@ export const LeftColumnProfileTab = () => {
           </div>
           <div className="flex flex-col gap-1">
             <p className="text-sm text-neutral-400">
-              {intl.t('page.home.leftColumn.settings.name')}
+              <Intl path="page.home.leftColumn.settings.name" />
             </p>
             <Input
               s="l"
               placeholder={intl.t('page.home.leftColumn.settings.name')}
-              {...updateProfileForm.register('name', {
-                required: {
-                  value: true,
-                  message: intl.t('page.home.leftColumn.settings.profile.name.required'),
-                },
-                maxLength: {
-                  value: 25,
-                  message: intl.t('page.home.leftColumn.settings.profile.name.maxLength'),
-                },
-              })}
+              {...updateProfileForm.register('name')}
               {...(updateProfileForm.formState.errors.name && {
                 error: true,
                 helperText: updateProfileForm.formState.errors.name.message,
@@ -112,7 +107,7 @@ export const LeftColumnProfileTab = () => {
           </div>
           <div className="flex flex-col gap-1">
             <p className="text-sm text-neutral-400">
-              {intl.t('page.home.leftColumn.settings.lastname')}
+              <Intl path="page.home.leftColumn.settings.lastname" />
             </p>
             <Input
               s="l"
@@ -127,19 +122,12 @@ export const LeftColumnProfileTab = () => {
           </div>
           <div className="flex flex-col gap-1">
             <p className="text-sm text-neutral-400">
-              {intl.t('page.home.leftColumn.settings.bio')}
+              <Intl path="page.home.leftColumn.settings.bio" />
             </p>
             <Input
               s="l"
               placeholder={intl.t('page.home.leftColumn.settings.bio')}
-              {...updateProfileForm.register('bio', {
-                maxLength: {
-                  value: 25,
-                  message: intl.t('page.home.leftColumn.settings.profile.bio.maxLength', {
-                    number: 25,
-                  }),
-                },
-              })}
+              {...updateProfileForm.register('bio')}
               {...(updateProfileForm.formState.errors.bio && {
                 error: true,
                 helperText: updateProfileForm.formState.errors.bio.message,
@@ -149,34 +137,12 @@ export const LeftColumnProfileTab = () => {
           </div>
           <div className="flex flex-col gap-1">
             <p className="text-sm text-neutral-400">
-              {intl.t('page.home.leftColumn.settings.username')}
+              <Intl path="page.home.leftColumn.settings.username" />
             </p>
             <Input
               s="l"
               placeholder={intl.t('page.home.leftColumn.settings.username')}
-              {...updateProfileForm.register('username', {
-                maxLength: {
-                  value: 25,
-                  message: intl.t('page.home.leftColumn.settings.profile.username.maxLength', {
-                    number: 25,
-                  }),
-                },
-                minLength: {
-                  value: 5,
-                  message: intl.t('page.home.leftColumn.settings.profile.username.minLength', {
-                    number: 5,
-                  }),
-                },
-                validate: {
-                  format: (value) => {
-                    if (!value) return true;
-                    return (
-                      /^[a-zA-Z0-9]*$/.test(value) ||
-                      intl.t('page.home.leftColumn.settings.profile.username.format')
-                    );
-                  },
-                },
-              })}
+              {...updateProfileForm.register('username')}
               {...(updateProfileForm.formState.errors.username && {
                 error: true,
                 helperText: updateProfileForm.formState.errors.username.message,

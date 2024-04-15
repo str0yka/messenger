@@ -1,12 +1,11 @@
 import cn from 'classnames';
 import { Outlet } from 'react-router-dom';
 
-import { useExtendedTheme } from '~/utils/hooks';
-
 import { SocketProvider, DialogProvider } from './contexts';
+import { useMainPage } from './hooks';
 
 export const MainPage = () => {
-  const { extendedTheme } = useExtendedTheme();
+  const { state } = useMainPage();
 
   return (
     <SocketProvider>
@@ -14,9 +13,9 @@ export const MainPage = () => {
         <main
           className={cn('flex h-screen overflow-hidden', {
             "bg-neutral-900 bg-[url('/images/chat-bg-pattern-dark.png')]":
-              extendedTheme.mode === 'dark',
+              state.extendedTheme.mode === 'dark',
             "bg-primary-300 bg-[url('/images/chat-bg-pattern-light.png')] bg-contain":
-              extendedTheme.mode === 'light',
+              state.extendedTheme.mode === 'light',
           })}
         >
           <Outlet />

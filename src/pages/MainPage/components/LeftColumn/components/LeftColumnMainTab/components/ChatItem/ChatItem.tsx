@@ -2,9 +2,10 @@ import cn from 'classnames';
 
 import { Avatar } from '~/components/common';
 import { IconDoubleCheck, IconCheck, IconPushPin } from '~/components/common/icons';
-import { useIntl } from '~/features/i18n';
 import { USER_STATUS } from '~/utils/constants';
-import { createDate, formatTime, isToday } from '~/utils/helpers';
+
+import { displayDate } from './helpers';
+import { useChatItem } from './hooks';
 
 interface ChatItemProps {
   avatar?: string | null;
@@ -29,7 +30,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   status,
   isPinned,
 }) => {
-  const intl = useIntl();
+  const { state } = useChatItem();
 
   return (
     <div
@@ -67,12 +68,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
                   'text-neutral-400': !active,
                 })}
               >
-                {(() => {
-                  const date = new Date(lastMessage.createdAt);
-                  const { hours, minutes } = formatTime(date);
-                  const { dayNumber, monthShort } = createDate({ date, locale: intl.locale });
-                  return isToday(date) ? `${hours}:${minutes}` : `${dayNumber} ${monthShort}`;
-                })()}
+                {displayDate(new Date(lastMessage.createdAt), state.locale)}
               </p>
               {lastMessageSentByUser && lastMessage.read && (
                 <IconDoubleCheck

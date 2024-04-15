@@ -7,7 +7,7 @@ interface ButtonProps extends React.ComponentProps<'button'> {
   children: React.ReactNode;
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<React.ElementRef<'button'>, ButtonProps>(
   ({ children, color = 'text', rounded = false, ...props }, ref) => (
     <button
       type="button"

@@ -1,33 +1,30 @@
 import cn from 'classnames';
 
+import { Intl } from '~/components';
 import { IconButton, RadioGroup } from '~/components/common';
 import { IconChevronLeft } from '~/components/common/icons';
-import { useIntl } from '~/features/i18n';
 import { LANGUAGES } from '~/utils/constants';
 
-import { TAB } from '../../constants';
-import { useTabSetter } from '../../contexts';
+import { useLeftColumnLanguageTab } from './hooks';
 
 export const LeftColumnLanguageTab = () => {
-  const intl = useIntl();
-
-  const setTab = useTabSetter();
+  const { state, functions } = useLeftColumnLanguageTab();
 
   return (
     <>
       <div className="flex h-14 items-center gap-2 border-b border-b-neutral-700 px-4">
-        <IconButton onClick={() => setTab(TAB.SETTINGS)}>
+        <IconButton onClick={functions.goPreviousTab}>
           <IconChevronLeft className="h-6 w-6" />
         </IconButton>
         <span className="grow text-xl font-semibold">
-          {intl.t('page.home.leftColumn.settings.language')}
+          <Intl path="page.home.leftColumn.settings.language" />
         </span>
       </div>
       <div className="flex grow flex-col gap-3 bg-neutral-900 font-medium">
         <RadioGroup.Root
           className="flex flex-col bg-neutral-800 p-2"
-          defaultValue={intl.locale}
-          onValueChange={(value) => intl.setLocale(value as Locale)}
+          defaultValue={state.locale}
+          onValueChange={functions.handleChangeLocale}
         >
           {LANGUAGES.map((language) => (
             <RadioGroup.Item
