@@ -9,7 +9,7 @@ interface Message {
   user: User;
   message: {
     id: number;
-    text: string;
+    text: string | null;
     image: string | null;
     userId: number;
     replyMessageId: number | null;
@@ -27,7 +27,7 @@ interface Message {
       user: User;
       message: {
         id: number;
-        text: string;
+        text: string | null;
         image: string | null;
         userId: number;
         replyMessageId: number | null;

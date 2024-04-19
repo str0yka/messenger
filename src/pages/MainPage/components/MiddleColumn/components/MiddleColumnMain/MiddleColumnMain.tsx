@@ -76,8 +76,11 @@ export const MiddleColumnMain = () => {
                   const needScrollToMessage = state.scrollToMessage?.id === message.id;
 
                   const onClickReply = () => functions.setReplyMessage(message);
-                  const onClickCopy = () =>
-                    navigator.clipboard.writeText(message.message.text).catch();
+                  const onClickCopy = () => {
+                    if (message.message.text) {
+                      navigator.clipboard.writeText(message.message.text).catch();
+                    }
+                  };
                   const onClickDelete = () => functions.setDeleteMessage(message);
                   const onClickForward = () => functions.setForwardMessage(message);
 
@@ -106,12 +109,14 @@ export const MiddleColumnMain = () => {
                               <IconReply />
                             </ContextMenu.Shortcut>
                           </ContextMenu.Item>
-                          <ContextMenu.Item onClick={onClickCopy}>
-                            <Intl path="page.home.middleColumn.main.contextMenu.item.copy" />
-                            <ContextMenu.Shortcut>
-                              <IconPapers />
-                            </ContextMenu.Shortcut>
-                          </ContextMenu.Item>
+                          {message.message.text && (
+                            <ContextMenu.Item onClick={onClickCopy}>
+                              <Intl path="page.home.middleColumn.main.contextMenu.item.copy" />
+                              <ContextMenu.Shortcut>
+                                <IconPapers />
+                              </ContextMenu.Shortcut>
+                            </ContextMenu.Item>
+                          )}
                           {!isPinnedMessage && (
                             <ContextMenu.Item onClick={functions.onClickPinMessage(message)}>
                               <Intl path="page.home.middleColumn.main.contextMenu.item.pin" />

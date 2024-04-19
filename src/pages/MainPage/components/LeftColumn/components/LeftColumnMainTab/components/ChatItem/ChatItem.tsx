@@ -2,7 +2,7 @@ import cn from 'classnames';
 
 import { Avatar } from '~/components/common';
 import { IconDoubleCheck, IconCheck, IconPushPin, IconBookmark } from '~/components/common/icons';
-import { USER_STATUS } from '~/utils/constants';
+import { IMAGE_URL, USER_STATUS } from '~/utils/constants';
 
 import { displayDate } from './helpers';
 import { useChatItem } from './hooks';
@@ -81,26 +81,37 @@ export const ChatItem: React.FC<ChatItemProps> = ({
               >
                 {displayDate(new Date(lastMessage.createdAt), state.locale)}
               </p>
-              {lastMessageSentByUser && lastMessage.read && (
-                <IconDoubleCheck
-                  className={cn('w-4', {
-                    'text-neutral-50': !active,
-                    'text-white': active,
-                  })}
-                />
-              )}
-              {lastMessageSentByUser && !lastMessage.read && (
-                <IconCheck
-                  className={cn('w-4', {
-                    'text-neutral-50': !active,
-                    'text-white': active,
-                  })}
-                />
+              {lastMessageSentByUser && (
+                <>
+                  {lastMessage.read && (
+                    <IconDoubleCheck
+                      className={cn('w-4', {
+                        'text-neutral-50': !active,
+                        'text-white': active,
+                      })}
+                    />
+                  )}
+                  {!lastMessage.read && (
+                    <IconCheck
+                      className={cn('w-4', {
+                        'text-neutral-50': !active,
+                        'text-white': active,
+                      })}
+                    />
+                  )}
+                </>
               )}
             </>
           )}
         </div>
         <div className="flex items-center gap-2">
+          {lastMessage?.message.image && (
+            <img
+              className="aspect-square w-6 rounded"
+              src={IMAGE_URL(lastMessage.message.image)}
+              alt=""
+            />
+          )}
           <p
             className={cn('grow truncate font-medium', {
               'text-neutral-400': !active,
@@ -110,7 +121,12 @@ export const ChatItem: React.FC<ChatItemProps> = ({
             {lastMessage?.message.text}
           </p>
           {!!unreadedMessagesCount && (
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-400 text-xs font-medium text-white">
+            <div
+              className={cn(
+                'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium',
+                { 'bg-primary-400 text-white': !active, 'bg-white text-primary-400': active },
+              )}
+            >
               {unreadedMessagesCount}
             </div>
           )}

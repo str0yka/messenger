@@ -22,7 +22,7 @@ export const MiddleColumnFooter = () => {
     <>
       <form
         className={cn('mx-auto flex w-full gap-2 px-2 pb-4 pt-1', 'md:w-8/12 md:px-0', 'xl:w-6/12')}
-        onSubmit={functions.onSubmit()}
+        onSubmit={functions.onSubmit(null)}
       >
         <div className="w-full grow">
           <AnimatePresence mode="popLayout">

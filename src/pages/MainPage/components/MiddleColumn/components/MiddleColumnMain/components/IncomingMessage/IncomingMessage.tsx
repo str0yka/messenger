@@ -11,14 +11,14 @@ interface IncomingMessageProps extends React.ComponentPropsWithoutRef<'div'> {
   read: boolean;
   createdAt: Date;
   message: {
-    text: string;
+    text: string | null;
     image: string | null;
     user: Pick<User, 'name' | 'lastname' | 'email'>;
     replyMessage: {
       id: number;
       user: Pick<User, 'name' | 'lastname' | 'email'>;
       message: {
-        text: string;
+        text: string | null;
       };
     } | null;
   };
@@ -34,7 +34,13 @@ export const IncomingMessage = forwardRef<HTMLDivElement, IncomingMessageProps>(
     return (
       <div
         ref={ref}
-        className="w-fit max-w-[66%]  overflow-hidden rounded-l-lg rounded-r-2xl bg-neutral-800 px-2 py-1 text-neutral-50"
+        className={cn(
+          'w-fit max-w-[66%]  overflow-hidden rounded-l-lg rounded-r-2xl bg-neutral-800 px-2 text-neutral-50',
+          {
+            'py-1': !!message.text,
+            'pt-1': !message.text,
+          },
+        )}
         {...props}
       >
         {type === 'MESSAGE' && message.replyMessage && (
@@ -68,7 +74,7 @@ export const IncomingMessage = forwardRef<HTMLDivElement, IncomingMessageProps>(
           </span>
         )}
         {!!message.image && (
-          <div className={cn('-mx-2 -mt-1')}>
+          <div className={cn('relative -mx-2 -mt-1')}>
             <ViewImage
               loading="lazy"
               width={500}
@@ -77,17 +83,27 @@ export const IncomingMessage = forwardRef<HTMLDivElement, IncomingMessageProps>(
               src={IMAGE_URL(message.image)}
               alt={`${getUserName(message.user)}'s photo`}
             />
+            {!message.text && (
+              <div className="pointer-events-none absolute bottom-1 right-1 flex items-center justify-center gap-1 rounded-full bg-black/50 px-2 text-white">
+                {isPinned && <IconPushPin className="h-3.5 w-3.5" />}
+                <span className="text-xs font-medium">
+                  {hours}:{minutes}
+                </span>
+              </div>
+            )}
           </div>
         )}
-        <div>
-          {message.text}
-          <div className="relative top-1 float-right ml-2 flex items-center gap-1 break-normal pb-0.5 text-neutral-50/50">
-            {isPinned && <IconPushPin className="h-3.5 w-3.5" />}
-            <span className="text-xs font-medium">
-              {hours}:{minutes}
-            </span>
+        {message.text && (
+          <div>
+            {message.text}
+            <div className="relative top-1 float-right ml-2 flex items-center gap-1 break-normal pb-0.5 text-neutral-50/50">
+              {isPinned && <IconPushPin className="h-3.5 w-3.5" />}
+              <span className="text-xs font-medium">
+                {hours}:{minutes}
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   },

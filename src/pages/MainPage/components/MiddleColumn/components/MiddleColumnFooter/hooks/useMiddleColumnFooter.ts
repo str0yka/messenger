@@ -69,11 +69,11 @@ export const useMiddleColumnFooter = () => {
     });
   }, [isTyping]);
 
-  const onSubmit = (image?: string | null) =>
+  const onSubmit = (image: string | null) =>
     sendMessageForm.handleSubmit((values: SendMessageFormScheme) => {
-      if (values.text) {
+      if (values.text || image) {
         const message = {
-          text: values.text,
+          text: values.text || null,
           createdAt: new Date().valueOf(),
           replyMessageId: replyMessage?.id,
           image,

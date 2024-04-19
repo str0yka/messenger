@@ -31,10 +31,10 @@ interface ClientToServerEvents {
     message:
       | {
           type: 'MESSAGE';
-          text: string;
+          text: string | null;
           createdAt?: number;
           replyMessageId?: number;
-          image?: string | null;
+          image: string | null;
         }
       | { type: 'FORWARDED'; id: number };
   }) => void;
