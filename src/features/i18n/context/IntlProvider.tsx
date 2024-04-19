@@ -2,7 +2,7 @@ import type { IntlState } from './IntlContext';
 import { IntlContext } from './IntlContext';
 
 interface IntlProviderProps extends IntlState {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const IntlProvider: React.FC<IntlProviderProps> = ({

@@ -98,6 +98,7 @@
   "page.home.middleColumn.deleteMessageDialog.cancel": "CANCEL",
   "page.home.middleColumn.deleteMessageDialog.delete": "DELETE",
   "page.home.middleColumn.forwardMessageDialog.savedMessages.description": "forward here to save",
+  "page.home.middleColumn.forwardMessageDialog.input.forward": "Forward...",
   "page.home.middleColumn.dateDialog.jumpToDate": "TO DATE",
   "page.home.middleColumn.dateDialog.cancel": "CANCEL",
   "page.home.middleColumn.unreadedMessages": "Unreaded messages",

@@ -1,12 +1,11 @@
-import { forwardRef, useState } from 'react';
+import { forwardRef } from 'react';
 
 import { Observer } from '~/components';
-import { useSocketEvents } from '~/utils/hooks';
-import { useUserStore } from '~/utils/store';
 
-import { useSocket } from '../../../../../../contexts';
 import { IncomingMessage } from '../IncomingMessage/IncomingMessage';
 import { OutcomingMessage } from '../OutcomingMessage/OutcomingMessage';
+
+import { useMessageItem } from './hooks';
 
 interface MessageItemProps extends React.ComponentPropsWithoutRef<'div'> {
   message: Message;
@@ -18,32 +17,14 @@ export const MessageItem = forwardRef<
   React.ElementRef<typeof OutcomingMessage | typeof IncomingMessage>,
   MessageItemProps
 >(({ message, isPinned, onClickReplyMessage, ...props }, ref) => {
-  const user = useUserStore((state) => state.user);
-  const socket = useSocket();
+  const { state, functions } = useMessageItem({ message });
 
-  const [isRead, setIsRead] = useState(message.read);
-
-  const isSentByUser = message.userId === user?.id;
-
-  useSocketEvents(
-    socket,
-    {
-      'SERVER:MESSAGE_READ': (data) => {
-        if (data.message.id === message.id) {
-          setIsRead(data.message.read);
-        }
-      },
-    },
-    [],
-    'MessageItem',
-  );
-
-  if (isSentByUser)
+  if (state.isSentByUser)
     return (
       <OutcomingMessage
         ref={ref}
         createdAt={message.createdAt}
-        read={isRead}
+        read={state.isRead}
         type={message.type}
         isPinned={isPinned}
         message={message.message}
@@ -52,12 +33,12 @@ export const MessageItem = forwardRef<
       />
     );
 
-  if (isRead)
+  if (state.isRead)
     return (
       <IncomingMessage
         ref={ref}
         createdAt={message.createdAt}
-        read={isRead}
+        read={state.isRead}
         type={message.type}
         isPinned={isPinned}
         message={message.message}
@@ -67,17 +48,11 @@ export const MessageItem = forwardRef<
     );
 
   return (
-    <Observer
-      observe={(entry) => {
-        if (entry?.isIntersecting) {
-          socket.emit('CLIENT:MESSAGE_READ', { readMessage: message });
-        }
-      }}
-    >
+    <Observer observe={functions.observeMessage}>
       <IncomingMessage
         ref={ref}
         createdAt={message.createdAt}
-        read={isRead}
+        read={state.isRead}
         type={message.type}
         isPinned={isPinned}
         message={message.message}

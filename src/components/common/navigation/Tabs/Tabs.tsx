@@ -4,7 +4,7 @@ import cn from 'classnames';
 // TabsRoot
 
 interface TabsRootProps extends React.ComponentProps<typeof TabsPrimitive.Root> {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const TabsRoot: React.FC<TabsRootProps> = ({ children, ...props }) => (
@@ -19,7 +19,7 @@ const TabsRoot: React.FC<TabsRootProps> = ({ children, ...props }) => (
 // TabsList
 
 interface TabsListProps extends React.ComponentProps<typeof TabsPrimitive.List> {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const TabsList: React.FC<TabsListProps> = ({ children, ...props }) => (
@@ -34,7 +34,7 @@ const TabsList: React.FC<TabsListProps> = ({ children, ...props }) => (
 // TabsTrigger
 
 interface TabsTriggerProps extends React.ComponentProps<typeof TabsPrimitive.Trigger> {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const TabsTrigger: React.FC<TabsTriggerProps> = ({ children, ...props }) => (

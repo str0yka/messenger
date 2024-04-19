@@ -9,7 +9,7 @@ import type { DialogState } from './DialogContext';
 import { DialogContext, DialogSetterContext } from './DialogContext';
 
 interface DialogProviderProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {

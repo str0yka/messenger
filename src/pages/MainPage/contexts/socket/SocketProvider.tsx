@@ -6,7 +6,7 @@ import { useUserStore } from '~/utils/store';
 import { SocketContext } from './SocketContext';
 
 interface SocketProviderProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {

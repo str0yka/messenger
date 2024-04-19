@@ -160,9 +160,15 @@ export const useMiddleColumnMain = () => {
         if (data.messages.length) {
           setMessages((prevMessages) => {
             if (!prevMessages.length) return data.messages;
-            if (data.messages.at(0)!.id < prevMessages.at(-1)!.id)
+            if (
+              new Date(data.messages.at(0)!.createdAt).valueOf() <
+              new Date(prevMessages.at(-1)!.createdAt).valueOf()
+            )
               return [...prevMessages, ...data.messages].slice(-MAX_NUMBER_OF_MESSAGES);
-            if (data.messages.at(-1)!.id > prevMessages.at(0)!.id)
+            if (
+              new Date(data.messages.at(-1)!.createdAt).valueOf() >
+              new Date(prevMessages.at(0)!.createdAt).valueOf()
+            )
               return [...data.messages.reverse(), ...prevMessages].slice(0, MAX_NUMBER_OF_MESSAGES);
             return prevMessages;
           });

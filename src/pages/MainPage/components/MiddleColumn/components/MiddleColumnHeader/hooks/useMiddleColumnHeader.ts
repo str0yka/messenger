@@ -1,11 +1,15 @@
 import { useIntl } from '~/features/i18n';
 
-export const useChatItem = () => {
+import { useDialog } from '../../../../../contexts';
+
+export const useMiddleColumnHeader = () => {
   const intl = useIntl();
+
+  const dialog = useDialog();
 
   return {
     state: {
-      locale: intl.locale,
+      dialog,
     },
     functions: {
       translate: intl.t,

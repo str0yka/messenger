@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 interface ButtonProps extends React.ComponentProps<'button'> {
   color?: 'primary' | 'warning' | 'error' | 'neutral' | 'success' | 'text';
   rounded?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const Button = forwardRef<React.ElementRef<'button'>, ButtonProps>(

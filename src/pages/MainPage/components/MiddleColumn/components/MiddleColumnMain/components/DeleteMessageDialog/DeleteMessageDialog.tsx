@@ -1,12 +1,10 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import cn from 'classnames';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
 import { Intl } from '~/components';
 import { Button, Checkbox, Dialog } from '~/components/common';
 
-import { deleteMessageFormScheme } from './constants';
-import type { DeleteMessageFormScheme } from './constants';
+import { useDeleteMessageDialog } from './hooks';
 
 interface DeleteMessageDialogProps extends React.ComponentProps<typeof Dialog.Root> {
   onDelete: (deleteForEveryone: boolean) => void;
@@ -16,10 +14,7 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
   onDelete,
   ...dialogRootProps
 }) => {
-  const deleteMessageForm = useForm<DeleteMessageFormScheme>({
-    defaultValues: { deleteForEveryone: false },
-    resolver: zodResolver(deleteMessageFormScheme),
-  });
+  const { form, functions } = useDeleteMessageDialog({ onDelete });
 
   return (
     <Dialog.Root {...dialogRootProps}>
@@ -28,9 +23,7 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
         <Dialog.Content className="w-72 rounded-xl bg-neutral-800 p-4">
           <form
             className="flex flex-col gap-2"
-            onSubmit={deleteMessageForm.handleSubmit(({ deleteForEveryone }) =>
-              onDelete(deleteForEveryone),
-            )}
+            onSubmit={functions.onSubmit}
           >
             <Dialog.Title>
               <Intl path="page.home.middleColumn.deleteMessageDialog.title" />
@@ -43,7 +36,7 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({
             >
               <Controller
                 name="deleteForEveryone"
-                control={deleteMessageForm.control}
+                control={form.control}
                 render={({ field }) => (
                   <Checkbox
                     checked={field.value as boolean}

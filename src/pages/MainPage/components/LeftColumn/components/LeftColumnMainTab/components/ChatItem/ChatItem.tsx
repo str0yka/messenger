@@ -1,7 +1,7 @@
 import cn from 'classnames';
 
 import { Avatar } from '~/components/common';
-import { IconDoubleCheck, IconCheck, IconPushPin } from '~/components/common/icons';
+import { IconDoubleCheck, IconCheck, IconPushPin, IconBookmark } from '~/components/common/icons';
 import { USER_STATUS } from '~/utils/constants';
 
 import { displayDate } from './helpers';
@@ -16,7 +16,8 @@ interface ChatItemProps {
   unreadedMessagesCount?: number;
   active?: boolean;
   status?: User['status'];
-  isPinned?: boolean;
+  pinned?: boolean;
+  savedMessages?: boolean;
 }
 
 export const ChatItem: React.FC<ChatItemProps> = ({
@@ -28,9 +29,10 @@ export const ChatItem: React.FC<ChatItemProps> = ({
   unreadedMessagesCount,
   active,
   status,
-  isPinned,
+  pinned,
+  savedMessages,
 }) => {
-  const { state } = useChatItem();
+  const { state, functions } = useChatItem();
 
   return (
     <div
@@ -42,12 +44,21 @@ export const ChatItem: React.FC<ChatItemProps> = ({
       })}
     >
       <div className="relative">
-        <Avatar.Root className="h-14 w-14">
-          <Avatar.Image avatar={avatar} />
-          <Avatar.Fallback>{avatarFallback}</Avatar.Fallback>
-        </Avatar.Root>
-        {status === USER_STATUS.ONLINE && (
-          <div className="absolute bottom-[3px] right-[3px] h-3 w-3 rounded-full border-2 border-primary-900/25 bg-white" />
+        {savedMessages && (
+          <Avatar.Root className="h-14 w-14">
+            <IconBookmark className="h-7 w-7 text-white" />
+          </Avatar.Root>
+        )}
+        {!savedMessages && (
+          <>
+            <Avatar.Root className="h-14 w-14">
+              <Avatar.Image avatar={avatar} />
+              <Avatar.Fallback>{avatarFallback}</Avatar.Fallback>
+            </Avatar.Root>
+            {status === USER_STATUS.ONLINE && (
+              <div className="absolute bottom-[3px] right-[3px] h-3 w-3 rounded-full border-2 border-primary-900/25 bg-white" />
+            )}
+          </>
         )}
       </div>
       <div className="flex min-w-[0] grow flex-col">
@@ -58,7 +69,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
               'text-white': active,
             })}
           >
-            {title}
+            {savedMessages ? functions.translate('savedMessages') : title}
           </h2>
           {lastMessage && (
             <>
@@ -103,7 +114,7 @@ export const ChatItem: React.FC<ChatItemProps> = ({
               {unreadedMessagesCount}
             </div>
           )}
-          {!unreadedMessagesCount && isPinned && (
+          {!unreadedMessagesCount && pinned && (
             <div
               className={cn(
                 'flex h-6 w-6 shrink-0 items-center justify-center text-xs',

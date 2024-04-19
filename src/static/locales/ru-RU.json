@@ -97,6 +97,7 @@
   "page.home.middleColumn.deleteMessageDialog.cancel": "ЗАКРЫТЬ",
   "page.home.middleColumn.deleteMessageDialog.delete": "УДАЛИТЬ",
   "page.home.middleColumn.forwardMessageDialog.savedMessages.description": "сохранённые сообщения",
+  "page.home.middleColumn.forwardMessageDialog.input.forward": "Переслать...",
   "page.home.middleColumn.dateDialog.jumpToDate": "К ДАТЕ",
   "page.home.middleColumn.dateDialog.cancel": "ЗАКРЫТЬ",
   "page.home.middleColumn.unreadedMessages": "Непрочитанные сообщения",

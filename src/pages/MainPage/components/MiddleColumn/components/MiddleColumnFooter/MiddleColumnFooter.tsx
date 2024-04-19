@@ -1,9 +1,5 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import cn from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useLocation } from 'react-router-dom';
 
 import { Intl } from '~/components';
 import { Dialog, DropdownMenu, IconButton, Input, Button } from '~/components/common';
@@ -14,109 +10,23 @@ import {
   IconPicture,
   IconReply,
 } from '~/components/common/icons';
-import { useIntl } from '~/features/i18n';
-import { useUploadMutation } from '~/utils/api';
 import { IMAGE_URL } from '~/utils/constants';
 import { getUserName } from '~/utils/helpers';
 
-import { useSocket } from '../../../../contexts';
-import { MAX_NUMBER_OF_MESSAGES } from '../../constants';
-import { useReply, useReplySetter } from '../../contexts';
-
-import { sendMessageFormScheme } from './constants';
-import type { SendMessageFormScheme } from './constants';
+import { useMiddleColumnFooter } from './hooks';
 
 export const MiddleColumnFooter = () => {
-  const location = useLocation();
-
-  const intl = useIntl();
-
-  const socket = useSocket();
-
-  const replyMessage = useReply();
-  const setReplyMessage = useReplySetter();
-
-  const [forwardMessage, setForwardMessage] = useState<Message | null>();
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [isTyping, setIsTyping] = useState(false);
-
-  const fileInputNodeRef = useRef<HTMLInputElement>(null);
-
-  const uploadMutation = useUploadMutation({
-    onSuccess: (data) => {
-      setUploadedImage(data.fileName);
-    },
-  });
-
-  const sendMessageForm = useForm<SendMessageFormScheme>({
-    defaultValues: {
-      text: '',
-    },
-    resolver: zodResolver(sendMessageFormScheme),
-  });
-
-  const messageText = sendMessageForm.watch('text');
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (location.state && 'forwardMessage' in location.state) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      setForwardMessage(location.state.forwardMessage as Message);
-      window.history.replaceState({}, ''); // $FIXME
-    }
-  }, [location]);
-
-  useEffect(() => {
-    setIsTyping(!!messageText);
-
-    const timer = setTimeout(() => {
-      setIsTyping(false);
-    }, 3000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [messageText]);
-
-  useEffect(() => {
-    socket.emit('CLIENT:DIALOG_UPDATE_STATUS', {
-      status: isTyping ? 'TYPING' : 'NONE',
-    });
-  }, [isTyping]);
-
-  const onSubmitSendMessageForm = (image?: string | null) => (values: SendMessageFormScheme) => {
-    if (values.text) {
-      const message = {
-        text: values.text,
-        createdAt: new Date().valueOf(),
-        replyMessageId: replyMessage?.id,
-        image,
-        type: 'MESSAGE',
-      } as const;
-      socket.emit('CLIENT:MESSAGE_ADD', { message });
-      sendMessageForm.reset();
-      setReplyMessage(null);
-    }
-    if (forwardMessage) {
-      socket.emit('CLIENT:MESSAGE_ADD', {
-        message: { type: 'FORWARDED', id: forwardMessage.message.id },
-      });
-      setForwardMessage(null);
-    }
-    if (image) {
-      setUploadedImage(null);
-    }
-  };
+  const { refs, state, functions, form } = useMiddleColumnFooter();
 
   return (
     <>
       <form
         className={cn('mx-auto flex w-full gap-2 px-2 pb-4 pt-1', 'md:w-8/12 md:px-0', 'xl:w-6/12')}
-        onSubmit={sendMessageForm.handleSubmit(onSubmitSendMessageForm())}
+        onSubmit={functions.onSubmit()}
       >
         <div className="w-full grow">
           <AnimatePresence mode="popLayout">
-            {forwardMessage && (
+            {state.forwardMessage && (
               <motion.div
                 key="forwardMessage"
                 className="flex items-center gap-2 rounded-t-2xl bg-neutral-800 px-2 pt-2"
@@ -138,22 +48,23 @@ export const MiddleColumnFooter = () => {
                     <Intl path="page.home.middleColumn.footer.forwardMessage" />
                   </p>
                   <p className="truncate text-sm leading-5 text-neutral-300/75">
-                    {getUserName(forwardMessage.message.user)}: {forwardMessage.message.text}
+                    {getUserName(state.forwardMessage.message.user)}:{' '}
+                    {state.forwardMessage.message.text}
                   </p>
                 </div>
                 <div className="shrink-0">
-                  <IconButton onClick={() => setForwardMessage(null)}>
+                  <IconButton onClick={functions.resetForwardMessage}>
                     <IconCross className="text-primary-400" />
                   </IconButton>
                 </div>
               </motion.div>
             )}
-            {replyMessage && (
+            {state.replyMessage && (
               <motion.div
                 key="replyMessage"
                 className={cn('flex items-center gap-2 bg-neutral-800 px-2 pt-2', {
-                  'rounded-none': forwardMessage,
-                  'rounded-t-2xl': !forwardMessage,
+                  'rounded-none': state.forwardMessage,
+                  'rounded-t-2xl': !state.forwardMessage,
                 })}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -171,27 +82,22 @@ export const MiddleColumnFooter = () => {
                   role="button"
                   tabIndex={0}
                   aria-hidden
-                  onClick={() =>
-                    socket.emit('CLIENT:JUMP_TO_MESSAGE', {
-                      messageId: replyMessage.id,
-                      take: MAX_NUMBER_OF_MESSAGES,
-                    })
-                  }
+                  onClick={functions.onClickReplyMessage}
                 >
                   <p className="block truncate text-sm leading-4 text-primary-500">
                     <Intl
                       path="page.home.middleColumn.footer.replyTo"
                       values={{
-                        name: replyMessage.user.name,
+                        name: getUserName(state.replyMessage.user),
                       }}
                     />
                   </p>
                   <p className="truncate text-sm leading-5 text-neutral-300/75">
-                    {replyMessage.message.text}
+                    {state.replyMessage.message.text}
                   </p>
                 </div>
                 <div className="shrink-0">
-                  <IconButton onClick={() => setReplyMessage(null)}>
+                  <IconButton onClick={functions.resetReplyMessage}>
                     <IconCross className="text-primary-400" />
                   </IconButton>
                 </div>
@@ -199,7 +105,9 @@ export const MiddleColumnFooter = () => {
             )}
           </AnimatePresence>
           <Input
-            placeholder={intl.t('page.home.middleColumn.footer.input.placeholder.message')}
+            placeholder={functions.translate(
+              'page.home.middleColumn.footer.input.placeholder.message',
+            )}
             variant="contained"
             s="l"
             endAdornment={
@@ -210,7 +118,7 @@ export const MiddleColumnFooter = () => {
                   </IconButton>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content className="w-40">
-                  <DropdownMenu.Item onClick={() => fileInputNodeRef.current?.click()}>
+                  <DropdownMenu.Item onClick={functions.triggerFileInput}>
                     <Intl path="page.home.middleColumn.footer.files.images" />
                     <DropdownMenu.Shortcut>
                       <IconPicture />
@@ -221,9 +129,11 @@ export const MiddleColumnFooter = () => {
             }
             labelProps={{
               style: { outline: 'none' },
-              className: cn((replyMessage || forwardMessage) && 'rounded-none rounded-b-2xl'),
+              className: cn(
+                (state.replyMessage || state.forwardMessage) && 'rounded-none rounded-b-2xl',
+              ),
             }}
-            {...sendMessageForm.register('text')}
+            {...form.register('text')}
           />
         </div>
         <div className="shrink-0 self-end">
@@ -237,22 +147,14 @@ export const MiddleColumnFooter = () => {
         </div>
       </form>
       <input
-        ref={fileInputNodeRef}
+        ref={refs.fileInputNodeRef}
         type="file"
         className="hidden"
-        onChange={(event) => {
-          if (event.target.files?.length) {
-            const formData = new FormData();
-            formData.append('image', event.target.files[0]);
-            uploadMutation.mutateAsync({ params: formData });
-          }
-          // eslint-disable-next-line no-param-reassign
-          event.target.value = '';
-        }}
+        onChange={functions.onFileInputChange}
       />
       <Dialog.Root
-        open={!!uploadedImage}
-        onOpenChange={(open) => !open && setUploadedImage(null)}
+        open={!!state.isUploadImageDialogOpen}
+        onOpenChange={functions.onUploadImageDialogOpenChange}
       >
         <Dialog.Portal>
           <Dialog.Overlay />
@@ -270,20 +172,20 @@ export const MiddleColumnFooter = () => {
             </div>
             <img
               className="rounded-lg"
-              src={IMAGE_URL(uploadedImage)}
+              src={IMAGE_URL(state.uploadedImage)}
               alt="uploaded"
             />
             <form
               className="flex flex-col gap-2"
-              onSubmit={sendMessageForm.handleSubmit(onSubmitSendMessageForm(uploadedImage))}
+              onSubmit={functions.onSubmit(state.uploadedImage)}
             >
               <Input
                 labelProps={{ className: 'grow' }}
                 variant="outlined"
-                placeholder={intl.t(
+                placeholder={functions.translate(
                   'page.home.middleColumn.footer.sendPhotosDialog.input.placeholder.caption',
                 )}
-                {...sendMessageForm.register('text')}
+                {...form.register('text')}
               />
               <Button
                 color="primary"

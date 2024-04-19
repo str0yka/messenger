@@ -8,7 +8,6 @@ import { PRIVATE_ROUTE } from '~/utils/constants';
 import { getUserLink, getUserName } from '~/utils/helpers';
 
 import { ChatItem } from '../ChatItem/ChatItem';
-import { SavedMessagesChatItem } from '../SavedMessagesChatItem/SavedMessagesChatItem';
 
 import { useChatList } from './hooks';
 
@@ -35,26 +34,18 @@ export const ChatList = () => {
                     to={PRIVATE_ROUTE.USER(getUserLink(dialog.partner))}
                     className="drag-none"
                   >
-                    {dialog.userId === dialog.partnerId && (
-                      <SavedMessagesChatItem
-                        lastMessage={dialog.lastMessage}
-                        active={state.activeDialog?.id === dialog.id}
-                        isPinned={dialog.isPinned}
-                      />
-                    )}
-                    {dialog.userId !== dialog.partnerId && (
-                      <ChatItem
-                        title={getUserName(dialog.partner)}
-                        avatarFallback={getUserName(dialog.partner)[0]}
-                        lastMessage={dialog.lastMessage}
-                        lastMessageSentByUser={dialog.lastMessage?.userId === state.user?.id}
-                        unreadedMessagesCount={dialog.unreadedMessagesCount}
-                        active={state.activeDialog?.id === dialog.id}
-                        status={dialog.partner.status}
-                        isPinned={dialog.isPinned}
-                        avatar={dialog.partner.avatar}
-                      />
-                    )}
+                    <ChatItem
+                      title={getUserName(dialog.partner)}
+                      avatarFallback={getUserName(dialog.partner)[0]}
+                      lastMessage={dialog.lastMessage}
+                      lastMessageSentByUser={dialog.lastMessage?.userId === state.user?.id}
+                      unreadedMessagesCount={dialog.unreadedMessagesCount}
+                      active={state.activeDialog?.id === dialog.id}
+                      status={dialog.partner.status}
+                      pinned={dialog.isPinned}
+                      savedMessages={dialog.userId === dialog.partnerId}
+                      avatar={dialog.partner.avatar}
+                    />
                   </Link>
                 </ContextMenu.Trigger>
                 <ContextMenu.Content className="w-56">
@@ -87,24 +78,17 @@ export const ChatList = () => {
                 transition={{ duration: 0.1 * index }}
               >
                 <Link to={PRIVATE_ROUTE.USER(getUserLink(dialog.partner))}>
-                  {dialog.userId === dialog.partnerId && (
-                    <SavedMessagesChatItem
-                      lastMessage={dialog.lastMessage}
-                      active={state.activeDialog?.id === dialog.id}
-                    />
-                  )}
-                  {dialog.userId !== dialog.partnerId && (
-                    <ChatItem
-                      title={getUserName(dialog.partner)}
-                      avatarFallback={getUserName(dialog.partner)[0]}
-                      lastMessage={dialog.lastMessage}
-                      lastMessageSentByUser={dialog.lastMessage?.userId === state.user?.id}
-                      unreadedMessagesCount={dialog.unreadedMessagesCount}
-                      active={state.activeDialog?.id === dialog.id}
-                      status={dialog.partner.status}
-                      avatar={dialog.partner.avatar}
-                    />
-                  )}
+                  <ChatItem
+                    title={getUserName(dialog.partner)}
+                    avatarFallback={getUserName(dialog.partner)[0]}
+                    lastMessage={dialog.lastMessage}
+                    lastMessageSentByUser={dialog.lastMessage?.userId === state.user?.id}
+                    unreadedMessagesCount={dialog.unreadedMessagesCount}
+                    active={state.activeDialog?.id === dialog.id}
+                    status={dialog.partner.status}
+                    savedMessages={dialog.userId === dialog.partnerId}
+                    avatar={dialog.partner.avatar}
+                  />
                 </Link>
               </motion.li>
             </ContextMenu.Trigger>

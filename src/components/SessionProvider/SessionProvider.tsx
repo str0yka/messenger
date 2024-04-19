@@ -4,7 +4,7 @@ import { LOCAL_STORAGE_KEY } from '~/utils/constants';
 import { useUserStore } from '~/utils/store';
 
 interface SessionProviderProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
