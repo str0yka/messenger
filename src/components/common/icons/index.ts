@@ -29,3 +29,5 @@ export * from './IconBookmark';
 export * from './IconPushPinSlashed';
 export * from './IconCameraWithPlus';
 export * from './IconPicture';
+export * from './IconOpenLock';
+export * from './IconClosedLock';

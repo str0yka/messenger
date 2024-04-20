@@ -46,6 +46,8 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
             : { id: Number(partnerId) }),
         },
       });
+    } else {
+      socket.emit('CLIENT:DIALOG_LEAVE');
     }
 
     return () => {

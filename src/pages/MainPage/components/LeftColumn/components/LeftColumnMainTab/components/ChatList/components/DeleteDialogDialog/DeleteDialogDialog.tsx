@@ -4,14 +4,14 @@ import { Controller } from 'react-hook-form';
 import { Intl } from '~/components';
 import { Button, Checkbox, Dialog } from '~/components/common';
 
-import { useDeleteMessageDialog } from './hooks';
+import { useDeleteDialogDialog } from './hooks';
 
-interface DeleteMessageDialogProps extends React.ComponentProps<typeof Dialog.Root> {
+interface DeleteDialogDialogProps extends React.ComponentProps<typeof Dialog.Root> {
   onDelete: (deleteForEveryone: boolean) => void;
 }
 
-export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({ onDelete, ...props }) => {
-  const { form, functions } = useDeleteMessageDialog({ onDelete });
+export const DeleteDialogDialog: React.FC<DeleteDialogDialogProps> = ({ onDelete, ...props }) => {
+  const { form, functions } = useDeleteDialogDialog({ onDelete });
 
   return (
     <Dialog.Root {...props}>
@@ -23,7 +23,7 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({ onDele
             onSubmit={functions.onSubmit}
           >
             <Dialog.Title>
-              <Intl path="page.home.middleColumn.deleteMessageDialog.title" />
+              <Intl path="page.home.leftColumn.chatList.deleteDialogDialog.title" />
             </Dialog.Title>
             <label
               className={cn(
@@ -42,16 +42,16 @@ export const DeleteMessageDialog: React.FC<DeleteMessageDialogProps> = ({ onDele
                 )}
               />
               <span className="font-medium">
-                <Intl path="page.home.middleColumn.deleteMessageDialog.deleteForEveryone" />
+                <Intl path="page.home.leftColumn.chatList.deleteDialogDialog.deleteForEveryone" />
               </span>
             </label>
             <div className="flex items-center justify-between gap-2">
               <Button type="submit">
-                <Intl path="page.home.middleColumn.deleteMessageDialog.delete" />
+                <Intl path="page.home.leftColumn.chatList.deleteDialogDialog.delete" />
               </Button>
               <Dialog.Close asChild>
                 <Button>
-                  <Intl path="page.home.middleColumn.deleteMessageDialog.cancel" />
+                  <Intl path="page.home.leftColumn.chatList.deleteDialogDialog.cancel" />
                 </Button>
               </Dialog.Close>
             </div>

@@ -15,6 +15,8 @@ interface Dialog {
   lastMessage: Message | null;
   unreadedMessagesCount: number;
   pinnedMessage: Message | null;
+  userBlocked: boolean;
+  partnerBlocked: boolean;
 }
 
 type DialogStatus = 'NONE' | 'TYPING';

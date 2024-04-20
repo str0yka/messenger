@@ -2,13 +2,16 @@ import cn from 'classnames';
 import { Link } from 'react-router-dom';
 
 import { Intl } from '~/components';
-import { IconButton, Avatar, Dialog } from '~/components/common';
+import { IconButton, Avatar, Dialog, DropdownMenu } from '~/components/common';
 import {
   IconAtSign,
   IconBookmark,
+  IconClosedLock,
   IconCross,
+  IconDotsVertical,
   IconEnvelopeClosed,
   IconInfoCircled,
+  IconOpenLock,
 } from '~/components/common/icons';
 import { PRIVATE_ROUTE, USER_STATUS } from '~/utils/constants';
 import { getUserName } from '~/utils/helpers';
@@ -64,7 +67,7 @@ export const MiddleColumnHeader = () => {
               <div className="absolute bottom-[1.5px] right-[1.5px] h-2.5 w-2.5 rounded-full border-2 border-primary-900/25 bg-white" />
             )}
           </div>
-          <div className="flex flex-col items-start">
+          <div className="flex grow flex-col items-start">
             <h2 className="truncate font-semibold text-neutral-50">
               {getUserName(state.dialog.partner)}
             </h2>
@@ -73,6 +76,33 @@ export const MiddleColumnHeader = () => {
                 ? functions.translate('page.home.middleColumn.header.typing')
                 : functions.translate(`user.status.${state.dialog.partner.status}`)}
             </p>
+          </div>
+          <div>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <IconButton>
+                  <IconDotsVertical />
+                </IconButton>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content className="w-56">
+                {state.dialog.partnerBlocked && (
+                  <DropdownMenu.Item onClick={functions.onClickUnblock}>
+                    <Intl path="page.home.middleColumn.header.unblock" />
+                    <DropdownMenu.Shortcut>
+                      <IconOpenLock />
+                    </DropdownMenu.Shortcut>
+                  </DropdownMenu.Item>
+                )}
+                {!state.dialog.partnerBlocked && (
+                  <DropdownMenu.Item onClick={functions.onClickBlock}>
+                    <Intl path="page.home.middleColumn.header.block" />
+                    <DropdownMenu.Shortcut>
+                      <IconClosedLock />
+                    </DropdownMenu.Shortcut>
+                  </DropdownMenu.Item>
+                )}
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           </div>
         </div>
       </Dialog.Trigger>

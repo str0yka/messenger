@@ -20,6 +20,7 @@ export const useChatList = () => {
     pinned: Dialog[];
     unpinned: Dialog[];
   }>({ pinned: [], unpinned: [] });
+  const [deleteDialog, setDeleteDialog] = useState<Dialog | null>(null);
 
   const dialogReorderMutation = useDialogsReorderMutation({
     onSuccess: (response) => setDialogs(response.dialogs),
@@ -61,16 +62,26 @@ export const useChatList = () => {
     });
   };
 
-  const onPinDialog = (dialogId: number) => () => {
+  const onClickPinDialog = (dialogId: number) => () => {
     dialogPinMutation.mutateAsync({ params: { dialogId } });
   };
 
-  const onUnpinDialog = (dialogId: number) => () => {
+  const onClickUnpinDialog = (dialogId: number) => () => {
     dialogUnpinMutation.mutateAsync({ params: { dialogId } });
   };
 
-  const onDeleteDialog = (dialogId: number) => () => {
-    socket.emit('CLIENT:DIALOG_DELETE', { dialogId });
+  const onClickDeleteDialog = (dialog: Dialog) => () => {
+    setDeleteDialog(dialog);
+  };
+
+  const isDeleteDialogDialogOpen = !!deleteDialog;
+  const onDeleteDialogDialogOpenChange = (open: boolean) => !open && setDeleteDialog(null);
+
+  const onDeleteDialog = (deleteForEveryone: boolean) => {
+    if (deleteDialog) {
+      socket.emit('CLIENT:DIALOG_DELETE', { dialogId: deleteDialog.id, deleteForEveryone });
+      setDeleteDialog(null);
+    }
   };
 
   return {
@@ -78,11 +89,14 @@ export const useChatList = () => {
       user,
       dialogs,
       activeDialog,
+      isDeleteDialogDialogOpen,
     },
     functions: {
       onReorderDialogs,
-      onPinDialog,
-      onUnpinDialog,
+      onClickPinDialog,
+      onClickUnpinDialog,
+      onClickDeleteDialog,
+      onDeleteDialogDialogOpenChange,
       onDeleteDialog,
     },
   };

@@ -1,5 +1,5 @@
 import { createContext } from 'react';
 
-export type SocketState = IO.Socket | null;
+export type SocketState = IO.Socket;
 
-export const SocketContext = createContext<SocketState>(null);
+export const SocketContext = createContext<SocketState>({} as IO.Socket);
