@@ -18,6 +18,7 @@ export const useMiddleColumnMain = () => {
 
   const setReplyMessage = useReplySetter();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
   const [pinnedMessage, setPinnedMessage] = useState<Message | null>(null);
   const [deleteMessage, setDeleteMessage] = useState<Message | null>(null);
@@ -124,6 +125,7 @@ export const useMiddleColumnMain = () => {
     socket,
     {
       'SERVER:DIALOG_JOIN_RESPONSE': (data) => {
+        setIsLoading(false);
         setMessages(data.messages);
         setPinnedMessage(data.dialog.pinnedMessage);
 
@@ -263,6 +265,7 @@ export const useMiddleColumnMain = () => {
 
   return {
     state: {
+      isLoading,
       user,
       messages,
       isDeleteMessageDialogOpen: !!deleteMessage,

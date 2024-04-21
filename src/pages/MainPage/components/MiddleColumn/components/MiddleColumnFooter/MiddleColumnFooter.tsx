@@ -2,7 +2,7 @@ import cn from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { Intl } from '~/components';
-import { Dialog, DropdownMenu, IconButton, Input, Button } from '~/components/common';
+import { Dialog, DropdownMenu, IconButton, Input, Button, Alert } from '~/components/common';
 import {
   IconCross,
   IconPaperClip,
@@ -13,10 +13,41 @@ import {
 import { IMAGE_URL } from '~/utils/constants';
 import { getUserName } from '~/utils/helpers';
 
+import { MiddleColumnFooterSkeleton } from './components';
 import { useMiddleColumnFooter } from './hooks';
 
 export const MiddleColumnFooter = () => {
   const { refs, state, functions, form } = useMiddleColumnFooter();
+
+  if (state.isLoading) {
+    return <MiddleColumnFooterSkeleton />;
+  }
+
+  if (state.dialog?.partnerBlocked) {
+    return (
+      <div className={cn('mx-auto w-full px-2 pb-4 pt-1', 'md:w-8/12 md:px-0', 'xl:w-6/12')}>
+        <Button
+          color="primary"
+          className="mx-auto"
+          onClick={functions.onClickUnblock}
+        >
+          <Intl path="page.home.middleColumn.footer.button.unblock" />
+        </Button>
+      </div>
+    );
+  }
+
+  if (state.dialog?.userBlocked) {
+    return (
+      <div className={cn('mx-auto w-full px-2 pb-4 pt-1', 'md:w-8/12 md:px-0', 'xl:w-6/12')}>
+        <Alert.Root severity="error">
+          <Alert.Label>
+            <Intl path="page.home.middleColumn.footer.alert.blocked" />
+          </Alert.Label>
+        </Alert.Root>
+      </div>
+    );
+  }
 
   return (
     <>

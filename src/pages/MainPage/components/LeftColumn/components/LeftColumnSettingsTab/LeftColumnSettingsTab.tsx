@@ -1,7 +1,7 @@
 import cn from 'classnames';
 
 import { Intl } from '~/components';
-import { DropdownMenu, IconButton } from '~/components/common';
+import { Avatar, DropdownMenu, IconButton } from '~/components/common';
 import {
   IconAtSign,
   IconBrush,
@@ -12,6 +12,7 @@ import {
   IconPencil,
   IconTranslate,
 } from '~/components/common/icons';
+import { getUserName } from '~/utils/helpers';
 
 import { useLeftColumnSettingsTab } from './hooks';
 
@@ -45,6 +46,16 @@ export const LeftColumnSettingsTab = () => {
       </div>
       <div className="flex grow flex-col gap-3 bg-neutral-900 font-medium">
         <div className="flex flex-col bg-neutral-800 p-2">
+          <div className="flex flex-col items-center justify-center py-4">
+            <Avatar.Root className="mb-2 h-28 w-28">
+              <Avatar.Image avatar={state.user!.avatar} />
+              <Avatar.Fallback>{getUserName(state.user!)[0]}</Avatar.Fallback>
+            </Avatar.Root>
+            <p className="w-full truncate text-center text-lg">{getUserName(state.user!)}</p>
+            <p className="font-normal leading-4 text-neutral-400">
+              <Intl path="user.status.ONLINE" />
+            </p>
+          </div>
           <button
             type="button"
             className={cn(

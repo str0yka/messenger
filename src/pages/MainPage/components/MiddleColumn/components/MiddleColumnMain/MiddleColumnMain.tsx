@@ -2,7 +2,7 @@ import cn from 'classnames';
 import { Fragment } from 'react';
 
 import { Intl, Observer } from '~/components';
-import { ContextMenu, IconButton } from '~/components/common';
+import { CircularProgress, ContextMenu, IconButton } from '~/components/common';
 import {
   IconCross,
   IconPapers,
@@ -53,7 +53,12 @@ export const MiddleColumnMain = () => {
         ref={refs.chatNodeRef}
         className={cn('grow overflow-auto px-2', 'md:px-0')}
       >
-        {!!state.messages.length && (
+        {state.isLoading && (
+          <div className="flex h-full items-center justify-center">
+            <CircularProgress />
+          </div>
+        )}
+        {!state.isLoading && !!state.messages.length && (
           <div
             className={cn('mx-auto flex flex-col-reverse break-words', 'md:w-8/12', 'xl:w-6/12')}
           >

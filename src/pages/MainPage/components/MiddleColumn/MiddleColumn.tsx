@@ -9,7 +9,6 @@ export const MiddleColumn = () => {
 
   return (
     <ReplyProvider key={id}>
-      {/* $FIXME */}
       <div className={cn('flex grow flex-col overflow-hidden', 'lg:static')}>
         <MiddleColumnHeader />
         <div className="flex w-full grow flex-col overflow-hidden">

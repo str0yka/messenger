@@ -16,12 +16,13 @@ import {
 import { PRIVATE_ROUTE, USER_STATUS } from '~/utils/constants';
 import { getUserName } from '~/utils/helpers';
 
+import { MiddleColumnHeaderSkeleton } from './components';
 import { useMiddleColumnHeader } from './hooks';
 
 export const MiddleColumnHeader = () => {
   const { state, functions } = useMiddleColumnHeader();
 
-  if (!state.dialog) return null; // $FIXME
+  if (!state.dialog) return <MiddleColumnHeaderSkeleton />;
 
   if (state.dialog.userId === state.dialog.partnerId) {
     return (
@@ -49,7 +50,7 @@ export const MiddleColumnHeader = () => {
 
   return (
     <Dialog.Root>
-      <Dialog.Trigger>
+      <Dialog.Trigger asChild>
         <div className="flex cursor-pointer items-center gap-4 border-b border-b-neutral-700 bg-neutral-800 px-4 py-2">
           <div>
             <Link to={PRIVATE_ROUTE.HOME}>
@@ -86,7 +87,12 @@ export const MiddleColumnHeader = () => {
               </DropdownMenu.Trigger>
               <DropdownMenu.Content className="w-56">
                 {state.dialog.partnerBlocked && (
-                  <DropdownMenu.Item onClick={functions.onClickUnblock}>
+                  <DropdownMenu.Item
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      functions.onClickUnblock();
+                    }}
+                  >
                     <Intl path="page.home.middleColumn.header.unblock" />
                     <DropdownMenu.Shortcut>
                       <IconOpenLock />
@@ -94,7 +100,12 @@ export const MiddleColumnHeader = () => {
                   </DropdownMenu.Item>
                 )}
                 {!state.dialog.partnerBlocked && (
-                  <DropdownMenu.Item onClick={functions.onClickBlock}>
+                  <DropdownMenu.Item
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      functions.onClickBlock();
+                    }}
+                  >
                     <Intl path="page.home.middleColumn.header.block" />
                     <DropdownMenu.Shortcut>
                       <IconClosedLock />

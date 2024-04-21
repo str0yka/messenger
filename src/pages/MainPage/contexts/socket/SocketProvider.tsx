@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { io } from 'socket.io-client';
 
 import { useUserStore } from '~/utils/store';
@@ -13,18 +13,20 @@ interface SocketProviderProps {
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const user = useUserStore((state) => state.user);
 
-  const socketRef = useRef<SocketState>(
-    io(import.meta.env.VITE_SOCKET_URL as string, {
-      query: user!,
-    }),
+  const socket = useMemo<SocketState>(
+    () =>
+      io(import.meta.env.VITE_SOCKET_URL as string, {
+        query: user!,
+      }),
+    [],
   );
 
   useEffect(
     () => () => {
-      socketRef.current.disconnect();
+      socket.disconnect();
     },
     [],
   );
 
-  return <SocketContext.Provider value={socketRef.current}>{children}</SocketContext.Provider>;
+  return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
 };

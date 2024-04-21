@@ -47,6 +47,7 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
         },
       });
     } else {
+      setDialog(null);
       socket.emit('CLIENT:DIALOG_LEAVE');
     }
 

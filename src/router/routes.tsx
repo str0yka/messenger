@@ -19,10 +19,10 @@ export const privateRoutes: RouteObject[] = [
       {
         path: PRIVATE_ROUTE.USER(':id'),
         element: (
-          <MainPageGuard>
+          <>
             <LeftColumn hideWhenShrink />
             <MiddleColumn />
-          </MainPageGuard>
+          </>
         ),
       },
       {

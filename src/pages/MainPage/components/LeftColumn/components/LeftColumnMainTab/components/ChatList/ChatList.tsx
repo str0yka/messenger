@@ -8,12 +8,23 @@ import { PRIVATE_ROUTE } from '~/utils/constants';
 import { getUserLink, getUserName } from '~/utils/helpers';
 
 import { ChatItem } from '../ChatItem/ChatItem';
+import { ChatItemSkeleton } from '../ChatItemSkeleton/ChatItemSkeleton';
 
 import { DeleteDialogDialog } from './components';
 import { useChatList } from './hooks';
 
 export const ChatList = () => {
   const { state, functions } = useChatList();
+
+  if (state.isLoading) {
+    return (
+      <ul className="flex grow flex-col overflow-auto p-2">
+        {new Array(10).fill(null).map((_, index) => (
+          <ChatItemSkeleton key={index} />
+        ))}
+      </ul>
+    );
+  }
 
   return (
     <>

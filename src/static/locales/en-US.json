@@ -84,6 +84,8 @@
   "page.home.middleColumn.footer.sendPhotosDialog.title": "Send {number} photo",
   "page.home.middleColumn.footer.sendPhotosDialog.input.placeholder.caption": "Add a caption...",
   "page.home.middleColumn.footer.sendPhotosDialog.button.send": "Send",
+  "page.home.middleColumn.footer.button.unblock": "Unblock",
+  "page.home.middleColumn.footer.alert.blocked": "A user has blocked you",
   "page.home.middleColumn.main.contextMenu.item.copy": "Copy",
   "page.home.middleColumn.main.contextMenu.item.deleteMessage": "Delete message",
   "page.home.middleColumn.main.contextMenu.item.reply": "Reply",

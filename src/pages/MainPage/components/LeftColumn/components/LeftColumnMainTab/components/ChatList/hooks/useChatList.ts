@@ -16,6 +16,7 @@ export const useChatList = () => {
   const socket = useSocket();
   const activeDialog = useDialog();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [dialogs, setDialogs] = useState<{
     pinned: Dialog[];
     unpinned: Dialog[];
@@ -39,6 +40,7 @@ export const useChatList = () => {
         socket.emit('CLIENT:DIALOGS_GET');
       },
       'SERVER:DIALOGS_PUT': (data) => {
+        setIsLoading(false);
         setDialogs(data.dialogs);
       },
     },
@@ -86,6 +88,7 @@ export const useChatList = () => {
 
   return {
     state: {
+      isLoading,
       user,
       dialogs,
       activeDialog,

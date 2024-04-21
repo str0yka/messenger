@@ -5,8 +5,9 @@ import { useLocation } from 'react-router-dom';
 
 import { useIntl } from '~/features/i18n';
 import { useUploadMutation } from '~/utils/api';
+import { useSocketEvents } from '~/utils/hooks';
 
-import { useSocket } from '../../../../../contexts';
+import { useDialog, useSocket } from '../../../../../contexts';
 import { MAX_NUMBER_OF_MESSAGES } from '../../../constants';
 import { useReply, useReplySetter } from '../../../contexts';
 import { SendMessageFormScheme, sendMessageFormScheme } from '../constants';
@@ -17,10 +18,11 @@ export const useMiddleColumnFooter = () => {
   const intl = useIntl();
 
   const socket = useSocket();
-
+  const dialog = useDialog();
   const replyMessage = useReply();
   const setReplyMessage = useReplySetter();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [forwardMessage, setForwardMessage] = useState<Message | null>();
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
@@ -40,6 +42,17 @@ export const useMiddleColumnFooter = () => {
     resolver: zodResolver(sendMessageFormScheme),
   });
 
+  useSocketEvents(
+    socket,
+    {
+      'SERVER:DIALOG_JOIN_RESPONSE': () => {
+        setIsLoading(false);
+      },
+    },
+    [],
+    'MiddleColumnFooter',
+  );
+
   const messageText = sendMessageForm.watch('text');
 
   useEffect(() => {
@@ -47,7 +60,7 @@ export const useMiddleColumnFooter = () => {
     if (location.state && 'forwardMessage' in location.state) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       setForwardMessage(location.state.forwardMessage as Message);
-      window.history.replaceState({}, ''); // $FIXME
+      window.history.replaceState({}, '');
     }
   }, [location]);
 
@@ -121,6 +134,12 @@ export const useMiddleColumnFooter = () => {
 
   const triggerFileInput = () => fileInputNodeRef.current?.click();
 
+  const onClickUnblock = () => {
+    if (dialog) {
+      socket.emit('CLIENT:DIALOG_UNBLOCK', { partnerId: dialog.partnerId });
+    }
+  };
+
   return {
     refs: {
       fileInputNodeRef,
@@ -130,6 +149,8 @@ export const useMiddleColumnFooter = () => {
       forwardMessage,
       replyMessage,
       isUploadImageDialogOpen,
+      dialog,
+      isLoading,
     },
     form: sendMessageForm,
     functions: {
@@ -138,6 +159,7 @@ export const useMiddleColumnFooter = () => {
       resetReplyMessage,
       onClickReplyMessage,
       onFileInputChange,
+      onClickUnblock,
       onUploadImageDialogOpenChange,
       triggerFileInput,
       translate: intl.t,
