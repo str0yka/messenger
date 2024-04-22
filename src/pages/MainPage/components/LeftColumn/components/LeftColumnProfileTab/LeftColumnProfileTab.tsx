@@ -35,7 +35,10 @@ export const LeftColumnProfileTab = () => {
                 className="group absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50"
               >
                 <IconCameraWithPlus
-                  className={cn('h-12 w-12 transition-all', 'group-hover:h-14 group-hover:w-14')}
+                  className={cn(
+                    'h-12 w-12 text-white transition-all',
+                    'group-hover:h-14 group-hover:w-14',
+                  )}
                 />
                 <input
                   type="file"

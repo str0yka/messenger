@@ -27,7 +27,7 @@ export const DateButton: React.FC<DateButtonProps> = ({ date }) => {
         <Dialog.Overlay />
         <Dialog.Content className="rounded-xl bg-neutral-800 p-4">
           <Dialog.Title>
-            {state.dayShort}, {state.month} {state.dayNumber}
+            {state.selectedDateDayShort}, {state.selectedDateMonth} {state.selectedDateDayNumber}
           </Dialog.Title>
           <Calendar
             className="mb-4 mt-4"

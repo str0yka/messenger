@@ -62,7 +62,7 @@ export const OutcomingMessage = forwardRef<HTMLDivElement, OutcomingMessageProps
           </div>
         )}
         {type === 'FORWARDED' && (
-          <span className="text-sm font-medium leading-4">
+          <span className="mb-2 block text-sm font-medium leading-4">
             <Intl
               path="page.home.middleColumn.main.message.forwardedFrom"
               values={{

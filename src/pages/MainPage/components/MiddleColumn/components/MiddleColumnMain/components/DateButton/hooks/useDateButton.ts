@@ -16,7 +16,19 @@ export const useDateButton = ({ date }: UseDateButtonParams) => {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(date);
 
-  const { dayNumber, dayShort, month } = createDate({ date: selectedDate, locale: intl.locale });
+  const {
+    dayNumber: selectedDateDayNumber,
+    dayShort: selectedDateDayShort,
+    month: selectedDateMonth,
+  } = createDate({
+    date: selectedDate,
+    locale: intl.locale,
+  });
+
+  const { dayNumber, month } = createDate({
+    date,
+    locale: intl.locale,
+  });
 
   const onDialogOpenChange = (isOpen: boolean) => {
     if (!isOpen) setSelectedDate(date);
@@ -37,8 +49,10 @@ export const useDateButton = ({ date }: UseDateButtonParams) => {
     state: {
       isDialogOpen: open,
       dayNumber,
-      dayShort,
       month,
+      selectedDateDayNumber,
+      selectedDateDayShort,
+      selectedDateMonth,
       selectedDate,
     },
     functions: {
